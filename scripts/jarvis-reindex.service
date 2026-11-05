@@ -1,0 +1,8 @@
+[Unit]
+Description=Reindexação da memória local do Jarvis
+After=jarvis.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/jarvis
+ExecStart=%h/jarvis/.venv/bin/python %h/jarvis/scripts/reindex.py

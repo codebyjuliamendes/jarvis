@@ -1,0 +1,16 @@
+[Unit]
+Description=Jarvis - assistente pessoal no Telegram
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/jarvis
+ExecStart=%h/jarvis/run.sh
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=default.target

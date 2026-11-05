@@ -1,0 +1,592 @@
+# Jarvis pessoal (Telegram + Ollama)
+
+Assistente pessoal que roda **na sua máquina** e é acessado pelo **Telegram**.
+Usa **Ollama** (modelo local, privado) e tem ferramentas para trabalhar com código,
+terminal, git/GitHub, Obsidian/Notion, Google Agenda/Gmail, Stripe e planilhas.
+Também lê PDFs/DOCX/imagens, mantém uma memória local indexada (RAG) e envia um
+briefing diário pela manhã.
+
+> Você escolheu rodar no seu computador. Isso significa: privacidade total e custo zero
+> de API, mas o Jarvis só responde quando o computador estiver ligado e com internet.
+
+---
+
+## O que ele faz
+
+- Conversa em português pelo Telegram (texto ou áudio transcrito localmente).
+- Lê, cria e edita arquivos dentro das pastas permitidas.
+- Roda comandos no terminal (testes, builds, scripts) com bloqueio de comandos destrutivos.
+- Usa `git` e consulta/cria issues e comentários no GitHub via API.
+- Lê, busca e escreve notas no Obsidian.
+- Busca, lê, anexa e cria páginas no Notion.
+- Lista/cria eventos na Google Agenda; busca, lê e envia e-mails pelo Gmail.
+- Acessa Microsoft 365: Outlook (e-mails/calendário) e Teams (equipes, canais e chats).
+- Responde em áudio com voz natural (edge-tts), sob demanda ou automático.
+- Consulta saldo, receita, clientes, faturas e payment links do Stripe.
+- Lê planilhas CSV/TSV/XLSX.
+- Lê PDFs (com OCR em páginas escaneadas), DOCX e imagens.
+- Mantém uma memória local (RAG) com busca semântica nas suas notas e documentos.
+- Envia um briefing diário às 6h (agenda, e-mails, lembretes e prioridades).
+- Busca e lê páginas na web (DuckDuckGo + extração de texto).
+- Envia arquivos da máquina para o Telegram.
+- Cria lembretes persistentes que chegam no Telegram na hora marcada.
+
+Cada integração é opcional: se não estiver configurada, o Jarvis explica o que falta
+em vez de inventar.
+
+---
+
+## Arquitetura
+
+```
+Telegram  <---long polling--->  Bot (Python)
+                                   |
+                                   v
+                            Agente (loop de ferramentas)
+                          /    |      |      |      |    \
+                    terminal arquivos git  GitHub Notion Google ...
+                                   |
+                                   v
+                            Ollama local (LLM)
+```
+
+- **Sem porta aberta / sem ngrok**: o bot só faz conexões de saída para o Telegram.
+- Histórico por conversa em SQLite (`data/jarvis.sqlite3`).
+- Suporta function calling nativo do Ollama; se o modelo não suportar, cai
+  automaticamente para um modo de ferramentas via JSON.
+
+---
+
+## Requisitos
+
+- Linux ou macOS, Python **3.8+**.
+- [Ollama](https://ollama.com) (o script instala sem `sudo` em `~/.local`).
+- Conta no Telegram.
+- 8 GB de RAM ou mais. **Sem GPU**, use modelos 3B; 7B funciona, mas é mais lento.
+- Internet para o Telegram (a inferência é local).
+- Para OCR: `tesseract-ocr` (e `tesseract-ocr-por` para português). Sem isso, PDFs
+  digitais e DOCX continuam funcionando; só OCR de imagens/PDFs escaneados fica indisponível.
+
+---
+
+## Início rápido
+
+### 1. Instalar dependências
+
+```bash
+cd ~/jarvis
+./setup.sh
+```
+
+Isso cria o `.venv`, instala tudo e gera um `.env` a partir do `.env.example`.
+
+Opcional (voz): instale a transcrição local de áudios depois:
+
+```bash
+./scripts/setup_voice.sh
+```
+
+O modelo do Whisper é baixado no primeiro áudio. Em CPU, `small` é um bom equilíbrio;
+use `base` para mais velocidade ou `medium` para mais precisão.
+
+### 2. Instalar o Ollama e baixar um modelo
+
+```bash
+# instala o servidor (sem sudo, ~1.5 GB) e baixa o modelo
+./scripts/install_ollama.sh qwen2.5:3b
+```
+
+Se a máquina aguentar, `qwen2.5:7b` responde melhor (mais lento em CPU).
+Outros modelos com suporte a ferramentas: `llama3.2:3b`, `llama3.1:8b`.
+
+Para a memória/RAG, baixe também o modelo de embeddings:
+
+```bash
+ollama pull nomic-embed-text
+```
+
+O `install_ollama.sh` já tenta baixar esse modelo automaticamente (pule com
+`JARVIS_SKIP_EMBEDDINGS=1`).
+
+Confira:
+
+```bash
+curl -s http://localhost:11434/api/tags
+```
+
+### 3. Criar o bot no Telegram
+
+1. Abra o Telegram e fale com o **@BotFather**.
+2. Envie `/newbot`, escolha nome e usuário.
+3. Copie o **token**.
+4. Edite o `.env`:
+
+```dotenv
+TELEGRAM_BOT_TOKEN=123456:ABC...
+OLLAMA_MODEL=qwen2.5:3b
+```
+
+### 4. Rodar
+
+```bash
+./run.sh
+```
+
+No Telegram, mande `/start`.
+
+Se aparecer **“Acesso ainda não configurado”**, ele mostra o seu ID numérico.
+Copie para o `.env` e reinicie:
+
+```dotenv
+TELEGRAM_ALLOWED_USER_IDS=123456789
+```
+
+Pronto. Mande `/status` para ver modelo, Ollama e integrações.
+
+---
+
+## Como usar nos seus projetos
+
+Ajuste no `.env`:
+
+```dotenv
+# pastas que o Jarvis pode acessar (vírgula)
+JARVIS_ALLOWED_ROOTS=/home/julinha/projetos,/home/julinha/faculdade
+
+# pasta padrão quando você não especifica caminho
+JARVIS_WORKSPACE=/home/julinha/projetos
+```
+
+Exemplos de pedidos:
+
+- “entra no projeto `api-clientes`, roda os testes e me diz o que falhou”
+- “faz um resumo do `git diff` do repositório `faculdade/tcc`”
+- “cria uma branch `feat/login` e um commit com as mudanças atuais”
+- “lista as issues abertas de `minhaorg/meurepo` e prioriza por label”
+- “anota no Obsidian, em `Faculdade/TCC.md`, que a defesa é dia 20”
+- “o que tenho na agenda amanhã?”
+- “busca e-mails não lidos do professor nas últimas 48h”
+- “quanto faturei no Stripe nos últimos 30 dias?”
+- “lê `vendas.xlsx`, aba `Março`, e resume os 10 maiores valores”
+- “pesquisa na web as notícias de hoje sobre a minha área e me manda um resumo”
+- “me manda o arquivo `relatorio.pdf` que está na pasta `projetos`”
+- “me lembra em 10 minutos de tomar água”
+- “anota que amanhã às 9h tenho reunião com o cliente”
+
+> Dica: para tarefas de código mais complexas, um modelo 7B ajuda bastante.
+> Troque `OLLAMA_MODEL` e rode `ollama pull <modelo>`.
+
+---
+
+## Configuração (`.env`)
+
+| Variável | Obrigatória | Descrição |
+|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | sim | Token do @BotFather |
+| `TELEGRAM_ALLOWED_USER_IDS` | sim | IDs autorizados, separados por vírgula |
+| `OLLAMA_URL` | não | Padrão `http://localhost:11434` |
+| `OLLAMA_MODEL` | não | Padrão `qwen2.5:3b` |
+| `OLLAMA_TIMEOUT` | não | Segundos de espera (padrão 300) |
+| `OLLAMA_NUM_CTX` | não | Contexto (padrão 8192) |
+| `JARVIS_ALLOWED_ROOTS` | não | Pastas permitidas (padrão: sua home) |
+| `JARVIS_WORKSPACE` | não | Pasta padrão de trabalho |
+| `JARVIS_SHELL_ENABLED` | não | `true`/`false` para liberar terminal |
+| `JARVIS_SHELL_TIMEOUT` | não | Timeout de comandos em segundos |
+| `JARVIS_MAX_ITERATIONS` | não | Máximo de passos do agente por mensagem |
+| `JARVIS_HISTORY_LIMIT` | não | Mensagens lembradas por conversa |
+| `JARVIS_OWNER_NAME` | não | Como o Jarvis te chama |
+| `JARVIS_TIMEZONE` | não | Fuso usado no contexto e nos lembretes |
+| `JARVIS_WHISPER_ENABLED` | não | `true`/`false` para transcrever áudios |
+| `JARVIS_WHISPER_MODEL` | não | `tiny`, `base`, `small` (padrão), `medium` |
+| `JARVIS_WHISPER_LANGUAGE` | não | Idioma da transcrição (padrão `pt`) |
+| `JARVIS_BRIEFING_ENABLED` | não | `true`/`false` para o briefing diário |
+| `JARVIS_BRIEFING_HOUR` | não | Hora do briefing (padrão `6`) |
+| `JARVIS_BRIEFING_MINUTE` | não | Minuto do briefing (padrão `0`) |
+| `JARVIS_BRIEFING_MAX_ITERATIONS` | não | Passos máximos do agente no briefing (padrão `4`) |
+| `JARVIS_RAG_ENABLED` | não | `true`/`false` para a memória local |
+| `JARVIS_RAG_MODEL` | não | Modelo de embeddings (padrão `nomic-embed-text`) |
+| `JARVIS_RAG_ROOTS` | não | Pastas indexadas, separadas por vírgula |
+| `JARVIS_RAG_EXTENSIONS` | não | Extensões indexadas (padrão `.md,.txt,.pdf,.docx,.csv,.xlsx`) |
+| `OBSIDIAN_VAULT` | não | Caminho do vault |
+| `NOTION_TOKEN` | não | Token da integração do Notion |
+| `NOTION_DEFAULT_PAGE` | não | Página pai padrão |
+| `STRIPE_API_KEY` | não | Chave restrita (rk_) ou de teste (sk_test_) |
+| `GITHUB_TOKEN` | não | Token com escopo `repo` |
+| `GITHUB_DEFAULT_REPO` | não | `owner/repo` padrão |
+| `GOOGLE_CREDENTIALS` | não | `credentials.json` do Google Cloud |
+| `GOOGLE_TOKEN` | não | `token.json` gerado pelo script |
+| `MS_GRAPH_CLIENT_ID` | não | Application (client) ID do app no Azure |
+| `MS_GRAPH_TENANT` | não | Directory (tenant) ID ou `organizations` |
+| `MS_GRAPH_TOKEN` | não | Cache de token (padrão `data/ms_graph_token.json`) |
+| `MS_GRAPH_SCOPES` | não | Escopos Graph separados por vírgula |
+| `JARVIS_TTS_ENABLED` | não | `true`/`false` para voz de saída |
+| `JARVIS_TTS_AUTO` | não | Falar automaticamente todas as respostas |
+| `JARVIS_TTS_VOICE` | não | Voz edge-tts (padrão `pt-BR-FranciscaNeural`) |
+| `JARVIS_TTS_RATE` | não | Velocidade, ex.: `+0%`, `+15%`, `-10%` |
+| `JARVIS_TTS_MAX_CHARS` | não | Limite de caracteres por áudio (padrão 3000) |
+
+---
+
+## Integrações
+
+### GitHub
+
+1. Crie um token clássico em <https://github.com/settings/tokens> com escopo `repo`.
+2. `.env`: `GITHUB_TOKEN=ghp_...` e, se quiser, `GITHUB_DEFAULT_REPO=owner/repo`.
+
+> O `gh` do snap está quebrado nesta máquina (glibc), por isso o Jarvis usa a API REST
+> diretamente. Não precisa do `gh`.
+
+### Notion
+
+1. Crie uma integração em <https://www.notion.so/my-integrations>.
+2. Copie o “Internal Integration Secret” para `NOTION_TOKEN`.
+3. No Notion, abra a página > `...` > **Connections** > adicione a integração.
+4. Opcional: `NOTION_DEFAULT_PAGE=<id da página>`.
+
+### Obsidian
+
+```dotenv
+OBSIDIAN_VAULT=/home/julinha/Documentos/MeuVault
+```
+
+### Google Agenda e Gmail
+
+1. No <https://console.cloud.google.com/>, crie um projeto.
+2. Ative **Google Calendar API** e **Gmail API**.
+3. Configure a tela de consentimento OAuth (Externo, modo teste; adicione seu e-mail
+   como usuário de teste).
+4. Crie credenciais > **ID do cliente OAuth** > **Aplicativo para computador**.
+5. Baixe o JSON e salve como `~/jarvis/credentials.json`.
+6. Rode uma vez:
+
+```bash
+.venv/bin/python scripts/google_auth.py
+```
+
+7. Autorize no navegador. O `token.json` é criado e renovado automaticamente.
+
+### Microsoft 365 (Outlook e Teams)
+
+Funciona com conta **trabalho/escola** (Microsoft 365). Usa o Microsoft Graph com
+device code, então não precisa de servidor nem redirecionamento público.
+
+1. No <https://portal.azure.com/>, entre em **Microsoft Entra ID** >
+   **Registros de aplicativo** > **Novo registro**.
+2. Nome: `Jarvis`. Tipo de conta: **somente esta organização** (ou multilocatário,
+   se quiser usar em várias empresas).
+3. Em **Autenticação**, habilite **Fluxos de cliente público** = **Sim**
+   (necessário para device code).
+4. Em **Permissões de API** > **Microsoft Graph** > **Permissões delegadas**, adicione:
+   `User.Read`, `Mail.Read`, `Mail.Send`, `Calendars.ReadWrite`, `Chat.Read`,
+   `Team.ReadBasic.All`, `Channel.ReadBasic.All`.
+5. Clique em **Conceder consentimento do administrador** (se você não for admin,
+   peça ao admin do tenant). Sem isso, o Teams pode retornar 403.
+6. Copie o **Application (client) ID** e o **Directory (tenant) ID** para o `.env`:
+
+```dotenv
+MS_GRAPH_CLIENT_ID=00000000-0000-0000-0000-000000000000
+MS_GRAPH_TENANT=00000000-0000-0000-0000-000000000000
+```
+
+7. Autorize uma vez:
+
+```bash
+.venv/bin/python scripts/ms_graph_auth.py
+```
+
+Ele mostra um código e um link (`microsoft.com/devicelogin`). Depois disso, o token
+fica em `data/ms_graph_token.json` e é renovado sozinho.
+
+Além de listar/criar eventos e ler/enviar e-mails, o Jarvis também marca e-mails como
+lidos/não lidos e remove eventos (pedindo confirmação conforme o bom senso).
+
+> Se o tenant bloquear o consentimento do Teams, remova os escopos de Teams de
+> `MS_GRAPH_SCOPES` e rode o script de novo. Outlook e calendário continuam funcionando.
+> Leitura de mensagens de **canais** do Teams normalmente exige
+> `ChannelMessage.Read.All` com consentimento do admin.
+
+### Stripe
+
+```dotenv
+STRIPE_API_KEY=rk_test_...
+```
+
+Prefira chave restrita (`rk_`) ou de teste (`sk_test_`). O Jarvis avisa quando a chave
+é `live`.
+
+### Planilhas
+
+Basta apontar o caminho no pedido (dentro das pastas permitidas). Ex.: `vendas.xlsx`.
+
+### Voz (transcrição local)
+
+```bash
+./scripts/setup_voice.sh
+```
+
+Depois é só mandar um áudio no Telegram. O Jarvis transcreve com Whisper local
+(`faster-whisper`), mostra o que entendeu e responde como se fosse texto.
+
+- `JARVIS_WHISPER_MODEL=small` (padrão) — bom equilíbrio em CPU.
+- `JARVIS_WHISPER_LANGUAGE=pt` — idioma principal.
+- Para desligar: `JARVIS_WHISPER_ENABLED=false`.
+
+O áudio é baixado, transcrito e apagado da máquina em seguida. Nada é enviado para a nuvem.
+
+### Voz de saída (TTS com edge-tts)
+
+O Jarvis pode responder em áudio usando o `edge-tts` (vozes neurais da Microsoft).
+Como esse serviço é online, **o texto da resposta é enviado à Microsoft** para gerar
+o áudio. O resto continua local.
+
+```text
+/voice status   # mostra se o áudio automático está ligado e qual voz
+/voice on       # toda resposta também vira áudio
+/voice off      # só texto (padrão)
+```
+
+Você também pode pedir “manda isso em áudio” ou “fala isso” e o agente usa a ferramenta
+`speak`. O padrão é **sob demanda** (`JARVIS_TTS_AUTO=false`).
+
+```dotenv
+JARVIS_TTS_ENABLED=true
+JARVIS_TTS_AUTO=false
+JARVIS_TTS_VOICE=pt-BR-FranciscaNeural
+JARVIS_TTS_RATE=+0%
+```
+
+Outras vozes em português: `pt-BR-AntonioNeural`, `pt-PT-FranciscaNeural`.
+Para desligar: `JARVIS_TTS_ENABLED=false`.
+
+### Lembretes
+
+```text
+/remind 10m tomar água
+/remind 2h ligar para o cliente
+/remind hoje 18:00 revisar o TCC
+/remind amanhã 09:00 reunião
+/remind 2026-11-20 18:30 prova
+/reminders
+```
+
+Os lembretes ficam no SQLite (`data/jarvis.sqlite3`), sobrevivem a reinícios e são
+enviados pelo próprio bot no horário marcado. O fuso usado é `JARVIS_TIMEZONE`.
+O computador e o Jarvis precisam estar ligados na hora do lembrete.
+
+### Briefing diário
+
+Todo dia às **6h** (configurável), o Jarvis gera e envia um resumo com prioridades,
+agenda, e-mails importantes, Teams, lembretes e próximo passo. Ele usa Google
+Agenda/Gmail, Microsoft 365 (Outlook/Teams), Obsidian, Notion, lembretes e, se precisar,
+busca na web. Integrações não configuradas são apenas ignoradas.
+
+```text
+/briefing    # gera o briefing de hoje na hora
+```
+
+```dotenv
+JARVIS_BRIEFING_ENABLED=true
+JARVIS_BRIEFING_HOUR=6
+JARVIS_BRIEFING_MINUTE=0
+```
+
+O computador precisa estar ligado às 6h. Se o horário passar com a máquina desligada,
+o agendador tenta executar quando o serviço voltar (margem de 1 hora).
+
+### Memória local (RAG)
+
+O Jarvis indexa suas notas e documentos e consulta por significado, não só por palavra
+exata. Os embeddings são gerados **localmente** pelo Ollama (`nomic-embed-text`).
+
+- Pastas padrão: vault do Obsidian (se configurado), `~/Documentos`, `~/Downloads` e o
+  próprio projeto. Ajuste com `JARVIS_RAG_ROOTS=/caminho/a,/caminho/b`.
+- Indexa `.md`, `.txt`, `.pdf`, `.docx`, `.csv`, `.xlsx` (configurável).
+- A indexação é incremental: arquivos sem mudança são ignorados.
+- Arquivos removidos/movidos saem do índice na próxima indexação completa.
+- Documentos enviados pelo Telegram são indexados automaticamente em segundo plano.
+- Pastas/arquivos sensíveis (`.ssh`, `.config`, `.env`, credenciais, chaves) são pulados.
+- Banco separado: `data/rag.sqlite3`.
+
+```text
+/reindex     # reindexa as pastas configuradas
+```
+
+Pela linha de comando:
+
+```bash
+.venv/bin/python scripts/reindex.py                 # incremental
+.venv/bin/python scripts/reindex.py --force         # tudo de novo
+.venv/bin/python scripts/reindex.py --path ~/Notas  # só uma pasta/arquivo
+```
+
+A primeira indexação pode demorar. O agente usa `knowledge_search` automaticamente
+quando você pergunta sobre conteúdo antigo. Também há `knowledge_index` para indexar
+uma pasta específica.
+
+### PDF, DOCX e OCR
+
+- `read_pdf`: extrai texto de PDFs; usa OCR automaticamente em páginas escaneadas.
+- `read_docx`: extrai texto e tabelas de arquivos Word.
+- `read_image`: faz OCR de prints/fotos.
+- Você pode **enviar um PDF/DOCX/planilha/imagem direto no Telegram**: o arquivo é salvo
+  em `data/uploads/`, lido e resumido. A legenda da mensagem vira o pedido.
+
+OCR requer `tesseract` instalado. O resto funciona sem ele.
+
+### Web e arquivos
+
+- `web_search`: busca no DuckDuckGo e devolve títulos, links e trechos.
+- `web_fetch`: baixa uma URL e extrai o texto principal (bloqueia localhost/rede interna).
+- `send_file`: envia um arquivo das pastas permitidas para a conversa atual
+  (limite do Telegram ~50 MB).
+
+---
+
+## Segurança
+
+- **Só os IDs em `TELEGRAM_ALLOWED_USER_IDS` conseguem usar.** Qualquer outra pessoa
+  recebe “acesso negado”. Se o token vazar, revogue no @BotFather (`/revoke`).
+- **Arquivos** são restritos a `JARVIS_ALLOWED_ROOTS`. Pastas/arquivos de credenciais
+  (`.ssh`, `.config`, `.git`, `.env`, `credentials.json`, `token.json`, chaves etc.)
+  são bloqueados.
+- **Terminal**: comandos perigosos (`sudo`, `mkfs`, `dd`, `shutdown`, `rm -rf /`,
+  fork bomb, `curl | sh` etc.) são bloqueados, e `git push --force`, `git clean -f`
+  e `git config --global` também. Isso **não é um sandbox completo**: o terminal é
+  poderoso. Se quiser desligar, use `JARVIS_SHELL_ENABLED=false`.
+- `.env`, `credentials.json`, `token.json` e o banco SQLite estão no `.gitignore`.
+- O bot usa **long polling**: não abre porta na sua rede.
+- O Jarvis pede confirmação antes de ações irreversíveis (o modelo é instruído a isso,
+  mas os bloqueios acima são a rede de segurança).
+
+---
+
+## Deixar rodando (systemd de usuário)
+
+```bash
+mkdir -p ~/.config/systemd/user
+cp ~/jarvis/scripts/jarvis.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now jarvis
+systemctl --user status jarvis
+journalctl --user -u jarvis -f
+```
+
+Para continuar rodando mesmo sem sessão aberta:
+
+```bash
+loginctl enable-linger "$USER"
+```
+
+O `run.sh` sobe o Ollama automaticamente se ele estiver offline.
+
+### Backup e reindexação automáticos (opcional)
+
+```bash
+cp ~/jarvis/scripts/jarvis-backup.service ~/jarvis/scripts/jarvis-backup.timer \
+   ~/jarvis/scripts/jarvis-reindex.service ~/jarvis/scripts/jarvis-reindex.timer \
+   ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now jarvis-backup.timer jarvis-reindex.timer
+```
+
+- **Backup diário às 3:30** em `~/jarvis-backups/jarvis-AAAAmmdd-HHMMSS.tar.gz`
+  (`.env`, `data/` exceto logs/uploads, credenciais; mantém 30 dias).
+  Ajuste com `JARVIS_BACKUP_DIR`.
+- **Reindexação diária às 4:00** da memória local.
+- Rode um backup manual: `./scripts/backup.sh`.
+- Restaurar: pare o Jarvis, extraia o `.tar.gz` em `~/jarvis` e suba de novo.
+
+---
+
+## Problemas comuns
+
+| Sintoma | O que fazer |
+|---|---|
+| `TELEGRAM_BOT_TOKEN não configurado` | Preencha o token no `.env` |
+| “Acesso ainda não configurado” | Copie o ID mostrado para `TELEGRAM_ALLOWED_USER_IDS` e reinicie |
+| “Não consegui conectar no Ollama” | `./scripts/install_ollama.sh` ou `ollama serve`; veja `data/ollama.log` |
+| “O modelo X não está baixado” | `ollama pull X` |
+| Respostas muito lentas | Use `qwen2.5:3b`; aumente `OLLAMA_TIMEOUT` |
+| Google 403 | Ative Calendar/Gmail API e rode `scripts/google_auth.py` de novo |
+| Notion 404 | Compartilhe a página com a integração (Connections) |
+| GitHub 401 | Gere outro token e atualize `GITHUB_TOKEN` |
+| Briefing não chegou | `systemctl --user status jarvis`; máquina ligada às 6h; veja `journalctl` |
+| RAG: “modelo não encontrado” | `ollama pull nomic-embed-text` |
+| OCR não funciona | Instale `tesseract-ocr` e `tesseract-ocr-por` |
+| TTS retorna 403 | Atualize `edge-tts` (`pip install -U edge-tts`); a Microsoft muda o token às vezes |
+| Microsoft 403 no Teams | Peça consentimento admin ou ajuste `MS_GRAPH_SCOPES` |
+| Bot não responde | Veja os logs do terminal ou `journalctl --user -u jarvis -f` |
+
+Teste as ferramentas sem modelo:
+
+```bash
+.venv/bin/python scripts/smoke_test.py
+```
+
+Ele valida arquivos, terminal, git, web, lembretes, bloqueios de segurança, memória,
+RAG, PDF/DOCX, briefing, Microsoft/TTS e o loop do agente (63 verificações).
+
+---
+
+## Estrutura do projeto
+
+```
+jarvis/
+├── jarvis/
+│   ├── __main__.py          # entrada
+│   ├── config.py            # .env -> Settings
+│   ├── security.py          # raízes permitidas, segredos, comandos perigosos
+│   ├── memory.py            # histórico SQLite
+│   ├── reminders.py         # lembretes persistentes + APScheduler
+│   ├── briefing.py          # briefing diário às 6h
+│   ├── rag.py               # memória local + embeddings (Ollama)
+│   ├── documents.py         # extração de PDF/DOCX/XLSX/OCR
+│   ├── voice.py             # transcrição local (faster-whisper)
+│   ├── tts.py               # voz de saída (edge-tts)
+│   ├── graph_auth.py        # token Microsoft Graph (MSAL)
+│   ├── telegram_api.py      # envio de mensagens, arquivos e áudio
+│   ├── llm.py               # cliente Ollama (+ fallback sem tools)
+│   ├── agent.py             # loop do agente
+│   ├── telegram_bot.py      # bot, autorização, comandos, voz, documentos
+│   └── tools/
+│       ├── system.py        # terminal e arquivos
+│       ├── dev.py           # git e GitHub
+│       ├── productivity.py  # Obsidian, Notion, planilhas
+│       ├── google.py        # Calendar e Gmail
+│       ├── microsoft.py     # Outlook, Calendar e Teams (Graph)
+│       ├── business.py      # Stripe
+│       ├── web.py           # busca e leitura de páginas
+│       ├── telegram_tools.py# envio de arquivos
+│       ├── knowledge.py     # busca/indexação da memória local
+│       ├── documents.py     # leitura de PDF/DOCX/imagem
+│       ├── voice_tools.py   # ferramenta speak (TTS)
+│       └── reminders.py     # ferramenta de lembretes
+├── scripts/
+│   ├── install_ollama.sh
+│   ├── google_auth.py
+│   ├── ms_graph_auth.py
+│   ├── setup_voice.sh
+│   ├── backup.sh
+│   ├── reindex.py
+│   ├── smoke_test.py
+│   ├── jarvis.service
+│   ├── jarvis-backup.service
+│   ├── jarvis-backup.timer
+│   ├── jarvis-reindex.service
+│   └── jarvis-reindex.timer
+├── setup.sh
+├── run.sh
+├── requirements.txt
+├── requirements-voice.txt
+└── .env.example
+```
+
+---
+
+## Próximos passos possíveis
+
+- **WhatsApp**: API oficial (Meta Cloud API) ou bridge QR; exige decisão/conta.
+- **Google Drive** e outras integrações (Trello, Linear, Slack, Mercado Pago).
+- **Migrar para VPS** para ficar 24h no ar (basta copiar `.env`, `data/` e instalar Ollama
+  ou trocar o cliente por uma API).

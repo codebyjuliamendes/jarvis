@@ -1,0 +1,5 @@
+# Transcrição local de áudios do Telegram (opcional).
+# Instale com: ./scripts/setup_voice.sh
+faster-whisper==1.1.0
+# tokenizers 0.21+ não tem wheel para Python 3.8
+tokenizers==0.20.3

@@ -1,0 +1,9 @@
+[Unit]
+Description=Reindexação diária da memória local do Jarvis
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

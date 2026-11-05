@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup do Jarvis (dados, .env e credenciais)
+
+[Service]
+Type=oneshot
+ExecStart=%h/jarvis/scripts/backup.sh
