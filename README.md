@@ -17,7 +17,7 @@ Ollama, CI e Docker.
 
 | Seção | Destaque |
 |---|---|
-| [Avaliação](#avaliação) | 78 casos de seleção de ferramentas e 36 de RAG, MLflow, JSON de cada caso versionado |
+| [Avaliação](#avaliação) | 78 casos de seleção de ferramentas (3 rodadas, IC 95%, McNemar) e 36+36 de RAG (original e paráfrases), MLflow, JSON de cada caso versionado |
 | [Fine-tuning](#fine-tuning) | dataset sintético de 2.134 conversas, template idêntico ao do Ollama; treino no Colab **pendente** |
 | [RAG](#rag) | BM25 (FTS5), vetorial (sqlite-vec) e híbrido (RRF), com citação de fonte |
 | [Observabilidade](#observabilidade) | latência, tokens e ferramentas por requisição; logs JSON com `request_id` |
@@ -295,6 +295,26 @@ dos prefixos.
   prefixos k=10 seria melhor (0,815 contra 0,773), e não foi adotado. 1 pergunta = 2,8 pontos
   no total e 5,6 em cada metade: a diferença entre BM25 e híbrido com prefixos (4 perguntas em
   recall@1) é real neste corpus, mas não prova que o BM25 ganha nas notas reais de alguém.
+
+**Paráfrases (extras).** Para testar a ressalva acima, 36 perguntas novas com os mesmos trechos
+esperados e sinônimos no lugar das palavras do texto (sobreposição lexical de 7,9%, contra 65,0%
+do conjunto original), com o critério de troca do padrão commitado **antes** de rodar:
+
+| Configuração | MRR original | MRR paráfrases | Média (critério) | recall@1 paráfrases | recall@5 paráfrases |
+|---|---|---|---|---|---|
+| vetorial sqlite-vec, sem prefixos | 0,544 | 0,162 | 0,353 | 5,6% (2/36) | 36,1% (13/36) |
+| vetorial sqlite-vec + prefixos | 0,614 | 0,191 | 0,402 | 5,6% (2/36) | 38,9% (14/36) |
+| **bm25 (padrão)** | **0,912** | 0,283 | **0,598** | 19,4% (7/36) | 44,4% (16/36) |
+| híbrido (RRF k=60), sem prefixos | 0,773 | 0,307 | 0,540 | 22,2% (8/36) | 47,2% (17/36) |
+| híbrido (RRF k=60) + prefixos | 0,845 | **0,349** | 0,597 | 19,4% (7/36) | **63,9% (23/36)** |
+
+Todos os modos caem muito (o `nomic-embed-text` é fraco com sinônimos em pt-BR). Pela regra
+fixada antes — média do MRR nos dois conjuntos, empate de 0,03 a favor do atual — o **BM25
+continua o padrão** (0,598 × 0,597). O híbrido com prefixos acha bem mais trechos no top-5
+das paráfrases (23 × 16) sem perder no original; como o agente recebe 5 trechos, trocar para
+`hybrid` é uma opção razoável, registrada como decisão pendente em
+[`PENDENCIAS.md`](evals/PENDENCIAS.md#rag-subprojeto-4). Detalhes em
+[`RAG.md`](evals/results/RAG.md#conjunto-de-paráfrases-extras).
 
 ### Citação das fontes (exemplo real)
 

@@ -161,7 +161,12 @@ especificação está em `docs/superpowers/specs/2026-11-08-observabilidade-desi
 A especificação está em `docs/superpowers/specs/2026-11-08-rag-hibrido-design.md`; a tabela,
 em `evals/results/RAG.md`.
 
-1. **O dataset favorece a busca por palavras.** Em média 65% das palavras de conteúdo de cada
+1. **[PARCIALMENTE RESOLVIDO nos extras: `evals/data/rag_paraphrase.jsonl`]** 36 paráfrases com
+   sobreposição de 7,9%; o BM25 continua o padrão pelo critério fixado antes (ver `RAG.md`). Ainda
+   falta o que este item pedia de verdade: perguntas escritas por **outra pessoa** ou tiradas do
+   uso real — as paráfrases foram escritas por quem escreveu o original e leu os trechos.
+   Registro original:
+   **O dataset favorece a busca por palavras.** Em média 65% das palavras de conteúdo de cada
    pergunta (tokens do `fts_query`, sem stopwords) aparecem no trecho certo, e só 1 das 36
    perguntas não tem nenhuma em comum (conta feita à parte, sobre os mesmos fixtures). As
    perguntas foram escritas por quem conhecia os documentos. O BM25 ganhou com folga aqui, mas
@@ -371,3 +376,18 @@ A especificação está em `docs/superpowers/specs/2026-11-08-mcp-design.md`; o 
 9. **Lembretes não entram.** O servidor monta o registro sem `ReminderService` (precisa do
    agendador e do Telegram), então `reminder` não existe no MCP; `send_file` e `speak` são
    recusadas sempre.
+
+### RAG — extras (paráfrases)
+
+13. **[DECISÃO DA JÚLIA] `bm25` ou `hybrid` como padrão?** Pelo critério fixado antes (média do
+    MRR nos dois conjuntos) dá empate técnico (0,5977 × 0,5970) e o `bm25` fica. Mas no recall@5
+    das paráfrases o híbrido com prefixos acha 23/36 contra 16/36, sem perder no original (36/36
+    nos dois), e o agente recebe 5 trechos. Custo do híbrido: ~100 ms por busca e dependência do
+    Ollama na consulta (se ele cair, o híbrido responde só com BM25). Para trocar:
+    `JARVIS_RAG_MODE=hybrid` no `.env`.
+14. **Embeddings em inglês.** O `nomic-embed-text` não aproxima sinônimos em pt-BR (vetorial com
+    MRR 0,19 nas paráfrases). Um modelo multilíngue (`bge-m3`, ~1,2 GB) é o próximo experimento;
+    não baixei por causa do limite de tamanho desta noite.
+15. **As paráfrases ajustadas só contra a sobreposição lexical.** Uma pergunta (`par-014`) foi
+    reescrita porque repetia 4 palavras do trecho; nenhuma foi mudada depois de ver resultados de
+    busca. Mesmo assim, 36 perguntas da mesma autora: 1 pergunta = 2,8 pontos.
