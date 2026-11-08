@@ -1,0 +1,36 @@
+{"id": "par-001", "question": "A estreia da edição nova do sistema de agendamento de espaços foi empurrada para que data?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "adiado de 3 de novembro para 24 de novembro"}
+{"id": "par-002", "question": "Quanto de verba foi liberado para a próxima etapa do sistema de agendamento de espaços?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "R$ 48.000"}
+{"id": "par-003", "question": "Quem ficou encarregado de transferir a base e de estressar o sistema com muitos acessos juntos?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "Rafael cuida da migração do banco"}
+{"id": "par-004", "question": "Com quantos agendamentos a cada sessenta segundos a máquina caiu durante a simulação de uso pesado?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "320 reservas por minuto"}
+{"id": "par-005", "question": "Qual espaço de encontros é o mais procurado e em que fração do tempo ele fica ocupado?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "taxa de ocupação de 92%"}
+{"id": "par-006", "question": "Em que dia arranca a fase experimental de firmar acordos sem papel?", "expected_doc": "reuniao_projeto_orion.md", "expected_snippet": "começa em 6 de outubro"}
+{"id": "par-007", "question": "Qual a quantia que desembolso todo mês pela moradia?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "R$ 2.350,00"}
+{"id": "par-008", "question": "Que penalidade sofro se quitar a mensalidade da moradia depois da data combinada?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "multa de 2% sobre o valor do"}
+{"id": "par-009", "question": "Com base em qual indicador de inflação a mensalidade da moradia sobe anualmente?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "variação do IPCA"}
+{"id": "par-010", "question": "Qual a penalidade por devolver as chaves no primeiro ano de moradia?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "multa proporcional"}
+{"id": "par-011", "question": "Se aparecer umidade escorrendo pela parede, quem arca com o conserto?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "infiltrações"}
+{"id": "par-012", "question": "Qual é a numeração do meu lugar para estacionar o carro?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "vaga de garagem número 27"}
+{"id": "par-013", "question": "Posso repassar a moradia para turistas por uns dias via app?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "proibido sublocar"}
+{"id": "par-014", "question": "Quanto dinheiro entrou no negócio de peças de iluminação nesse último período de três meses?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "R$ 184.300"}
+{"id": "par-015", "question": "Por que o lucro sobre as vendas encolheu no período?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "frete subiu 18%"}
+{"id": "par-016", "question": "Quanto custou, em média, conquistar cada comprador novo?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "caiu para R$ 38"}
+{"id": "par-017", "question": "Quantos exemplares daquele abajur dobrado em estilo japonês saíram?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "Luminária Origami | 412"}
+{"id": "par-018", "question": "No fim de semana, a partir de que hora preciso manter o volume baixo?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "das 23h às 9h aos sábados"}
+{"id": "par-019", "question": "Qual o dia de manutenção em que não dá para nadar no prédio?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "Às segundas ela fica fechada"}
+{"id": "par-020", "question": "Preciso avisar com qual prazo para trazer o caminhão com meus móveis?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "48 horas de antecedência"}
+{"id": "par-021", "question": "Quanto vou desembolsar a mais por mês para refazer a vedação do telhado?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "taxa extra de R$ 95 por mês"}
+{"id": "par-022", "question": "Que previsão de despesas os moradores aprovaram para o exercício de 2025?", "expected_doc": "ata_assembleia_2025.txt", "expected_snippet": "R$ 574.000"}
+{"id": "par-023", "question": "Como devo descartar a gordura que sobra da fritura?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "Óleo de cozinha usado"}
+{"id": "par-024", "question": "Qual o calor do forno e quanto demora para assar aquele salgado mineiro?", "expected_doc": "receitas_familia.md", "expected_snippet": "200 °C por cerca de 25 minutos"}
+{"id": "par-025", "question": "Quanto daquele líquido branco do coqueiro vai no ensopado baiano?", "expected_doc": "receitas_familia.md", "expected_snippet": "200 ml de leite de coco"}
+{"id": "par-026", "question": "Qual é o localizador da passagem aérea da viagem à Europa?", "expected_doc": "viagem_lisboa.md", "expected_snippet": "QX7LMB"}
+{"id": "par-027", "question": "Até que data posso desistir do quarto sem ser cobrada?", "expected_doc": "viagem_lisboa.md", "expected_snippet": "sem custo até 20 de fevereiro"}
+{"id": "par-028", "question": "Qual condução sobre trilhos me leva até a região da torre à beira do rio?", "expected_doc": "viagem_lisboa.md", "expected_snippet": "elétrico 15"}
+{"id": "par-029", "question": "Quando e em que local vou fazer a prova inicial da disciplina de matemática?", "expected_doc": "notas_aula_calculo.md", "expected_snippet": "19 de novembro de 2026"}
+{"id": "par-030", "question": "Quando dá para resolver um quociente indefinido pelo atalho de diferenciar as duas partes?", "expected_doc": "notas_aula_calculo.md", "expected_snippet": "infinito sobre infinito"}
+{"id": "par-031", "question": "Qual nota me livra da recuperação no fim do curso?", "expected_doc": "notas_aula_calculo.md", "expected_snippet": "igual ou maior que 7"}
+{"id": "par-032", "question": "Como restauro o equipamento de internet ao estado em que veio da loja?", "expected_doc": "manual_roteador.txt", "expected_snippet": "botão RESET"}
+{"id": "par-033", "question": "O que quer dizer quando o indicador do modem acende em vermelho?", "expected_doc": "manual_roteador.txt", "expected_snippet": "Luz vermelha: sem conexão"}
+{"id": "par-034", "question": "Como libero uma conexão sem fio à parte para quem vem me visitar?", "expected_doc": "manual_roteador.txt", "expected_snippet": "Nimbus-Visitas"}
+{"id": "par-035", "question": "Qual a minha meta de duração na prova de rua do fim do ano?", "expected_doc": "plano_treino.txt", "expected_snippet": "menos de 60 minutos"}
+{"id": "par-036", "question": "Em que horário é dada a partida da competição de corrida?", "expected_doc": "plano_treino.txt", "expected_snippet": "largada é às 6h30"}
