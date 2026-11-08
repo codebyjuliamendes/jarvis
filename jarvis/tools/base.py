@@ -129,6 +129,9 @@ class ToolRegistry:
             "result_chars": len(result or ""),
             "error": error,
         }
+        source = (context or {}).get("source")
+        if source:  # ex.: "mcp"; o bot não passa e o formato dele não muda
+            record["source"] = source
         try:
             with self._audit_lock:
                 with self._audit_path.open("a", encoding="utf-8") as handle:

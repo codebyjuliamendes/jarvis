@@ -125,6 +125,10 @@ class Settings:
     metrics_db_path: Optional[Path] = None
     log_format: str = "text"
     log_level: str = "INFO"
+    # Servidor MCP (jarvis/mcp_server.py, opcional): ferramentas expostas (vazio = só
+    # leitura) e a segunda chave para as que escrevem, executam ou enviam.
+    mcp_tools: List[str] = field(default_factory=list)
+    mcp_allow_unsafe: bool = False
 
     def resolved_metrics_db_path(self) -> Path:
         """Banco das métricas: separado do histórico, ao lado dele por padrão."""
@@ -245,4 +249,6 @@ class Settings:
             metrics_db_path=_as_path(os.getenv("JARVIS_METRICS_DB_PATH")),
             log_format=(os.getenv("JARVIS_LOG_FORMAT") or "text").strip().lower(),
             log_level=(os.getenv("JARVIS_LOG_LEVEL") or "INFO").strip().upper(),
+            mcp_tools=_as_list(os.getenv("JARVIS_MCP_TOOLS")),
+            mcp_allow_unsafe=_as_bool(os.getenv("JARVIS_MCP_ALLOW_UNSAFE"), False),
         )
