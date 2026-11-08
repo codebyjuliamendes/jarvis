@@ -10,6 +10,7 @@ from .llm import OllamaClient, OllamaError, OllamaUnavailable, ToolsNotSupported
 from .memory import Memory
 from .tool_parsing import extract_text_tool, parse_tool_call
 from .tools.base import ToolRegistry
+from .tools.knowledge import ensure_citation
 
 if TYPE_CHECKING:  # evita importar sqlite3 só para a anotação
     from .metrics_store import MetricsStore
@@ -184,6 +185,7 @@ class Agent:
         messages.append({"role": "user", "content": text})
 
         final = ""
+        rag_outputs: List[str] = []  # saídas do knowledge_search, para garantir a citação
         for _ in range(limit):
             trace.iterations += 1
             try:
@@ -229,6 +231,8 @@ class Agent:
                     result = await self.tools.execute(
                         name, args, context={"chat_id": chat_id}
                     )
+                    if name == "knowledge_search":
+                        rag_outputs.append(result)
                     messages.append(
                         {"role": "tool", "content": result, "tool_name": name}
                     )
@@ -241,6 +245,8 @@ class Agent:
                     result = await self.tools.execute(
                         name, args, context={"chat_id": chat_id}
                     )
+                    if name == "knowledge_search":
+                        rag_outputs.append(result)
                     messages.append({"role": "assistant", "content": content})
                     messages.append(
                         {
@@ -254,7 +260,9 @@ class Agent:
                     )
                     continue
 
-            final = content
+            # Modelos pequenos nem sempre citam: se usou o RAG e não citou, o agente
+            # anexa as fontes consultadas (ver jarvis/tools/knowledge.py).
+            final = ensure_citation(content, rag_outputs) if rag_outputs else content
             break
 
         trace.mode = "text" if text_mode else "native"

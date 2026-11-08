@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .. import security
 from ..config import Settings
@@ -9,16 +10,23 @@ from ..rag import RagIndex
 from ..security import SecurityError
 from .base import ToolRegistry
 
-
+RESULTS_HEADER = "Resultados da memória local:"
 CITATION_HINT = (
-    "Ao responder, cite as fontes que usou no formato (fonte: arquivo, trecho N). "
-    "Não cite o que não está abaixo."
+    "Ao responder, use só o que está acima e termine citando as fontes que usou, "
+    "assim: (fonte: {name}, trecho {chunk}). Não cite o que não está acima."
 )
+_SOURCE_LINE = re.compile(r"^\[\d+\] (?P<name>.+?), trecho (?P<chunk>\d+)(?: de \d+)?$")
+_MODEL_CITED = re.compile(r"\bfonte\s*:", re.IGNORECASE)
 
 
 def format_results(results: List[Dict[str, Any]], max_chars: int = 1200) -> str:
-    """Resultados do RAG para o modelo: arquivo e trecho de cada um, para ele citar."""
-    lines = ["Resultados da memória local. " + CITATION_HINT]
+    """Resultados do RAG para o modelo: arquivo e trecho de cada um, para ele citar.
+
+    A instrução de citar vem no FIM, com o primeiro resultado como exemplo: modelos
+    pequenos seguem melhor o que está mais perto da resposta.
+    """
+    lines = [RESULTS_HEADER]
+    first = None
     for index, item in enumerate(results, start=1):
         text = str(item["text"]).strip().replace("\n", " ")
         if len(text) > max_chars:
@@ -31,7 +39,51 @@ def format_results(results: List[Dict[str, Any]], max_chars: int = 1200) -> str:
         lines.append(
             "\n[{}] {}, {}\ncaminho: {}\n{}".format(index, name, position, path, text)
         )
+        if first is None:
+            first = (name, chunk)
+    if first is not None:
+        lines.append("\n" + CITATION_HINT.format(name=first[0], chunk=first[1]))
     return "\n".join(lines)
+
+
+def parse_sources(output: str, limit: int = 3) -> List[Tuple[str, int]]:
+    """(arquivo, trecho) dos primeiros resultados de uma saída do knowledge_search."""
+    if not output.startswith(RESULTS_HEADER):
+        return []
+    sources: List[Tuple[str, int]] = []
+    for line in output.splitlines():
+        match = _SOURCE_LINE.match(line.strip())
+        if match:
+            sources.append((match.group("name"), int(match.group("chunk"))))
+            if len(sources) >= limit:
+                break
+    return sources
+
+
+def ensure_citation(reply: str, outputs: Sequence[str], limit: int = 3) -> str:
+    """Se a resposta usou o RAG e o modelo não citou, anexa as fontes consultadas.
+
+    "Consultadas" e não "usadas": são os primeiros resultados da busca, e o agente não
+    sabe quais o modelo aproveitou. Se o modelo já citou "(fonte: ...)", nada muda.
+    """
+    if not reply or _MODEL_CITED.search(reply):
+        return reply
+    grouped: Dict[str, List[int]] = {}
+    for output in outputs:
+        for name, chunk in parse_sources(output, limit):
+            chunks = grouped.setdefault(name, [])
+            if chunk not in chunks and sum(len(v) for v in grouped.values()) < limit:
+                chunks.append(chunk)
+    grouped = {name: chunks for name, chunks in grouped.items() if chunks}
+    if not grouped:
+        return reply
+    parts = [
+        "{} ({} {})".format(
+            name, "trecho" if len(chunks) == 1 else "trechos", ", ".join(str(c) for c in chunks)
+        )
+        for name, chunks in grouped.items()
+    ]
+    return reply.rstrip() + "\n\nFontes consultadas: " + "; ".join(parts)
 
 
 class KnowledgeTools:

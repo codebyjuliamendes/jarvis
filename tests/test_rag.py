@@ -338,11 +338,12 @@ def test_knowledge_search_devolve_arquivo_e_trecho_para_citar(settings, tmp_path
             registry.execute("knowledge_search", {"query": "lançamento do Falcon", "k": 2})
         )
         lines = output.splitlines()
-        assert lines[0].startswith("Resultados da memória local.")
-        assert "(fonte: arquivo, trecho N)" in lines[0]
+        assert lines[0] == "Resultados da memória local:"
         assert "[1] falcon.md, trecho 1 de 1" in lines
         assert "caminho: {}".format((corpus / "falcon.md").resolve()) in lines
         assert any("adiado para 24 de novembro" in line for line in lines)
+        # instrução no fim, com o 1º resultado como exemplo
+        assert "(fonte: falcon.md, trecho 1)" in lines[-1]
         assert "score=" not in output  # a escala muda com o modo; não ajuda o modelo
 
         memory = Memory(settings.db_path)
@@ -364,3 +365,66 @@ def test_format_results_sem_total_e_texto_longo():
         max_chars=20,
     )
     assert "[1] notas.md, trecho 3\ncaminho: /x/notas.md\nlinha 1 linha 2aaaaa..." in text
+
+
+def _output(*items):
+    from jarvis.tools.knowledge import format_results
+
+    return format_results(
+        [{"path": "/x/" + name, "chunk": chunk - 1, "chunks_total": 9, "text": "t"} for name, chunk in items]
+    )
+
+
+def test_parse_sources_le_a_saida_da_ferramenta():
+    from jarvis.tools.knowledge import parse_sources
+
+    out = _output(("a.md", 2), ("b.pdf", 1), ("a.md", 5), ("c.txt", 1))
+    assert parse_sources(out) == [("a.md", 2), ("b.pdf", 1), ("a.md", 5)]
+    assert parse_sources("Nada encontrado na memória local.") == []
+    assert parse_sources("Erro: [1] x.md, trecho 1") == []
+
+
+def test_ensure_citation_anexa_so_quando_o_modelo_nao_citou():
+    from jarvis.tools.knowledge import ensure_citation
+
+    out = _output(("a.md", 2), ("b.pdf", 1), ("a.md", 5), ("c.txt", 1))
+    assert ensure_citation("O aluguel é R$ 2.350.", [out]) == (
+        "O aluguel é R$ 2.350.\n\nFontes consultadas: a.md (trechos 2, 5); b.pdf (trecho 1)"
+    )
+    cited = "O aluguel é R$ 2.350 (fonte: a.md, trecho 2)."
+    assert ensure_citation(cited, [out]) == cited
+    assert ensure_citation("Nada achei.", ["Nada encontrado na memória local."]) == "Nada achei."
+    assert ensure_citation("", [out]) == ""
+
+
+def test_agente_anexa_fontes_quando_o_modelo_nao_cita(settings, tmp_path):
+    import asyncio
+
+    from jarvis.agent import Agent
+    from jarvis.memory import Memory
+    from jarvis.tools import build_registry
+    from tests.test_agent_parsing import ScriptedLLM
+
+    rag = make_rag(settings, tmp_path, rag_mode="bm25")
+    memory = Memory(settings.db_path)
+    try:
+        rag.index(paths=[make_corpus(tmp_path)], force=True)
+        call = {"function": {"name": "knowledge_search", "arguments": {"query": "roteador resetar"}}}
+        llm = ScriptedLLM([{"tool_calls": [call]}, {"content": "Segure o botão por 10 s."}])
+        agent = Agent(settings, build_registry(settings, rag=rag), memory, llm=llm)
+        reply = asyncio.run(agent.respond(1, "como reseto o roteador?", remember=False))
+        assert reply == "Segure o botão por 10 s.\n\nFontes consultadas: roteador.txt (trecho 1)"
+
+        llm = ScriptedLLM(
+            [{"tool_calls": [call]}, {"content": "Segure 10 s (fonte: roteador.txt, trecho 1)."}]
+        )
+        agent = Agent(settings, build_registry(settings, rag=rag), memory, llm=llm)
+        reply = asyncio.run(agent.respond(1, "como reseto o roteador?", remember=False))
+        assert reply == "Segure 10 s (fonte: roteador.txt, trecho 1)."
+
+        llm = ScriptedLLM([{"content": "Oi!"}])  # sem RAG: nada muda
+        agent = Agent(settings, build_registry(settings, rag=rag), memory, llm=llm)
+        assert asyncio.run(agent.respond(1, "oi", remember=False)) == "Oi!"
+    finally:
+        memory.close()
+        rag.close()
