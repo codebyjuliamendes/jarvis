@@ -1,0 +1,651 @@
+{
+  "kind": "comparison",
+  "meta": {
+    "timestamp": "2026-11-08T03:10:49-03:00",
+    "git_commit": "0fa0ad2",
+    "python": "3.8.20",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+    "ollama": {
+      "url": "http://127.0.0.1:11434",
+      "version": "0.40.14"
+    }
+  },
+  "models": [
+    "qwen2.5:1.5b",
+    "qwen2.5:3b",
+    "llama3.2:3b"
+  ],
+  "modes": [
+    "native",
+    "json"
+  ],
+  "limit": 0,
+  "tool_results": [
+    {
+      "kind": "tool_selection",
+      "model": "qwen2.5:1.5b",
+      "mode": "native",
+      "effective_mode": "native",
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "warmup_s": 4.5908978,
+      "meta": {
+        "timestamp": "2026-11-08T03:00:20-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 78,
+        "tool_accuracy": 0.5641025641025641,
+        "tool_hits": 44,
+        "args_accuracy": 0.4426229508196721,
+        "args_hits": 27,
+        "args_n": 61,
+        "args_accuracy_given_tool": 0.84375,
+        "args_hits_given_tool": 27,
+        "args_n_given_tool": 32,
+        "invalid_json_rate": 0.0,
+        "invalid_json": 0,
+        "leaked_calls": 4,
+        "unknown_tool_calls": 0,
+        "errors": 1,
+        "latency_s": {
+          "n": 77,
+          "mean": 0.5017996051948043,
+          "p50": 0.3953004,
+          "p95": 0.9271551600000006,
+          "min": 0.2098163999999656,
+          "max": 2.850708699999984
+        },
+        "tokens_per_s": 118.66054505458902,
+        "mean_prompt_tokens": 3926.5584415584417,
+        "by_category": {
+          "ambiguo": {
+            "n": 8,
+            "hits": 3,
+            "accuracy": 0.375
+          },
+          "direto": {
+            "n": 62,
+            "hits": 33,
+            "accuracy": 0.532258064516129
+          },
+          "sem_ferramenta": {
+            "n": 8,
+            "hits": 8,
+            "accuracy": 1.0
+          }
+        },
+        "errors_by_pair": {
+          "microsoft -> None": 4,
+          "google -> None": 3,
+          "reminder -> None": 3,
+          "run_shell -> None": 2,
+          "replace_in_file -> None": 2,
+          "search_files -> None": 2,
+          "find_files -> None": 2,
+          "stripe -> None": 2,
+          "read_pdf -> None": 2,
+          "knowledge_search -> None": 2,
+          "find_files -> list_dir": 1,
+          "github -> None": 1,
+          "spreadsheet -> None": 1,
+          "web_search -> None": 1,
+          "web_fetch -> read_file": 1,
+          "web_fetch -> None": 1,
+          "send_file -> read_file": 1,
+          "read_docx -> None": 1,
+          "speak -> None": 1,
+          "read_file -> None": 1
+        }
+      }
+    },
+    {
+      "kind": "tool_selection",
+      "model": "qwen2.5:1.5b",
+      "mode": "json",
+      "effective_mode": "json",
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "warmup_s": 1.0941592000000355,
+      "meta": {
+        "timestamp": "2026-11-08T03:06:01-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 78,
+        "tool_accuracy": 0.47435897435897434,
+        "tool_hits": 37,
+        "args_accuracy": 0.32786885245901637,
+        "args_hits": 20,
+        "args_n": 61,
+        "args_accuracy_given_tool": 0.7407407407407407,
+        "args_hits_given_tool": 20,
+        "args_n_given_tool": 27,
+        "invalid_json_rate": 0.08974358974358974,
+        "invalid_json": 7,
+        "leaked_calls": 0,
+        "unknown_tool_calls": 1,
+        "errors": 1,
+        "latency_s": {
+          "n": 77,
+          "mean": 0.5036756922077916,
+          "p50": 0.4018442999999934,
+          "p95": 1.0410500600000208,
+          "min": 0.1735879999999952,
+          "max": 2.1546594999999797
+        },
+        "tokens_per_s": 115.36102813686018,
+        "mean_prompt_tokens": 5517.38961038961,
+        "by_category": {
+          "ambiguo": {
+            "n": 8,
+            "hits": 3,
+            "accuracy": 0.375
+          },
+          "direto": {
+            "n": 62,
+            "hits": 28,
+            "accuracy": 0.45161290322580644
+          },
+          "sem_ferramenta": {
+            "n": 8,
+            "hits": 6,
+            "accuracy": 0.75
+          }
+        },
+        "errors_by_pair": {
+          "google -> None": 4,
+          "microsoft -> None": 4,
+          "run_shell -> None": 3,
+          "read_file -> None": 2,
+          "search_files -> None": 2,
+          "find_files -> None": 2,
+          "notion -> None": 2,
+          "send_file -> None": 2,
+          "read_pdf -> None": 2,
+          "run_shell -> pip": 1,
+          "replace_in_file -> find_files": 1,
+          "list_dir -> None": 1,
+          "list_dir -> find_files": 1,
+          "github -> None": 1,
+          "obsidian -> notion": 1,
+          "obsidian -> None": 1,
+          "spreadsheet -> None": 1,
+          "web_search -> None": 1,
+          "web_fetch -> None": 1,
+          "web_fetch -> knowledge_search": 1,
+          "read_docx -> read_file": 1,
+          "read_docx -> None": 1,
+          "read_image -> None": 1,
+          "speak -> None": 1,
+          "None -> knowledge_search": 1,
+          "None -> write_file": 1,
+          "knowledge_search -> None": 1
+        }
+      }
+    },
+    {
+      "kind": "tool_selection",
+      "model": "qwen2.5:3b",
+      "mode": "native",
+      "effective_mode": "native",
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "warmup_s": 5.208401500000036,
+      "meta": {
+        "timestamp": "2026-11-08T03:07:06-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 78,
+        "tool_accuracy": 0.8205128205128205,
+        "tool_hits": 64,
+        "args_accuracy": 0.8032786885245902,
+        "args_hits": 49,
+        "args_n": 61,
+        "args_accuracy_given_tool": 0.9423076923076923,
+        "args_hits_given_tool": 49,
+        "args_n_given_tool": 52,
+        "invalid_json_rate": 0.0,
+        "invalid_json": 0,
+        "leaked_calls": 0,
+        "unknown_tool_calls": 0,
+        "errors": 0,
+        "latency_s": {
+          "n": 78,
+          "mean": 0.7523355141025525,
+          "p50": 0.5786097000000154,
+          "p95": 1.1245608549999704,
+          "min": 0.3053557999999157,
+          "max": 7.632271400000036
+        },
+        "tokens_per_s": 69.86101434569937,
+        "mean_prompt_tokens": 3924.5128205128203,
+        "by_category": {
+          "ambiguo": {
+            "n": 8,
+            "hits": 6,
+            "accuracy": 0.75
+          },
+          "direto": {
+            "n": 62,
+            "hits": 53,
+            "accuracy": 0.8548387096774194
+          },
+          "sem_ferramenta": {
+            "n": 8,
+            "hits": 5,
+            "accuracy": 0.625
+          }
+        },
+        "errors_by_pair": {
+          "None -> knowledge_search": 3,
+          "git -> None": 2,
+          "replace_in_file -> knowledge_search": 1,
+          "search_files -> knowledge_index": 1,
+          "find_files -> read_docx": 1,
+          "google -> None": 1,
+          "google -> reminder": 1,
+          "read_pdf -> read_docx": 1,
+          "knowledge_search -> None": 1,
+          "None -> speak": 1,
+          "read_file -> None": 1
+        }
+      }
+    },
+    {
+      "kind": "tool_selection",
+      "model": "qwen2.5:3b",
+      "mode": "json",
+      "effective_mode": "json",
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "warmup_s": 1.905094599999984,
+      "meta": {
+        "timestamp": "2026-11-08T03:08:16-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 78,
+        "tool_accuracy": 0.47435897435897434,
+        "tool_hits": 37,
+        "args_accuracy": 0.39344262295081966,
+        "args_hits": 24,
+        "args_n": 61,
+        "args_accuracy_given_tool": 0.9230769230769231,
+        "args_hits_given_tool": 24,
+        "args_n_given_tool": 26,
+        "invalid_json_rate": 0.05128205128205128,
+        "invalid_json": 4,
+        "leaked_calls": 0,
+        "unknown_tool_calls": 0,
+        "errors": 0,
+        "latency_s": {
+          "n": 78,
+          "mean": 0.8589706282051304,
+          "p50": 0.690968450000014,
+          "p95": 1.8118032099999657,
+          "min": 0.21565739999994094,
+          "max": 7.405594199999996
+        },
+        "tokens_per_s": 66.94637363367056,
+        "mean_prompt_tokens": 5513.51282051282,
+        "by_category": {
+          "ambiguo": {
+            "n": 8,
+            "hits": 2,
+            "accuracy": 0.25
+          },
+          "direto": {
+            "n": 62,
+            "hits": 27,
+            "accuracy": 0.43548387096774194
+          },
+          "sem_ferramenta": {
+            "n": 8,
+            "hits": 8,
+            "accuracy": 1.0
+          }
+        },
+        "errors_by_pair": {
+          "knowledge_search -> None": 4,
+          "reminder -> None": 4,
+          "run_shell -> None": 3,
+          "google -> None": 3,
+          "microsoft -> None": 3,
+          "search_files -> None": 2,
+          "find_files -> None": 2,
+          "obsidian -> None": 2,
+          "notion -> None": 2,
+          "stripe -> None": 2,
+          "web_search -> None": 2,
+          "write_file -> None": 1,
+          "replace_in_file -> None": 1,
+          "list_dir -> find_files": 1,
+          "git -> None": 1,
+          "github -> None": 1,
+          "spreadsheet -> None": 1,
+          "web_fetch -> None": 1,
+          "send_file -> None": 1,
+          "read_docx -> None": 1,
+          "read_image -> None": 1,
+          "speak -> None": 1,
+          "read_file -> None": 1
+        }
+      }
+    },
+    {
+      "kind": "tool_selection",
+      "model": "llama3.2:3b",
+      "mode": "native",
+      "effective_mode": "native",
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "warmup_s": 8.435909600000059,
+      "meta": {
+        "timestamp": "2026-11-08T03:09:29-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 78,
+        "tool_accuracy": 0.7435897435897436,
+        "tool_hits": 58,
+        "args_accuracy": 0.6557377049180327,
+        "args_hits": 40,
+        "args_n": 61,
+        "args_accuracy_given_tool": 0.7843137254901961,
+        "args_hits_given_tool": 40,
+        "args_n_given_tool": 51,
+        "invalid_json_rate": 0.0,
+        "invalid_json": 0,
+        "leaked_calls": 4,
+        "unknown_tool_calls": 0,
+        "errors": 0,
+        "latency_s": {
+          "n": 78,
+          "mean": 0.8161041705128232,
+          "p50": 0.7668199999999956,
+          "p95": 1.2899142849999183,
+          "min": 0.316587800000093,
+          "max": 2.358843200000024
+        },
+        "tokens_per_s": 65.20592345085647,
+        "mean_prompt_tokens": 3984.3846153846152,
+        "by_category": {
+          "ambiguo": {
+            "n": 8,
+            "hits": 6,
+            "accuracy": 0.75
+          },
+          "direto": {
+            "n": 62,
+            "hits": 52,
+            "accuracy": 0.8387096774193549
+          },
+          "sem_ferramenta": {
+            "n": 8,
+            "hits": 0,
+            "accuracy": 0.0
+          }
+        },
+        "errors_by_pair": {
+          "None -> knowledge_search": 3,
+          "find_files -> list_dir": 2,
+          "google -> None": 2,
+          "None -> speak": 2,
+          "None -> web_search": 2,
+          "run_shell -> None": 1,
+          "replace_in_file -> write_file": 1,
+          "search_files -> knowledge_search": 1,
+          "search_files -> knowledge_index": 1,
+          "microsoft -> google": 1,
+          "microsoft -> None": 1,
+          "web_fetch -> web_search": 1,
+          "None -> run_shell": 1,
+          "spreadsheet -> None": 1
+        }
+      }
+    },
+    {
+      "kind": "tool_selection",
+      "model": "llama3.2:3b",
+      "mode": "json",
+      "effective_mode": "json",
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "warmup_s": 2.1382307000000083,
+      "meta": {
+        "timestamp": "2026-11-08T03:10:44-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 78,
+        "tool_accuracy": 0.5384615384615384,
+        "tool_hits": 42,
+        "args_accuracy": 0.39344262295081966,
+        "args_hits": 24,
+        "args_n": 61,
+        "args_accuracy_given_tool": 0.75,
+        "args_hits_given_tool": 24,
+        "args_n_given_tool": 32,
+        "invalid_json_rate": 0.20512820512820512,
+        "invalid_json": 16,
+        "leaked_calls": 0,
+        "unknown_tool_calls": 5,
+        "errors": 0,
+        "latency_s": {
+          "n": 78,
+          "mean": 0.9209998179487116,
+          "p50": 0.8053332499999897,
+          "p95": 1.5604895799999572,
+          "min": 0.32626170000003185,
+          "max": 3.484674200000086
+        },
+        "tokens_per_s": 61.253722828938315,
+        "mean_prompt_tokens": 5514.384615384615,
+        "by_category": {
+          "ambiguo": {
+            "n": 8,
+            "hits": 5,
+            "accuracy": 0.625
+          },
+          "direto": {
+            "n": 62,
+            "hits": 33,
+            "accuracy": 0.532258064516129
+          },
+          "sem_ferramenta": {
+            "n": 8,
+            "hits": 4,
+            "accuracy": 0.5
+          }
+        },
+        "errors_by_pair": {
+          "reminder -> None": 4,
+          "git -> None": 3,
+          "microsoft -> google": 3,
+          "notion -> None": 2,
+          "web_search -> web_fetch": 2,
+          "knowledge_search -> None": 2,
+          "None -> write_file": 2,
+          "run_shell -> pytest": 1,
+          "run_shell -> pip": 1,
+          "run_shell -> find_files": 1,
+          "run_shell -> python": 1,
+          "write_file -> None": 1,
+          "replace_in_file -> find_files": 1,
+          "replace_in_file -> None": 1,
+          "list_dir -> find_files": 1,
+          "search_files -> find_files": 1,
+          "search_files -> None": 1,
+          "find_files -> list_dir": 1,
+          "obsidian -> knowledge_index": 1,
+          "microsoft -> teams": 1,
+          "knowledge_search -> knowledge_index": 1,
+          "None -> google": 1,
+          "None -> python": 1,
+          "google -> None": 1,
+          "None -> knowledge_search": 1
+        }
+      }
+    }
+  ],
+  "rag_results": [
+    {
+      "kind": "rag_retrieval",
+      "embed_model": "nomic-embed-text",
+      "k": 5,
+      "config": {
+        "mode": "bm25",
+        "prefixes": true,
+        "rrf_k": 60,
+        "vector_backend": "sqlite-vec",
+        "vector_backend_requested": "auto",
+        "fts5": true
+      },
+      "dataset": "evals/data/rag_retrieval.jsonl",
+      "dataset_sha256": "63a1ac64abdb",
+      "fixtures_sha256": "f2849a0beb5b",
+      "corpus": {
+        "documents": 13,
+        "chunks": 25,
+        "index_s": 4.315439300000094
+      },
+      "meta": {
+        "timestamp": "2026-11-08T03:10:49-03:00",
+        "git_commit": "0fa0ad2",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26200-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "metrics": {
+        "n": 36,
+        "recall_at_1": 0.8333333333333334,
+        "hits_at_1": 30,
+        "recall_at_5": 1.0,
+        "hits_at_5": 36,
+        "mrr": 0.9120370370370371,
+        "doc_recall_at_1": 0.9444444444444444,
+        "search_latency_s": {
+          "n": 36,
+          "mean": 0.0010213138888843787,
+          "p50": 0.0007070999999996275,
+          "p95": 0.0021584000000132164,
+          "min": 0.0005579999999554275,
+          "max": 0.008567500000026484
+        }
+      },
+      "metrics_by_split": {
+        "dev": {
+          "n": 18,
+          "recall_at_1": 0.8333333333333334,
+          "hits_at_1": 15,
+          "recall_at_5": 1.0,
+          "hits_at_5": 18,
+          "mrr": 0.9074074074074073,
+          "doc_recall_at_1": 0.8888888888888888,
+          "search_latency_s": {
+            "n": 18,
+            "mean": 0.0012095000000032189,
+            "p50": 0.0007019500000069456,
+            "p95": 0.002994815000016606,
+            "min": 0.0005579999999554275,
+            "max": 0.008567500000026484
+          }
+        },
+        "test": {
+          "n": 18,
+          "recall_at_1": 0.8333333333333334,
+          "hits_at_1": 15,
+          "recall_at_5": 1.0,
+          "hits_at_5": 18,
+          "mrr": 0.9166666666666666,
+          "doc_recall_at_1": 1.0,
+          "search_latency_s": {
+            "n": 18,
+            "mean": 0.0008331277777655385,
+            "p50": 0.000711000000023887,
+            "p95": 0.0012790099999790505,
+            "min": 0.0006186999999044929,
+            "max": 0.002599400000008245
+          }
+        }
+      }
+    }
+  ],
+  "failures": [],
+  "files": [
+    "20261108T030020_tools_qwen2.5-1.5b_native.json",
+    "20261108T030601_tools_qwen2.5-1.5b_json.json",
+    "20261108T030706_tools_qwen2.5-3b_native.json",
+    "20261108T030816_tools_qwen2.5-3b_json.json",
+    "20261108T030929_tools_llama3.2-3b_native.json",
+    "20261108T031044_tools_llama3.2-3b_json.json",
+    "20261108T031049_rag_nomic-embed-text_bm25.json"
+  ]
+}

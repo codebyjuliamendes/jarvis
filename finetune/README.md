@@ -123,9 +123,9 @@ mudaria o prompt.
 ```
 
 - Mesmos 78 casos, mesmo system prompt real, seed 42, temperatura 0,2, `num_ctx` 8192, modo
-  nativo. Rodar a base **na mesma execução** importa: a linha de base de 56,4% do 1,5B foi
-  medida antes de o subprojeto 4 acrescentar uma linha ao system prompt (o dataset usa o
-  prompt atual).
+  nativo. Rodar a base **na mesma execução** importa: duas rodadas iguais do mesmo modelo
+  variam 1–2 casos (no 5b, o `qwen2.5:3b` deu 66/78 e 64/78 com o mesmo prompt), e a
+  diferença esperada do LoRA precisa ser comparada com isso.
 - Use `--markdown` com outro arquivo: sem ele o `compare_models.py` sobrescreve o
   `evals/results/RESULTS.md` com só dois modelos.
 - Se treinar o 3B, compare com `qwen2.5:3b` (e importe com outro nome).

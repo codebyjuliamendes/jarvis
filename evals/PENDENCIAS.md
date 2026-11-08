@@ -180,10 +180,11 @@ em `evals/results/RAG.md`.
 6. **"Fontes consultadas" não são "fontes usadas".** Quando o modelo usa o RAG e não cita, o
    agente anexa os 3 primeiros resultados da busca. Pode listar um trecho que o modelo ignorou.
    A detecção de "já citou" é o texto `fonte:` em qualquer lugar da resposta.
-7. **O system prompt mudou (uma linha pedindo citação).** Só refiz o eval de ferramentas do
-   `qwen2.5:3b` nativo: 84,6% / 82,0%, igual ao de antes, com 7 casos trocando de previsão
-   (ganhos e perdas se anulam; não dá para separar efeito do prompt de não determinismo da
-   GPU). Os outros modelos/modos do `RESULTS.md` não foram refeitos.
+7. **[RESOLVIDO no subprojeto 5b: `RESULTS.md` refeito no commit `0fa0ad2`, os 3 modelos nos
+   2 modos]** O system prompt mudou (uma linha pedindo citação). Na época só o `qwen2.5:3b`
+   nativo foi refeito (84,6% / 82,0%). Na rodada completa do 5b, com o mesmo prompt, ele deu
+   82,1% / 80,3%: 2 casos de diferença sem mudança de código, que é a medida do não
+   determinismo entre rodadas. A comparação modelo a modelo está no fim do `RESULTS.md`.
 8. **Embeddings continuam sendo gerados na indexação, mesmo no modo `bm25`.** Assim trocar de
    modo é instantâneo, mas a indexação continua dependendo do Ollama. Não há opção para pular.
 9. **O runner do Ollama falhou no meio da grade** duas vezes em três tentativas
@@ -219,9 +220,10 @@ antes/depois NÃO foram feitos.**
    O tempo de treino na T4 não foi medido (~13 milhões de tokens em 2 épocas).
 2. **[PENDENTE] Medir o antes/depois** com
    `evals/compare_models.py qwen2.5:1.5b jarvis-qwen-lora --skip-rag --markdown evals/results/FINETUNE.md`
-   e só então preencher a linha do modelo ajustado no README. A linha de base do 1,5B
-   (56,4% / 42,6%) foi medida antes de o subprojeto 4 acrescentar uma linha ao system prompt;
-   por isso a base tem de ser medida de novo na mesma execução.
+   e só então preencher a linha do modelo ajustado no README. A linha de base do 1,5B foi
+   refeita com o prompt atual no subprojeto 5b (56,4% / 44,3%; antes 56,4% / 42,6%), mas
+   rodadas iguais variam 1–2 casos, então a base ainda deve ser medida na mesma execução que
+   o modelo ajustado.
 3. **Os modelos de frase foram escritos por quem tinha lido o eval.** Os filtros de vazamento
    pegam cópia (exata), paráfrase próxima (Jaccard de 4-gramas ≥ 0,35; 60 removidos) e
    entidades do eval (0), mas não "ensinar para a prova" no nível da política — ex.:
