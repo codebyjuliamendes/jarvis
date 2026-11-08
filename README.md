@@ -57,6 +57,72 @@ Telegram  <---long polling--->  Bot (Python)
 
 ---
 
+## Avaliação
+
+O Jarvis tem uma suíte de avaliação automatizada em [`evals/`](evals/README.md) que mede, com
+dados, as duas decisões das quais tudo depende:
+
+- **Seleção de ferramentas:** 78 pedidos em pt-BR cobrindo as 25 ferramentas reais, mais casos
+  ambíguos e casos em que o certo é **não** chamar ferramenta. Uma chamada ao LLM por pedido,
+  com o system prompt e os schemas reais do agente, sem executar nada; a resposta é
+  interpretada pelo mesmo código de parsing do agente.
+- **Recuperação (RAG):** 36 perguntas sobre um corpus fictício (.md, .txt, .pdf, .docx) com
+  distratores, indexado com o `RagIndex` real.
+
+Cada execução também fica registrada no **MLflow** (params, métricas, JSON e tabela como
+artefatos) para comparar runs pela interface.
+
+Resultados medidos em 08/11/2026 num notebook com RTX 4050 Laptop (6 GB), Ollama 0.40.14, um
+modelo por vez, seed 42 ([tabela completa e por categoria](evals/results/RESULTS.md); os JSON
+com cada caso estão em [`evals/results/`](evals/results/)):
+
+| Modelo | Modo | Acurácia ferramenta | Acurácia args | JSON inválido | Latência p50 (s) | Latência p95 (s) | tokens/s |
+|---|---|---|---|---|---|---|---|
+| `qwen2.5:1.5b` | nativo | 56,4% (44/78) | 42,6% (26/61) | 0,0% | 0,42 | 1,66 | 121,4 |
+| `qwen2.5:1.5b` | JSON | 47,4% (37/78) | 26,2% (16/61) | 7,7% | 0,41 | 1,09 | 114,9 |
+| **`qwen2.5:3b`** | **nativo** | **84,6% (66/78)** | **82,0% (50/61)** | 0,0% | 0,65 | 1,26 | 64,5 |
+| `qwen2.5:3b` | JSON | 51,3% (40/78) | 42,6% (26/61) | 6,4% | 0,64 | 2,02 | 65,5 |
+| `llama3.2:3b` | nativo | 74,4% (58/78) | 57,4% (35/61) | 0,0% | 0,72 | 1,32 | 64,0 |
+| `llama3.2:3b` | JSON | 48,7% (38/78) | 24,6% (15/61) | 30,8% | 0,87 | 1,56 | 60,3 |
+
+| Embeddings | Corpus | recall@1 | recall@5 | MRR |
+|---|---|---|---|---|
+| `nomic-embed-text` | 13 docs / 25 trechos | 44,4% (16/36) | 72,2% (26/36) | 0,544 |
+
+**Análise.**
+
+- **O padrão continua sendo `qwen2.5:3b` com function calling nativo.** Foi o melhor em
+  ferramenta (84,6%) e em argumentos (82,0%; 94,3% quando acerta a ferramenta), com latência
+  mediana de 0,65 s por decisão. O `llama3.2:3b`, de tamanho e latência parecidos, erra 10
+  pontos a mais em ferramenta e quase 25 em argumentos. O `qwen2.5:1.5b` gera tokens quase
+  duas vezes mais rápido, mas em 31 dos seus 34 erros nem chama ferramenta e responde em
+  texto: perde 28 pontos, uma troca que não compensa.
+- **O fallback JSON é muito pior em todos os modelos** (47–51%). Ele existe para não quebrar
+  com modelos sem function calling, mas na prática esses modelos não deveriam ser usados no
+  Jarvis. No `llama3.2:3b`, 24 dos 78 casos (30,8%) vieram em JSON que o parser não aproveita:
+  8 por caminhos do Windows (`C:\Users\...`) sem escapar as barras e a maioria dos outros
+  fora do protocolo (argumentos sem o nome da ferramenta, ou `args` como lista).
+- **O ponto fraco do `qwen2.5:3b` é a conversa sem ferramenta:** chamou ferramenta em 3 de 8
+  casos (ex.: `knowledge_search` para "quanto é 15% de 240?"). É o próximo alvo para ajuste de
+  prompt, e a avaliação mede o efeito.
+- **O RAG é o elo mais fraco:** o trecho certo vem em 1º lugar em menos da metade das
+  perguntas (recall@1 de 44,4%) e fica fora do top-5 em 10 de 36. Próximos experimentos: os
+  prefixos `search_query:`/`search_document:` do `nomic-embed-text`, outro tamanho de trecho e
+  busca híbrida com palavras-chave.
+- **Ressalvas:** uma execução por configuração e 78 casos (1 caso = 1,3 ponto), então
+  diferenças de poucos pontos não são conclusivas. As latências valem para esta máquina. Ver
+  [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md).
+
+Para reproduzir:
+
+```bash
+uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt   # MLflow (opcional) + pytest
+.venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b qwen2.5:3b llama3.2:3b --modes native,json
+.venv/Scripts/python.exe -m pytest -q    # testes unitários, sem Ollama
+```
+
+---
+
 ## Requisitos
 
 - Linux ou macOS, Python **3.8+**.
@@ -525,7 +591,10 @@ Teste as ferramentas sem modelo:
 ```
 
 Ele valida arquivos, terminal, git, web, lembretes, bloqueios de segurança, memória,
-RAG, PDF/DOCX, briefing, Microsoft/TTS e o loop do agente (63 verificações).
+RAG, PDF/DOCX, briefing, Microsoft/TTS e o loop do agente (63 verificações no Linux; no
+Windows a checagem "run_shell executa" é pulada, ver `evals/PENDENCIAS.md`).
+
+Testes unitários (pytest, sem Ollama): `.venv/bin/python -m pytest -q`.
 
 ---
 
