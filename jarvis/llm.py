@@ -24,11 +24,14 @@ class OllamaClient:
         model: str,
         timeout: float = 300.0,
         num_ctx: int = 8192,
+        extra_options: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.url = url.rstrip("/")
         self.model = model
         self.timeout = timeout
         self.num_ctx = num_ctx
+        # Opções extras do Ollama (ex.: {"seed": 42} nas avaliações). Padrão: nenhuma.
+        self.extra_options: Dict[str, Any] = dict(extra_options or {})
         self.tools_supported = True
 
     def _timeout(self) -> httpx.Timeout:
@@ -39,14 +42,30 @@ class OllamaClient:
         messages: List[Dict[str, Any]],
         tools: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
+        """Envia a conversa e devolve só a mensagem do assistente."""
+        data = await self.chat_full(messages, tools=tools)
+        return data["message"]
+
+    async def chat_full(
+        self,
+        messages: List[Dict[str, Any]],
+        tools: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """Como chat(), mas devolve a resposta inteira do Ollama.
+
+        Inclui as métricas (eval_count, eval_duration, prompt_eval_count,
+        total_duration...), usadas pelas avaliações e pela observabilidade.
+        """
+        options: Dict[str, Any] = {
+            "temperature": 0.2,
+            "num_ctx": self.num_ctx,
+        }
+        options.update(self.extra_options)
         payload: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "options": {
-                "temperature": 0.2,
-                "num_ctx": self.num_ctx,
-            },
+            "options": options,
         }
         if tools and self.tools_supported:
             payload["tools"] = tools
@@ -87,10 +106,10 @@ class OllamaClient:
         except ValueError as exc:
             raise OllamaError("Resposta inválida do Ollama (não era JSON).") from exc
 
-        message = data.get("message") or {}
+        message = data.get("message") if isinstance(data, dict) else None
         if not message:
             raise OllamaError("O Ollama não retornou nenhuma mensagem.")
-        return message
+        return data
 
     async def is_available(self) -> bool:
         try:
