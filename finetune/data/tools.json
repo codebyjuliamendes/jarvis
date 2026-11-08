@@ -1,0 +1,868 @@
+[
+ {
+  "type": "function",
+  "function": {
+   "name": "run_shell",
+   "description": "Executa um comando no bash dentro das pastas permitidas. Use para rodar testes, builds, scripts, instalar dependências e comandos não interativos.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "command": {
+      "type": "string",
+      "description": "Comando bash."
+     },
+     "cwd": {
+      "type": "string",
+      "description": "Diretório de trabalho (opcional)."
+     }
+    },
+    "required": [
+     "command"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "read_file",
+   "description": "Lê um arquivo de texto. Retorna linhas numeradas. Use para inspecionar código e docs.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho do arquivo."
+     },
+     "start_line": {
+      "type": "integer",
+      "description": "Linha inicial (1)."
+     },
+     "end_line": {
+      "type": "integer",
+      "description": "Linha final."
+     }
+    },
+    "required": [
+     "path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "write_file",
+   "description": "Cria ou sobrescreve um arquivo de texto. Use com cuidado: sobrescreve o conteúdo.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho do arquivo."
+     },
+     "content": {
+      "type": "string",
+      "description": "Conteúdo completo."
+     },
+     "create_dirs": {
+      "type": "boolean",
+      "description": "Criar pastas intermediárias (padrão true)."
+     }
+    },
+    "required": [
+     "path",
+     "content"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "replace_in_file",
+   "description": "Substitui um trecho exato de texto dentro de um arquivo. Ideal para edições pequenas.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho do arquivo."
+     },
+     "old": {
+      "type": "string",
+      "description": "Texto exato a substituir."
+     },
+     "new": {
+      "type": "string",
+      "description": "Novo texto."
+     },
+     "all": {
+      "type": "boolean",
+      "description": "Substituir todas as ocorrências (padrão false)."
+     }
+    },
+    "required": [
+     "path",
+     "old",
+     "new"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "list_dir",
+   "description": "Lista arquivos e pastas de um diretório.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Diretório (padrão: workspace)."
+     }
+    },
+    "required": []
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "search_files",
+   "description": "Busca um padrão regex dentro dos arquivos de uma pasta (similar a grep -rn).",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "pattern": {
+      "type": "string",
+      "description": "Expressão regular."
+     },
+     "path": {
+      "type": "string",
+      "description": "Pasta inicial."
+     },
+     "glob": {
+      "type": "string",
+      "description": "Filtro de nomes, ex.: '*.py'. Padrão '*'."
+     },
+     "max_results": {
+      "type": "integer",
+      "description": "Máximo de resultados."
+     }
+    },
+    "required": [
+     "pattern"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "find_files",
+   "description": "Encontra arquivos/pastas pelo nome (glob), ex.: '*.pdf' ou 'test_*'.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "Glob do nome, ex.: '*.py'."
+     },
+     "path": {
+      "type": "string",
+      "description": "Pasta inicial."
+     },
+     "max_results": {
+      "type": "integer",
+      "description": "Máximo de resultados."
+     }
+    },
+    "required": [
+     "name"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "git",
+   "description": "Executa comandos git num repositório (status, diff, log, add, commit, branch, pull...). Não abre editor. Push com --force é bloqueado por segurança.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "args": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "Argumentos do git, ex.: ['status', '--short']."
+     },
+     "cwd": {
+      "type": "string",
+      "description": "Pasta do repositório (padrão: workspace)."
+     }
+    },
+    "required": [
+     "args"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "github",
+   "description": "Consulta e age no GitHub via API: repositórios, issues, pull requests, commits, criar issue e comentar. Requer GITHUB_TOKEN.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "list_repos",
+       "repo_info",
+       "list_issues",
+       "get_issue",
+       "list_prs",
+       "get_pr",
+       "recent_commits",
+       "create_issue",
+       "comment_issue"
+      ],
+      "description": "Ação a executar."
+     },
+     "repo": {
+      "type": "string",
+      "description": "Repositório no formato owner/nome (opcional se GITHUB_DEFAULT_REPO)."
+     },
+     "number": {
+      "type": "integer",
+      "description": "Número da issue ou PR."
+     },
+     "title": {
+      "type": "string",
+      "description": "Título (create_issue)."
+     },
+     "body": {
+      "type": "string",
+      "description": "Corpo/comentário."
+     },
+     "state": {
+      "type": "string",
+      "enum": [
+       "open",
+       "closed",
+       "all"
+      ],
+      "description": "Filtro de estado (padrão open)."
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Máximo de itens (padrão 10)."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "obsidian",
+   "description": "Acessa um vault do Obsidian: buscar notas, ler, escrever/append e listar. Requer OBSIDIAN_VAULT.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "search",
+       "read",
+       "write",
+       "list"
+      ]
+     },
+     "query": {
+      "type": "string",
+      "description": "Busca (search)."
+     },
+     "path": {
+      "type": "string",
+      "description": "Caminho relativo da nota (read/write)."
+     },
+     "content": {
+      "type": "string",
+      "description": "Conteúdo (write)."
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "append",
+       "overwrite"
+      ],
+      "description": "Modo de escrita (padrão append)."
+     },
+     "folder": {
+      "type": "string",
+      "description": "Pasta (list)."
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Máximo de itens."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "notion",
+   "description": "Acessa o Notion: buscar páginas, ler conteúdo, anexar texto e criar página. Requer NOTION_TOKEN e página compartilhada com a integração.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "search",
+       "read",
+       "append",
+       "create_page"
+      ]
+     },
+     "query": {
+      "type": "string",
+      "description": "Busca (search)."
+     },
+     "page_id": {
+      "type": "string",
+      "description": "ID da página (read/append)."
+     },
+     "parent_page_id": {
+      "type": "string",
+      "description": "Página pai (create_page)."
+     },
+     "title": {
+      "type": "string",
+      "description": "Título (create_page)."
+     },
+     "content": {
+      "type": "string",
+      "description": "Texto (append/create_page)."
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Máximo de resultados."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "spreadsheet",
+   "description": "Lê planilhas CSV/TSV/XLSX e retorna uma prévia em texto para análise.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "read"
+      ]
+     },
+     "path": {
+      "type": "string",
+      "description": "Caminho do arquivo."
+     },
+     "sheet": {
+      "type": "string",
+      "description": "Nome da aba (XLSX)."
+     },
+     "max_rows": {
+      "type": "integer",
+      "description": "Máximo de linhas."
+     }
+    },
+    "required": [
+     "action",
+     "path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "google",
+   "description": "Acessa Google Agenda e Gmail: listar/criar eventos, buscar/ler/enviar e-mails. Requer credenciais OAuth (scripts/google_auth.py).",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "calendar_list",
+       "calendar_create",
+       "gmail_search",
+       "gmail_read",
+       "gmail_send"
+      ]
+     },
+     "days": {
+      "type": "integer",
+      "description": "Dias à frente (calendar_list)."
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Máximo de itens."
+     },
+     "summary": {
+      "type": "string",
+      "description": "Título do evento."
+     },
+     "start": {
+      "type": "string",
+      "description": "Início ISO 8601 (calendar_create)."
+     },
+     "end": {
+      "type": "string",
+      "description": "Fim ISO 8601 (calendar_create)."
+     },
+     "description": {
+      "type": "string",
+      "description": "Descrição do evento."
+     },
+     "location": {
+      "type": "string",
+      "description": "Local do evento."
+     },
+     "query": {
+      "type": "string",
+      "description": "Busca do Gmail (ex.: from:x is:unread)."
+     },
+     "message_id": {
+      "type": "string",
+      "description": "ID da mensagem (gmail_read)."
+     },
+     "to": {
+      "type": "string",
+      "description": "Destinatário (gmail_send)."
+     },
+     "subject": {
+      "type": "string",
+      "description": "Assunto (gmail_send)."
+     },
+     "body": {
+      "type": "string",
+      "description": "Corpo do e-mail (gmail_send)."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "microsoft",
+   "description": "Acessa Microsoft 365 via Graph: perfil, Outlook (listar/buscar/ler/marcar/enviar e-mails), calendário (listar/criar/remover eventos) e Teams (equipes, canais, chats e mensagens). Requer MS_GRAPH_CLIENT_ID e scripts/ms_graph_auth.py.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "me",
+       "calendar_list",
+       "calendar_create",
+       "calendar_delete",
+       "mail_list",
+       "mail_search",
+       "mail_read",
+       "mail_mark_read",
+       "mail_mark_unread",
+       "mail_send",
+       "teams_list",
+       "teams_channels",
+       "teams_chats",
+       "teams_messages",
+       "teams_channel_messages"
+      ]
+     },
+     "days": {
+      "type": "integer",
+      "description": "Dias à frente (calendar_list)."
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Máximo de itens."
+     },
+     "summary": {
+      "type": "string",
+      "description": "Título do evento."
+     },
+     "start": {
+      "type": "string",
+      "description": "Início ISO 8601 (calendar_create)."
+     },
+     "end": {
+      "type": "string",
+      "description": "Fim ISO 8601 (calendar_create)."
+     },
+     "event_id": {
+      "type": "string",
+      "description": "ID do evento (calendar_delete)."
+     },
+     "description": {
+      "type": "string",
+      "description": "Descrição do evento."
+     },
+     "location": {
+      "type": "string",
+      "description": "Local do evento."
+     },
+     "attendees": {
+      "type": "string",
+      "description": "Participantes separados por vírgula."
+     },
+     "unread": {
+      "type": "boolean",
+      "description": "Só não lidos (mail_list, padrão true)."
+     },
+     "query": {
+      "type": "string",
+      "description": "Busca de e-mail."
+     },
+     "message_id": {
+      "type": "string",
+      "description": "ID da mensagem (mail_read)."
+     },
+     "to": {
+      "type": "string",
+      "description": "Destinatário(s) (mail_send)."
+     },
+     "subject": {
+      "type": "string",
+      "description": "Assunto (mail_send)."
+     },
+     "body": {
+      "type": "string",
+      "description": "Corpo do e-mail (mail_send)."
+     },
+     "team_id": {
+      "type": "string",
+      "description": "ID da equipe (Teams)."
+     },
+     "channel_id": {
+      "type": "string",
+      "description": "ID do canal (Teams)."
+     },
+     "chat_id": {
+      "type": "string",
+      "description": "ID do chat (Teams)."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "stripe",
+   "description": "Consulta o Stripe: saldo e últimas cobranças, receita do período, clientes, faturas e payment links. Requer STRIPE_API_KEY.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "overview",
+       "revenue",
+       "customers",
+       "invoices",
+       "payment_links"
+      ]
+     },
+     "days": {
+      "type": "integer",
+      "description": "Dias para receita (padrão 30)."
+     },
+     "limit": {
+      "type": "integer",
+      "description": "Máximo de itens."
+     },
+     "status": {
+      "type": "string",
+      "description": "Filtro de status de faturas (ex.: paid, open)."
+     },
+     "email": {
+      "type": "string",
+      "description": "Filtrar cliente por e-mail."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "web_search",
+   "description": "Busca na web (DuckDuckGo) e retorna títulos, URLs e trechos. Use para notícias, documentação e informações atuais.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "query": {
+      "type": "string",
+      "description": "Termos da busca."
+     },
+     "max_results": {
+      "type": "integer",
+      "description": "Máximo de resultados (padrão 5)."
+     }
+    },
+    "required": [
+     "query"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "web_fetch",
+   "description": "Baixa uma página/URL e retorna o texto principal. Use depois de web_search para ler uma fonte específica.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "url": {
+      "type": "string",
+      "description": "URL http/https."
+     },
+     "max_chars": {
+      "type": "integer",
+      "description": "Máximo de caracteres (padrão 8000)."
+     }
+    },
+    "required": [
+     "url"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "send_file",
+   "description": "Envia um arquivo da máquina para a conversa atual do Telegram (relatórios, PDFs, planilhas, imagens, backups). Máximo ~50 MB.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho do arquivo."
+     },
+     "caption": {
+      "type": "string",
+      "description": "Legenda opcional do arquivo."
+     }
+    },
+    "required": [
+     "path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "read_pdf",
+   "description": "Extrai o texto de um PDF (com OCR automático em páginas escaneadas). Use para provas, apostilas, contratos e relatórios.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho do PDF."
+     },
+     "max_pages": {
+      "type": "integer",
+      "description": "Máximo de páginas (padrão 50)."
+     },
+     "ocr": {
+      "type": "boolean",
+      "description": "Usar OCR em páginas sem texto (padrão true)."
+     }
+    },
+    "required": [
+     "path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "read_docx",
+   "description": "Extrai o texto (incluindo tabelas) de um arquivo Word .docx.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho do .docx."
+     }
+    },
+    "required": [
+     "path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "read_image",
+   "description": "Faz OCR de uma imagem (print, foto de quadro, comprovante). Retorna o texto reconhecido.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Caminho da imagem."
+     }
+    },
+    "required": [
+     "path"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "speak",
+   "description": "Gera um áudio de voz (edge-tts) com o texto informado e envia no Telegram. Use quando a usuária pedir 'em áudio', 'fala isso' ou 'manda um áudio'.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "text": {
+      "type": "string",
+      "description": "Texto que será falado."
+     },
+     "caption": {
+      "type": "string",
+      "description": "Legenda opcional do áudio."
+     }
+    },
+    "required": [
+     "text"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "knowledge_search",
+   "description": "Busca na memória local indexada (notas, PDFs, DOCX, planilhas, textos). Use antes de responder perguntas sobre conteúdo antigo da usuária ou dos arquivos dela.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "query": {
+      "type": "string",
+      "description": "O que procurar."
+     },
+     "k": {
+      "type": "integer",
+      "description": "Número de trechos (padrão 5, máximo 12)."
+     }
+    },
+    "required": [
+     "query"
+    ]
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "knowledge_index",
+   "description": "Indexa arquivos/pastas na memória local para busca semântica. Sem 'path', reindexa as pastas padrão (JARVIS_RAG_ROOTS).",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "description": "Arquivo ou pasta (opcional)."
+     },
+     "force": {
+      "type": "boolean",
+      "description": "Reindexar mesmo sem mudanças (padrão false)."
+     },
+     "max_files": {
+      "type": "integer",
+      "description": "Máximo de arquivos nesta rodada (padrão 400)."
+     }
+    },
+    "required": []
+   }
+  }
+ },
+ {
+  "type": "function",
+  "function": {
+   "name": "reminder",
+   "description": "Cria, lista e cancela lembretes que chegam no Telegram. Aceita '10m', '2h', 'hoje 18:00', 'amanhã 09:30', '2026-11-20 18:30'.",
+   "parameters": {
+    "type": "object",
+    "properties": {
+     "action": {
+      "type": "string",
+      "enum": [
+       "add",
+       "list",
+       "delete"
+      ]
+     },
+     "when": {
+      "type": "string",
+      "description": "Quando (add): '10m', 'hoje 18:00', etc."
+     },
+     "text": {
+      "type": "string",
+      "description": "O que lembrar (add)."
+     },
+     "id": {
+      "type": "integer",
+      "description": "ID do lembrete (delete)."
+     }
+    },
+    "required": [
+     "action"
+    ]
+   }
+  }
+ }
+]

@@ -1,0 +1,145 @@
+{
+ "seed": 42,
+ "pedidos": 2200,
+ "gerados": 2194,
+ "intencoes_esgotadas": {
+  "google.gmail_unread": [
+   8,
+   6
+  ],
+  "stripe.overview": [
+   16,
+   14
+  ],
+  "stripe.open_invoices": [
+   10,
+   8
+  ]
+ },
+ "duplicatas_pos_parafrase": 0,
+ "vazados_removidos": 60,
+ "limiar": 0.35,
+ "paráfrase": null,
+ "treino": {
+  "n": 1689,
+  "por_tipo": {
+   "tool": 1240,
+   "no_tool": 362,
+   "continuation": 87
+  },
+  "sem_ferramenta_pct": 21.4,
+  "negativos_dificeis": 72,
+  "parafraseados": 0,
+  "por_ferramenta": {
+   "find_files": 50,
+   "git": 46,
+   "github": 52,
+   "google": 38,
+   "knowledge_index": 52,
+   "knowledge_search": 58,
+   "list_dir": 51,
+   "microsoft": 47,
+   "notion": 44,
+   "obsidian": 40,
+   "read_docx": 44,
+   "read_file": 50,
+   "read_image": 54,
+   "read_pdf": 54,
+   "reminder": 47,
+   "replace_in_file": 53,
+   "run_shell": 50,
+   "search_files": 47,
+   "send_file": 51,
+   "speak": 51,
+   "spreadsheet": 46,
+   "stripe": 52,
+   "web_fetch": 51,
+   "web_search": 52,
+   "write_file": 60
+  },
+  "modelos_de_frase": 263
+ },
+ "val": {
+  "n": 445,
+  "por_tipo": {
+   "tool": 307,
+   "no_tool": 117,
+   "continuation": 21
+  },
+  "sem_ferramenta_pct": 26.3,
+  "negativos_dificeis": 27,
+  "parafraseados": 0,
+  "por_ferramenta": {
+   "find_files": 14,
+   "git": 18,
+   "github": 12,
+   "google": 12,
+   "knowledge_index": 11,
+   "knowledge_search": 6,
+   "list_dir": 11,
+   "microsoft": 11,
+   "notion": 13,
+   "obsidian": 22,
+   "read_docx": 13,
+   "read_file": 15,
+   "read_image": 10,
+   "read_pdf": 10,
+   "reminder": 17,
+   "replace_in_file": 10,
+   "run_shell": 15,
+   "search_files": 18,
+   "send_file": 13,
+   "speak": 12,
+   "spreadsheet": 11,
+   "stripe": 4,
+   "web_fetch": 13,
+   "web_search": 11,
+   "write_file": 5
+  },
+  "modelos_de_frase": 71
+ },
+ "tudo": {
+  "n": 2134,
+  "por_tipo": {
+   "tool": 1547,
+   "no_tool": 479,
+   "continuation": 108
+  },
+  "sem_ferramenta_pct": 22.4,
+  "negativos_dificeis": 99,
+  "parafraseados": 0,
+  "por_ferramenta": {
+   "find_files": 64,
+   "git": 64,
+   "github": 64,
+   "google": 50,
+   "knowledge_index": 63,
+   "knowledge_search": 64,
+   "list_dir": 62,
+   "microsoft": 58,
+   "notion": 57,
+   "obsidian": 62,
+   "read_docx": 57,
+   "read_file": 65,
+   "read_image": 64,
+   "read_pdf": 64,
+   "reminder": 64,
+   "replace_in_file": 63,
+   "run_shell": 65,
+   "search_files": 65,
+   "send_file": 64,
+   "speak": 63,
+   "spreadsheet": 57,
+   "stripe": 56,
+   "web_fetch": 64,
+   "web_search": 63,
+   "write_file": 65
+  },
+  "modelos_de_frase": 334
+ },
+ "chars_renderizados": {
+  "min": 14310,
+  "p50": 14450,
+  "max": 14793
+ }
+}
