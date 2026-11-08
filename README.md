@@ -15,6 +15,10 @@ por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **servi
 leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **441 testes** sem
 Ollama, CI e Docker.
 
+![Demonstração: servidor MCP só leitura, avaliação com IC 95% e McNemar, testes](docs/demo.gif)
+
+<sub>Gravado a partir da saída real dos comandos (o `--check` do MCP, a tabela gravada em `evals/results/REPEATS.md` e o pytest).</sub>
+
 | Seção | Destaque |
 |---|---|
 | [Avaliação](#avaliação) | 78 casos de seleção de ferramentas (3 rodadas, IC 95%, McNemar) e 36+36 de RAG (original e paráfrases), MLflow, JSON de cada caso versionado |
