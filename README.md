@@ -12,7 +12,7 @@ pedidos em pt-BR (85,5% na média de 3 rodadas, IC 95% de 77,8% a 92,3%; 0,58 s 
 decisão numa GPU de notebook), e trocar a busca vetorial pela
 busca por palavras (BM25) levou o recall@1 do RAG de **44,4% para 83,3%**. Observabilidade
 por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **servidor MCP** que
-leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **427 testes** sem
+leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **441 testes** sem
 Ollama, CI e Docker.
 
 | Seção | Destaque |
@@ -500,10 +500,10 @@ neste servidor MCP". Pendências: [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#mc
 
 O que sustenta os números acima e deixa o projeto fácil de rodar e de auditar.
 
-- **Testes:** 427 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
+- **Testes:** 441 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
   `conftest` aponta o Ollama para uma porta descartável): parsing das chamadas de ferramenta,
   segurança, RAG (BM25, vetorial, híbrido, queda para NumPy), métricas, avaliações, sanitizador,
-  dataset do fine-tuning, o template do `qwen2.5` e o servidor MCP (420 em Python 3.8; os 7
+  dataset do fine-tuning, o template do `qwen2.5` e o servidor MCP (434 em Python 3.8; os 7
   do protocolo MCP pedem o SDK, Python 3.10+). Mais o `scripts/smoke_test.py`, que exercita
   as ferramentas reais (arquivos, terminal, git, PDF/DOCX, lembretes, briefing, laço do agente)
   com um LLM roteirizado.
