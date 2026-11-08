@@ -1,0 +1,1779 @@
+{
+  "kind": "rag_retrieval",
+  "embed_model": "nomic-embed-text",
+  "k": 5,
+  "config": {
+    "mode": "hybrid",
+    "prefixes": false,
+    "rrf_k": 60,
+    "vector_backend": "sqlite-vec",
+    "vector_backend_requested": "sqlite-vec",
+    "fts5": true
+  },
+  "dataset": "evals/data/rag_paraphrase.jsonl",
+  "dataset_sha256": "9a64dc118a12",
+  "fixtures_sha256": "f2849a0beb5b",
+  "corpus": {
+    "documents": 13,
+    "chunks": 25,
+    "index_s": 1.9134957000000021
+  },
+  "meta": {
+    "timestamp": "2026-11-08T05:11:09-03:00",
+    "git_commit": "c971115",
+    "python": "3.8.20",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+    "ollama": {
+      "url": "http://127.0.0.1:11434",
+      "version": "0.40.14"
+    }
+  },
+  "metrics": {
+    "n": 36,
+    "recall_at_1": 0.2222222222222222,
+    "hits_at_1": 8,
+    "recall_at_5": 0.4722222222222222,
+    "hits_at_5": 17,
+    "mrr": 0.30740740740740746,
+    "doc_recall_at_1": 0.3611111111111111,
+    "search_latency_s": {
+      "n": 36,
+      "mean": 0.11469402777777699,
+      "p50": 0.11133165000000034,
+      "p95": 0.1641043499999988,
+      "min": 0.06327049999999446,
+      "max": 0.19249320000000125
+    }
+  },
+  "metrics_by_split": {
+    "dev": {
+      "n": 18,
+      "recall_at_1": 0.2777777777777778,
+      "hits_at_1": 5,
+      "recall_at_5": 0.4444444444444444,
+      "hits_at_5": 8,
+      "mrr": 0.3351851851851852,
+      "doc_recall_at_1": 0.2777777777777778,
+      "search_latency_s": {
+        "n": 18,
+        "mean": 0.11437256666666605,
+        "p50": 0.11272130000000047,
+        "p95": 0.1608441299999988,
+        "min": 0.06327049999999446,
+        "max": 0.1885559999999984
+      }
+    },
+    "test": {
+      "n": 18,
+      "recall_at_1": 0.16666666666666666,
+      "hits_at_1": 3,
+      "recall_at_5": 0.5,
+      "hits_at_5": 9,
+      "mrr": 0.2796296296296296,
+      "doc_recall_at_1": 0.4444444444444444,
+      "search_latency_s": {
+        "n": 18,
+        "mean": 0.11501548888888793,
+        "p50": 0.10634685000000133,
+        "p95": 0.15844287999999973,
+        "min": 0.07487210000000033,
+        "max": 0.19249320000000125
+      }
+    }
+  },
+  "records": [
+    {
+      "id": "par-001",
+      "split": "dev",
+      "question": "A estreia da edição nova do sistema de agendamento de espaços foi empurrada para que data?",
+      "expected_doc": "reuniao_projeto_falcon.md",
+      "rank": null,
+      "latency_s": 0.08043659999999875,
+      "top_docs": [
+        "manual_roteador.txt",
+        "reuniao_projeto_orion.md",
+        "reuniao_projeto_falcon.md",
+        "manual_roteador.txt",
+        "ata_assembleia_2025.txt"
+      ],
+      "top": [
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_orion.md",
+          "chunk": 0,
+          "score": 0.0313,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-002",
+      "split": "test",
+      "question": "Quanto de verba foi liberado para a próxima etapa do sistema de agendamento de espaços?",
+      "expected_doc": "reuniao_projeto_falcon.md",
+      "rank": null,
+      "latency_s": 0.07487210000000033,
+      "top_docs": [
+        "reuniao_projeto_falcon.md",
+        "reuniao_projeto_orion.md",
+        "manual_roteador.txt",
+        "reuniao_projeto_falcon.md",
+        "regulamento_condominio.txt"
+      ],
+      "top": [
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0315,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_orion.md",
+          "chunk": 0,
+          "score": 0.0311,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0286,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-003",
+      "split": "dev",
+      "question": "Quem ficou encarregado de transferir a base e de estressar o sistema com muitos acessos juntos?",
+      "expected_doc": "reuniao_projeto_falcon.md",
+      "rank": null,
+      "latency_s": 0.07268760000000185,
+      "top_docs": [
+        "manual_roteador.txt",
+        "reuniao_projeto_orion.md",
+        "contrato_aluguel.pdf",
+        "notas_aula_fisica.md",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0323,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_orion.md",
+          "chunk": 0,
+          "score": 0.0295,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0156,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-004",
+      "split": "test",
+      "question": "Com quantos agendamentos a cada sessenta segundos a máquina caiu durante a simulação de uso pesado?",
+      "expected_doc": "reuniao_projeto_falcon.md",
+      "rank": 3,
+      "latency_s": 0.08111650000000026,
+      "top_docs": [
+        "regulamento_condominio.txt",
+        "regulamento_condominio.txt",
+        "reuniao_projeto_falcon.md",
+        "regulamento_condominio.txt",
+        "relatorio_trimestral.docx"
+      ],
+      "top": [
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0313,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 0,
+          "score": 0.0304,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0302,
+          "hit": true
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 2,
+          "score": 0.0301,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0293,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-005",
+      "split": "dev",
+      "question": "Qual espaço de encontros é o mais procurado e em que fração do tempo ele fica ocupado?",
+      "expected_doc": "reuniao_projeto_falcon.md",
+      "rank": 1,
+      "latency_s": 0.09023400000000237,
+      "top_docs": [
+        "reuniao_projeto_falcon.md",
+        "notas_aula_fisica.md",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx",
+        "viagem_lisboa.md"
+      ],
+      "top": [
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.032,
+          "hit": true
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0315,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0313,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0301,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0292,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-006",
+      "split": "test",
+      "question": "Em que dia arranca a fase experimental de firmar acordos sem papel?",
+      "expected_doc": "reuniao_projeto_orion.md",
+      "rank": null,
+      "latency_s": 0.08287569999999533,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "relatorio_trimestral.docx",
+        "reuniao_projeto_falcon.md",
+        "notas_aula_fisica.md",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0328,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0311,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0303,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0301,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0299,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-007",
+      "split": "dev",
+      "question": "Qual a quantia que desembolso todo mês pela moradia?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": null,
+      "latency_s": 0.06327049999999446,
+      "top_docs": [
+        "regulamento_condominio.txt",
+        "contrato_aluguel.pdf",
+        "ata_assembleia_2025.txt",
+        "contrato_aluguel.pdf",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0306,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 2,
+          "score": 0.0305,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0301,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0298,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0285,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-008",
+      "split": "test",
+      "question": "Que penalidade sofro se quitar a mensalidade da moradia depois da data combinada?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": 5,
+      "latency_s": 0.10605499999999779,
+      "top_docs": [
+        "contrato_aluguel.pdf",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx",
+        "manual_roteador.txt",
+        "contrato_aluguel.pdf"
+      ],
+      "top": [
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0311,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0299,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0296,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0296,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 0,
+          "score": 0.0294,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "id": "par-009",
+      "split": "dev",
+      "question": "Com base em qual indicador de inflação a mensalidade da moradia sobe anualmente?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": null,
+      "latency_s": 0.14649709999999772,
+      "top_docs": [
+        "receitas_familia.md",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx",
+        "regulamento_condominio.txt",
+        "relatorio_trimestral.docx"
+      ],
+      "top": [
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0156,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-010",
+      "split": "test",
+      "question": "Qual a penalidade por devolver as chaves no primeiro ano de moradia?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": 4,
+      "latency_s": 0.07528620000000075,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "ata_assembleia_2025.txt",
+        "regulamento_condominio.txt",
+        "contrato_aluguel.pdf",
+        "receitas_familia.md"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.032,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0308,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0303,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0303,
+          "hit": true
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-011",
+      "split": "dev",
+      "question": "Se aparecer umidade escorrendo pela parede, quem arca com o conserto?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": 5,
+      "latency_s": 0.12606540000000166,
+      "top_docs": [
+        "reuniao_projeto_falcon.md",
+        "plano_treino.txt",
+        "reuniao_projeto_falcon.md",
+        "receitas_familia.md",
+        "contrato_aluguel.pdf"
+      ],
+      "top": [
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0313,
+          "hit": false
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 0,
+          "score": 0.0291,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "id": "par-012",
+      "split": "test",
+      "question": "Qual é a numeração do meu lugar para estacionar o carro?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": 4,
+      "latency_s": 0.13574119999999823,
+      "top_docs": [
+        "regulamento_condominio.txt",
+        "contrato_aluguel.pdf",
+        "notas_aula_calculo.md",
+        "contrato_aluguel.pdf",
+        "ata_assembleia_2025.txt"
+      ],
+      "top": [
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0325,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 0,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 2,
+          "score": 0.0156,
+          "hit": true
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-013",
+      "split": "dev",
+      "question": "Posso repassar a moradia para turistas por uns dias via app?",
+      "expected_doc": "contrato_aluguel.pdf",
+      "rank": null,
+      "latency_s": 0.1170189999999991,
+      "top_docs": [
+        "viagem_lisboa.md",
+        "regulamento_condominio.txt",
+        "ata_assembleia_2025.txt",
+        "regulamento_condominio.txt",
+        "plano_treino.txt"
+      ],
+      "top": [
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0311,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 2,
+          "score": 0.0303,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0299,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0296,
+          "hit": false
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 0,
+          "score": 0.0292,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-014",
+      "split": "test",
+      "question": "Quanto dinheiro entrou no negócio de peças de iluminação nesse último período de três meses?",
+      "expected_doc": "relatorio_trimestral.docx",
+      "rank": 1,
+      "latency_s": 0.12990469999999732,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "reuniao_projeto_falcon.md",
+        "receitas_familia.md",
+        "viagem_lisboa.md",
+        "viagem_lisboa.md"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0315,
+          "hit": true
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0313,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0308,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0306,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0303,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-015",
+      "split": "dev",
+      "question": "Por que o lucro sobre as vendas encolheu no período?",
+      "expected_doc": "relatorio_trimestral.docx",
+      "rank": 1,
+      "latency_s": 0.10290090000000163,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "viagem_lisboa.md",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx",
+        "ata_assembleia_2025.txt"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0294,
+          "hit": true
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0156,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-016",
+      "split": "test",
+      "question": "Quanto custou, em média, conquistar cada comprador novo?",
+      "expected_doc": "relatorio_trimestral.docx",
+      "rank": null,
+      "latency_s": 0.1038534999999996,
+      "top_docs": [
+        "notas_aula_fisica.md",
+        "regulamento_condominio.txt",
+        "notas_aula_calculo.md",
+        "manual_roteador.txt",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0308,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0308,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 1,
+          "score": 0.0307,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0296,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0288,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-017",
+      "split": "dev",
+      "question": "Quantos exemplares daquele abajur dobrado em estilo japonês saíram?",
+      "expected_doc": "relatorio_trimestral.docx",
+      "rank": 1,
+      "latency_s": 0.11083969999999965,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "relatorio_trimestral.docx",
+        "regulamento_condominio.txt",
+        "receitas_familia.md",
+        "receitas_familia.md"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.032,
+          "hit": true
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0315,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 2,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-018",
+      "split": "test",
+      "question": "No fim de semana, a partir de que hora preciso manter o volume baixo?",
+      "expected_doc": "regulamento_condominio.txt",
+      "rank": null,
+      "latency_s": 0.1029690999999957,
+      "top_docs": [
+        "receitas_familia.md",
+        "reuniao_projeto_falcon.md",
+        "relatorio_trimestral.docx",
+        "plano_treino.txt",
+        "ata_assembleia_2025.txt"
+      ],
+      "top": [
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0323,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0323,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0312,
+          "hit": false
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 0,
+          "score": 0.0307,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0301,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-019",
+      "split": "dev",
+      "question": "Qual o dia de manutenção em que não dá para nadar no prédio?",
+      "expected_doc": "regulamento_condominio.txt",
+      "rank": null,
+      "latency_s": 0.09625129999999871,
+      "top_docs": [
+        "reuniao_projeto_falcon.md",
+        "viagem_lisboa.md",
+        "notas_aula_calculo.md",
+        "contrato_aluguel.pdf",
+        "viagem_lisboa.md"
+      ],
+      "top": [
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0304,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 0,
+          "score": 0.0291,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0289,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0287,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-020",
+      "split": "test",
+      "question": "Preciso avisar com qual prazo para trazer o caminhão com meus móveis?",
+      "expected_doc": "regulamento_condominio.txt",
+      "rank": null,
+      "latency_s": 0.12156710000000004,
+      "top_docs": [
+        "contrato_aluguel.pdf",
+        "receitas_familia.md",
+        "receitas_familia.md",
+        "contrato_aluguel.pdf",
+        "regulamento_condominio.txt"
+      ],
+      "top": [
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0294,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 2,
+          "score": 0.0159,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-021",
+      "split": "dev",
+      "question": "Quanto vou desembolsar a mais por mês para refazer a vedação do telhado?",
+      "expected_doc": "regulamento_condominio.txt",
+      "rank": 1,
+      "latency_s": 0.12679869999999482,
+      "top_docs": [
+        "regulamento_condominio.txt",
+        "reuniao_projeto_falcon.md",
+        "receitas_familia.md",
+        "reuniao_projeto_falcon.md",
+        "manual_roteador.txt"
+      ],
+      "top": [
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0313,
+          "hit": true
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0311,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.031,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0303,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0301,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-022",
+      "split": "test",
+      "question": "Que previsão de despesas os moradores aprovaram para o exercício de 2025?",
+      "expected_doc": "ata_assembleia_2025.txt",
+      "rank": 1,
+      "latency_s": 0.09704889999999722,
+      "top_docs": [
+        "ata_assembleia_2025.txt",
+        "viagem_buenos_aires_2025.md",
+        "reuniao_projeto_falcon.md",
+        "regulamento_condominio.txt",
+        "receitas_familia.md"
+      ],
+      "top": [
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0328,
+          "hit": true
+        },
+        {
+          "doc": "viagem_buenos_aires_2025.md",
+          "chunk": 0,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-023",
+      "split": "dev",
+      "question": "Como devo descartar a gordura que sobra da fritura?",
+      "expected_doc": "regulamento_condominio.txt",
+      "rank": null,
+      "latency_s": 0.1448923000000022,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "notas_aula_fisica.md",
+        "receitas_familia.md",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0156,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-024",
+      "split": "test",
+      "question": "Qual o calor do forno e quanto demora para assar aquele salgado mineiro?",
+      "expected_doc": "receitas_familia.md",
+      "rank": 1,
+      "latency_s": 0.1147629999999964,
+      "top_docs": [
+        "receitas_familia.md",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx",
+        "viagem_lisboa.md",
+        "notas_aula_calculo.md"
+      ],
+      "top": [
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0309,
+          "hit": true
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 0,
+          "score": 0.0156,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-025",
+      "split": "dev",
+      "question": "Quanto daquele líquido branco do coqueiro vai no ensopado baiano?",
+      "expected_doc": "receitas_familia.md",
+      "rank": 3,
+      "latency_s": 0.08158110000000107,
+      "top_docs": [
+        "contrato_aluguel.pdf",
+        "receitas_familia.md",
+        "receitas_familia.md",
+        "viagem_lisboa.md",
+        "relatorio_trimestral.docx"
+      ],
+      "top": [
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0289,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": true
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0156,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-026",
+      "split": "test",
+      "question": "Qual é o localizador da passagem aérea da viagem à Europa?",
+      "expected_doc": "viagem_lisboa.md",
+      "rank": 2,
+      "latency_s": 0.10480210000000056,
+      "top_docs": [
+        "viagem_lisboa.md",
+        "viagem_lisboa.md",
+        "viagem_buenos_aires_2025.md",
+        "notas_aula_fisica.md",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0328,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.032,
+          "hit": true
+        },
+        {
+          "doc": "viagem_buenos_aires_2025.md",
+          "chunk": 0,
+          "score": 0.0315,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-027",
+      "split": "dev",
+      "question": "Até que data posso desistir do quarto sem ser cobrada?",
+      "expected_doc": "viagem_lisboa.md",
+      "rank": null,
+      "latency_s": 0.12927959999999672,
+      "top_docs": [
+        "manual_roteador.txt",
+        "ata_assembleia_2025.txt",
+        "reuniao_projeto_falcon.md",
+        "contrato_aluguel.pdf",
+        "regulamento_condominio.txt"
+      ],
+      "top": [
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0311,
+          "hit": false
+        },
+        {
+          "doc": "ata_assembleia_2025.txt",
+          "chunk": 0,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 1,
+          "score": 0.0156,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-028",
+      "split": "test",
+      "question": "Qual condução sobre trilhos me leva até a região da torre à beira do rio?",
+      "expected_doc": "viagem_lisboa.md",
+      "rank": null,
+      "latency_s": 0.15133149999999773,
+      "top_docs": [
+        "viagem_lisboa.md",
+        "manual_roteador.txt",
+        "receitas_familia.md",
+        "relatorio_trimestral.docx",
+        "receitas_familia.md"
+      ],
+      "top": [
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0315,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0294,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0159,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-029",
+      "split": "dev",
+      "question": "Quando e em que local vou fazer a prova inicial da disciplina de matemática?",
+      "expected_doc": "notas_aula_calculo.md",
+      "rank": 2,
+      "latency_s": 0.11182360000000102,
+      "top_docs": [
+        "notas_aula_fisica.md",
+        "notas_aula_calculo.md",
+        "plano_treino.txt",
+        "plano_treino.txt",
+        "notas_aula_calculo.md"
+      ],
+      "top": [
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0323,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 0,
+          "score": 0.0312,
+          "hit": true
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 0,
+          "score": 0.0298,
+          "hit": false
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 1,
+          "score": 0.0294,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 1,
+          "score": 0.0164,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-030",
+      "split": "test",
+      "question": "Quando dá para resolver um quociente indefinido pelo atalho de diferenciar as duas partes?",
+      "expected_doc": "notas_aula_calculo.md",
+      "rank": null,
+      "latency_s": 0.15243399999999951,
+      "top_docs": [
+        "notas_aula_calculo.md",
+        "contrato_aluguel.pdf",
+        "contrato_aluguel.pdf",
+        "reuniao_projeto_falcon.md",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 1,
+          "score": 0.0328,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 2,
+          "score": 0.0317,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 0,
+          "score": 0.0292,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0161,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-031",
+      "split": "dev",
+      "question": "Qual nota me livra da recuperação no fim do curso?",
+      "expected_doc": "notas_aula_calculo.md",
+      "rank": null,
+      "latency_s": 0.15595379999999892,
+      "top_docs": [
+        "plano_treino.txt",
+        "relatorio_trimestral.docx",
+        "manual_roteador.txt",
+        "reuniao_projeto_falcon.md",
+        "receitas_familia.md"
+      ],
+      "top": [
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 0,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0306,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0305,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0161,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-032",
+      "split": "test",
+      "question": "Como restauro o equipamento de internet ao estado em que veio da loja?",
+      "expected_doc": "manual_roteador.txt",
+      "rank": 2,
+      "latency_s": 0.19249320000000125,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "manual_roteador.txt",
+        "manual_roteador.txt",
+        "receitas_familia.md",
+        "viagem_lisboa.md"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 0,
+          "score": 0.0328,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.032,
+          "hit": true
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 0,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-033",
+      "split": "dev",
+      "question": "O que quer dizer quando o indicador do modem acende em vermelho?",
+      "expected_doc": "manual_roteador.txt",
+      "rank": 1,
+      "latency_s": 0.1885559999999984,
+      "top_docs": [
+        "manual_roteador.txt",
+        "manual_roteador.txt",
+        "receitas_familia.md",
+        "notas_aula_calculo.md",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0328,
+          "hit": true
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        },
+        {
+          "doc": "receitas_familia.md",
+          "chunk": 1,
+          "score": 0.0159,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_calculo.md",
+          "chunk": 1,
+          "score": 0.0156,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0154,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-034",
+      "split": "test",
+      "question": "Como libero uma conexão sem fio à parte para quem vem me visitar?",
+      "expected_doc": "manual_roteador.txt",
+      "rank": null,
+      "latency_s": 0.10663870000000486,
+      "top_docs": [
+        "contrato_aluguel.pdf",
+        "contrato_aluguel.pdf",
+        "reuniao_projeto_falcon.md",
+        "manual_roteador.txt",
+        "viagem_lisboa.md"
+      ],
+      "top": [
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 1,
+          "score": 0.03,
+          "hit": false
+        },
+        {
+          "doc": "contrato_aluguel.pdf",
+          "chunk": 2,
+          "score": 0.0292,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 2,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "manual_roteador.txt",
+          "chunk": 0,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 1,
+          "score": 0.0161,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-035",
+      "split": "dev",
+      "question": "Qual a minha meta de duração na prova de rua do fim do ano?",
+      "expected_doc": "plano_treino.txt",
+      "rank": null,
+      "latency_s": 0.11361899999999991,
+      "top_docs": [
+        "relatorio_trimestral.docx",
+        "viagem_lisboa.md",
+        "plano_treino.txt",
+        "notas_aula_fisica.md",
+        "reuniao_projeto_falcon.md"
+      ],
+      "top": [
+        {
+          "doc": "relatorio_trimestral.docx",
+          "chunk": 1,
+          "score": 0.0325,
+          "hit": false
+        },
+        {
+          "doc": "viagem_lisboa.md",
+          "chunk": 0,
+          "score": 0.0318,
+          "hit": false
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 1,
+          "score": 0.0299,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0296,
+          "hit": false
+        },
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0295,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "id": "par-036",
+      "split": "test",
+      "question": "Em que horário é dada a partida da competição de corrida?",
+      "expected_doc": "plano_treino.txt",
+      "rank": null,
+      "latency_s": 0.13652629999999988,
+      "top_docs": [
+        "reuniao_projeto_falcon.md",
+        "plano_treino.txt",
+        "regulamento_condominio.txt",
+        "regulamento_condominio.txt",
+        "notas_aula_fisica.md"
+      ],
+      "top": [
+        {
+          "doc": "reuniao_projeto_falcon.md",
+          "chunk": 1,
+          "score": 0.0323,
+          "hit": false
+        },
+        {
+          "doc": "plano_treino.txt",
+          "chunk": 0,
+          "score": 0.032,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 0,
+          "score": 0.029,
+          "hit": false
+        },
+        {
+          "doc": "regulamento_condominio.txt",
+          "chunk": 2,
+          "score": 0.0164,
+          "hit": false
+        },
+        {
+          "doc": "notas_aula_fisica.md",
+          "chunk": 0,
+          "score": 0.0159,
+          "hit": false
+        }
+      ]
+    }
+  ]
+}
