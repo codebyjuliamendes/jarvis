@@ -88,6 +88,11 @@ class MetricsStore:
         self._conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         with self._lock:
+            # Telemetria: WAL + synchronous=NORMAL troca o fsync a cada commit
+            # (~13 ms medidos no Windows) por < 1 ms. Numa queda de energia
+            # pode-se perder as últimas métricas, nunca corromper o banco.
+            self._conn.execute("PRAGMA journal_mode=WAL")
+            self._conn.execute("PRAGMA synchronous=NORMAL")
             self._conn.executescript(_SCHEMA)
             self._conn.execute("PRAGMA user_version = {}".format(SCHEMA_VERSION))
             self._conn.commit()
