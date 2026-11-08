@@ -1,0 +1,52 @@
+# Jarvis + Ollama em contêineres.
+#
+#   cp .env.example .env            # preencha TELEGRAM_BOT_TOKEN e TELEGRAM_ALLOWED_USER_IDS
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull qwen2.5:3b
+#   docker compose exec ollama ollama pull nomic-embed-text
+#   docker compose logs -f jarvis
+#
+# Com GPU NVIDIA (precisa do NVIDIA Container Toolkit no host):
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d --build
+
+services:
+  ollama:
+    image: ollama/ollama:0.40.14
+    restart: unless-stopped
+    volumes:
+      - ollama-models:/root/.ollama
+    # Sem porta publicada: só o jarvis fala com o Ollama, pela rede interna do compose.
+    # Para usar o Ollama do contêiner a partir do host, descomente (só no localhost):
+    # ports:
+    #   - "127.0.0.1:11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  jarvis:
+    build: .
+    image: jarvis:local
+    restart: unless-stopped
+    depends_on:
+      ollama:
+        condition: service_healthy
+    # Os segredos ficam no .env do host e entram como variáveis de ambiente;
+    # nada disso vai para a imagem.
+    env_file:
+      - .env
+    # Sobrescreve o que no .env aponta para o host (127.0.0.1, caminhos locais).
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      JARVIS_DB_PATH: /app/data/jarvis.sqlite3
+      JARVIS_WORKSPACE: /home/jarvis/workspace
+      JARVIS_ALLOWED_ROOTS: /home/jarvis/workspace
+    volumes:
+      # histórico, métricas, índice do RAG, uploads e tokens (Google/Microsoft)
+      - ./data:/app/data
+      # a pasta que o Jarvis pode ler/escrever e indexar no RAG
+      - ${JARVIS_HOST_WORKSPACE:-./workspace}:/home/jarvis/workspace
+
+volumes:
+  ollama-models:

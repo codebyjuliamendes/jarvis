@@ -36,3 +36,6 @@ mlartifacts/
 !finetune/data/
 # pesos exportados do Colab (centenas de MB)
 *.gguf
+
+# pasta de trabalho padrão do docker-compose (montada no contêiner)
+workspace/

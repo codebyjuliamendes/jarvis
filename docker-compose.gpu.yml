@@ -1,0 +1,16 @@
+# GPU NVIDIA para o Ollama (opcional). Use junto com o arquivo principal:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d --build
+#
+# Requer o driver NVIDIA e o NVIDIA Container Toolkit no host. Sem GPU, o
+# docker-compose.yml sozinho roda o Ollama na CPU (qwen2.5:3b é o mais leve).
+
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
