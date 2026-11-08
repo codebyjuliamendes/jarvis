@@ -64,9 +64,20 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
 
 ## Limitações da avaliação
 
-- **Uma execução por configuração.** Seed fixo (42) e temperatura 0,2 (a do agente), sem
-  repetições: não há intervalo de confiança. Com 78 casos, 1 caso = 1,3 ponto percentual;
-  diferenças de poucos pontos entre modelos não são conclusivas.
+- **[RESOLVIDO nos extras: `--repeats N`, IC 95% e McNemar; ver `results/REPEATS.md`]**
+  Uma execução por configuração, sem intervalo de confiança. Agora há 3 rodadas por modelo no
+  nativo (e no JSON dos dois qwen), IC por bootstrap sobre os casos e Wilson, e McNemar exato
+  pareado. O que continua valendo: com 78 casos o IC tem ~15 pontos de largura, e
+  `qwen2.5:3b` × `llama3.2:3b` dá p = 0,049, que não passa na correção para 4 comparações.
+  Para separar modelos tão próximos, o caminho é mais casos, não mais rodadas.
+- **[PENDENTE] `llama3.2:3b` no modo JSON com 3 rodadas.** A rodada foi interrompida pelo
+  Claude Code por falta de memória livre e não foi relançada. Comando:
+  `compare_models.py llama3.2:3b --modes json --repeats 3 --skip-rag --markdown <tmp>`, depois
+  `--from-json` com os 6 arquivos para refazer o `REPEATS.md`.
+- **Timeouts do `qwen2.5:1.5b`.** Sem limite de `num_predict` (nem no agente nem no eval), o
+  1,5B às vezes não para de gerar e estoura os 300 s do cliente: 2–4 casos por rodada nativa nos
+  extras (1 na rodada anterior). Conta como erro. Um `num_predict` no agente (ex.: 512) cortaria
+  isso, mas muda o comportamento do bot e precisa de medida própria.
 - **Latência de um único notebook** (RTX 4050 Laptop 6 GB, Windows 11). Os números servem
   para comparar modelos entre si, não como garantia de desempenho em outra máquina.
 - **Dataset escrito por uma pessoa**, sem anotação dupla. Os casos ambíguos aceitam mais de

@@ -8,7 +8,8 @@
 Assistente pessoal com **LLM local** (Ollama) que conversa pelo **Telegram** e age com **25
 ferramentas reais** — terminal, arquivos, git/GitHub, Google, Microsoft 365, Notion, RAG nas
 suas notas. Medido, não suposto: o `qwen2.5:3b` escolhe a ferramenta certa em **82,1%** de 78
-pedidos em pt-BR (0,58 s por decisão numa GPU de notebook), e trocar a busca vetorial pela
+pedidos em pt-BR (85,5% na média de 3 rodadas, IC 95% de 77,8% a 92,3%; 0,58 s por
+decisão numa GPU de notebook), e trocar a busca vetorial pela
 busca por palavras (BM25) levou o recall@1 do RAG de **44,4% para 83,3%**. Observabilidade
 por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **servidor MCP** que
 leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **427 testes** sem
@@ -144,17 +145,31 @@ rodada anterior](evals/results/RESULTS.md); os JSON com cada caso estão em
 - **O RAG era o elo mais fraco** (recall@1 de 44,4%, fora do top-5 em 10 de 36). O
   subprojeto 4 mediu prefixos, BM25 e busca híbrida; o resultado e as ressalvas estão na
   seção [RAG](#rag).
-- **Quanto uma rodada varia:** com o mesmo prompt e o mesmo código, o `qwen2.5:3b` nativo deu
-  66/78 numa rodada e 64/78 na seguinte (temperatura 0,2 e seed fixo não garantem a mesma
-  saída na GPU). Com 78 casos, 1 caso = 1,3 ponto: diferenças de poucos pontos não são
-  conclusivas; a ordem entre os modelos no modo nativo foi a mesma nas duas rodadas. As latências valem para
-  esta máquina. Ver [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md).
+- **Quanto uma rodada varia, e o que isso muda (3 rodadas por modelo).** Rodadas idênticas
+  variam 1–2 casos no modo nativo (temperatura 0,2 e seed fixo não garantem a mesma saída na
+  GPU), mas a incerteza maior é a amostra de 78 pedidos: o IC 95% tem ~15 pontos de largura.
+
+  | Modelo (nativo) | Acertos nas 3 rodadas | Média | Desvio | IC 95% (bootstrap sobre os casos) |
+  |---|---|---|---|---|
+  | `qwen2.5:1.5b` | 43 / 42 / 42 | 54,3% | 0,7 p.p. | [44,0; 64,5%] |
+  | **`qwen2.5:3b`** | **67 / 67 / 66** | **85,5%** | 0,7 p.p. | **[77,8; 92,3%]** |
+  | `llama3.2:3b` | 56 / 58 / 58 | 73,5% | 1,5 p.p. | [63,7; 82,5%] |
+
+  `qwen2.5:3b` × `llama3.2:3b`, pareado por caso: 13 casos só o qwen acerta, 4 só o llama;
+  McNemar exato p = 0,049 e diferença de +12,0 pontos (IC 95% [+2,1; +22,2]). É evidência
+  moderada a favor do qwen, **não** conclusiva: rodada a rodada o p vai de 0,019 a 0,096 e não
+  passa na correção de Bonferroni para as 4 comparações (0,0125). O `qwen2.5:1.5b` perde dos
+  dois com folga (p < 0,001 e 0,008). Detalhes, modo JSON e ressalvas em
+  [`RESULTS.md`](evals/results/RESULTS.md#três-rodadas-por-modelo-variância-ic-95-e-teste-pareado-extras)
+  e [`REPEATS.md`](evals/results/REPEATS.md). As latências valem para esta máquina.
 
 Para reproduzir:
 
 ```bash
 uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt   # MLflow (opcional) + pytest
 .venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b qwen2.5:3b llama3.2:3b --modes native,json
+.venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b qwen2.5:3b llama3.2:3b \
+    --repeats 3 --skip-rag --markdown evals/results/REPEATS.md     # média, desvio, IC 95%, McNemar
 .venv/Scripts/python.exe -m pytest -q    # testes unitários, sem Ollama
 ```
 
