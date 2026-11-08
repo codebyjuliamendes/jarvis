@@ -82,3 +82,58 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
   `.gitignore` também pegava `evals/data`) e os fixtures entraram junto com o código; os
   datasets entraram no commit seguinte, `3eaadd4`, que também corrige o `.gitignore`. O
   histórico não foi reescrito.
+
+## Observabilidade (subprojeto 3)
+
+O que a instrumentação mede, o que não mede e as decisões que merecem revisão. A
+especificação está em `docs/superpowers/specs/2026-11-08-observabilidade-design.md`.
+
+1. **Falha de ferramenta é uma heurística.** As ferramentas devolvem o erro em texto em vez
+   de levantar exceção. Conta como falha: exceção, ferramenta inexistente e texto que começa
+   com `Erro`. Respostas como "Não é um arquivo: ...", "Informe o campo 'path'." ou
+   "Notion não configurado" contam como **sucesso**. O certo seria as ferramentas devolverem
+   um resultado estruturado (`ok`, `texto`); isso muda o contrato das 25 ferramentas e ficou
+   para depois.
+2. **Latência é a do agente, não a percebida.** `latency_s` cobre o `Agent.respond`. Fica de
+   fora: download e transcrição de áudio (Whisper), extração de PDF/DOCX/OCR antes do agente,
+   o envio da resposta ao Telegram e o TTS. Tempo até o primeiro token também não existe:
+   o cliente usa `stream: false`.
+3. **Tokens de prompt vêm do Ollama sem conferência.** Não verifiquei se o
+   `prompt_eval_count` desconta o prefixo reaproveitado do cache KV entre chamadas da mesma
+   conversa. Na demo os números batem com o prompt inteiro (~950 tokens na 1ª chamada,
+   ~1.050 na 2ª, com o resultado da ferramenta), mas isso não foi testado em conversas
+   longas.
+4. **Uma chamada ao LLM que falha conta em `llm_calls`.** Inclusive a primeira tentativa
+   que recebe `ToolsNotSupported` e faz o agente cair para o modo JSON (ela também consome
+   uma iteração, como já acontecia antes). É intencional (mostra o custo real), mas pode
+   surpreender quem compara `llm_calls` com `iterations`.
+5. **Sem retenção.** As tabelas crescem para sempre (cada requisição ocupa algumas centenas
+   de bytes; uso pessoal leva anos para pesar). Não há limpeza automática nem
+   `/metrics reset`; zerar é apagar `data/metrics.sqlite3`.
+6. **O `/metrics` mistura origens e modelos.** A coluna `source` separa `chat` de
+   `briefing` (e da demo), e `model` registra o modelo, mas o resumo junta tudo. Se o
+   modelo for trocado no meio da semana, os percentis de 7 dias misturam os dois (a linha
+   "Modelos:" avisa quando há mais de um).
+7. **`request_id` só existe onde há agente.** Mensagens de texto, áudio e documento passam
+   pelo `_run_agent` e ganham id (inclusive os logs do envio da resposta). Comandos como
+   `/status`, `/reindex`, `/remind`, os disparos de lembrete e o agendador do briefing
+   (fora do `respond`) logam com `request_id: null`. O log da transcrição do áudio também
+   fica sem id, porque acontece antes do `_run_agent`.
+8. **Gravação síncrona no event loop.** `record()` roda na mesma thread do bot: 0,2 ms p50
+   e 0,5 ms p95 medidos (300 gravações, Windows, WAL), com picos de ~10 ms quando o SQLite
+   faz checkpoint do WAL. Aceitável para um bot pessoal; com mais carga, o caminho é uma
+   fila com uma thread gravadora.
+9. **`synchronous=NORMAL` pode perder as últimas métricas** numa queda de energia (não
+   corrompe o banco). Para telemetria a troca vale; para o histórico de conversa o `Memory`
+   continua com o padrão do SQLite.
+10. **A demo é pequena.** `scripts/demo_metrics.py` roda 5 pedidos uma vez, só com
+    ferramentas de arquivo numa pasta temporária. Serve para mostrar o pipeline de ponta a
+    ponta com o modelo real, não como medida de desempenho: com n = 5 o p95 é ilustrativo, e
+    o primeiro pedido inclui carregar o modelo na GPU.
+11. **Não testei o `/metrics` num Telegram de verdade.** O handler é testado com o
+    `JarvisBot` real e um `Update` falso (autorizado, não autorizado, métricas
+    desligadas). A formatação usa bloco ``` do Markdown legado do Telegram; se o envio com
+    Markdown falhar, o `_reply` já reenvia em texto puro, mas a aparência no app não foi
+    conferida.
+12. **Quem já tem `.env` com `OLLAMA_URL=http://localhost:11434`** continua pagando os ~2 s
+    por conexão no Windows: a troca do padrão não reescreve `.env` existente.

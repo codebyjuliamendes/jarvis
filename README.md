@@ -123,6 +123,101 @@ uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt   # M
 
 ---
 
+## Observabilidade
+
+Avaliação diz se o modelo escolhe bem num dataset; observabilidade diz como o Jarvis se
+comporta **no uso real**. Cada mensagem vira uma linha numa tabela SQLite, e o comando
+`/metrics` no Telegram resume as últimas 24 h e os últimos 7 dias. A especificação está em
+[`docs/superpowers/specs/2026-11-08-observabilidade-design.md`](docs/superpowers/specs/2026-11-08-observabilidade-design.md).
+
+**O que é medido, por requisição** (sem gravar o texto do pedido, da resposta nem os
+argumentos das ferramentas):
+
+- latência total (relógio de parede do `Agent.respond`) e tempo gasto dentro do LLM;
+- tokens de prompt e de resposta e vazão (tokens/s), tirados do que o próprio Ollama devolve
+  (`prompt_eval_count`, `eval_count`, `eval_duration`), com o mesmo código das avaliações
+  (`jarvis/metrics_utils.py`);
+- iterações do laço do agente, modo (function calling nativo ou JSON) e desfecho: `ok`,
+  `error` (Ollama fora do ar, HTTP de erro, exceção) ou `max_iterations` (não concluiu);
+- cada ferramenta chamada: nome, duração e sucesso/falha. Conta como falha a exceção, a
+  ferramenta inexistente e o texto que começa com `Erro` (as ferramentas do Jarvis devolvem o
+  erro em texto para o modelo ler, em vez de levantar exceção).
+
+**Esquema** (`data/metrics.sqlite3`, separado do histórico em `data/jarvis.sqlite3` para dar
+para apagar ou compartilhar a telemetria sem expor conversas):
+
+| Tabela | Colunas principais |
+|---|---|
+| `metrics` | `request_id` (PK), `ts`, `created_at`, `source` (chat/briefing/demo), `chat_id`, `model`, `mode`, `latency_s`, `llm_calls`, `llm_s`, `prompt_tokens`, `completion_tokens`, `eval_s`, `tokens_per_s`, `iterations`, `tool_calls`, `outcome`, `error` |
+| `metric_tool_calls` | `request_id` (FK), `seq`, `tool`, `duration_s`, `ok`, `error` |
+
+**Como é gravado.** Durante a requisição só se acumula em memória, num objeto guardado em
+`contextvars` (cada conversa simultânea tem o seu, então os números não se misturam mesmo com
+o cliente Ollama e o registro de ferramentas compartilhados). No fim, uma única transação. Com
+WAL e `synchronous=NORMAL`, medido nesta máquina: **0,2 ms p50 / 0,5 ms p95 por requisição**
+(eram 13 ms / 26 ms com o fsync padrão a cada commit). Falha ao gravar vira um `WARNING` no
+log e a resposta segue igual, coberto por teste.
+
+**Exemplo real.** Saída de `scripts/demo_metrics.py`, que roda o agente de verdade (mesmo
+prompt, ferramentas e laço do bot, sem Telegram) com `qwen2.5:3b` em 5 pedidos, numa pasta e
+num banco temporários. Medido em 08/11/2026 na RTX 4050 Laptop (6 GB), começando com o modelo
+descarregado:
+
+```
+== Últimas 24 h ==
+Requisições: 5 | erro: 0 | sem concluir: 0 | taxa de erro: 0%
+Latência: p50 1.7 s | p95 3.6 s | máx 4.1 s
+Por requisição: 1.8 iterações | 1813 tokens de prompt | 83 de resposta
+Vazão do modelo: 69.2 tokens/s
+Modelos: qwen2.5:3b
+Ferramentas: 4 chamada(s), 1 falha(s)
+Mais usadas:
+  read_file          2x  p50    3 ms  falhas 1
+  list_dir           1x  p50   15 ms  falhas 0
+  write_file         1x  p50    3 ms  falhas 0
+Mais falham:
+  read_file        1/2 (50%)
+
+== Últimos 7 dias ==
+(igual: todas as requisições da demo são de agora)
+```
+
+Como ler: o máximo de 4,1 s é o primeiro pedido, que inclui carregar o modelo na GPU; os
+outros ficaram entre 1,1 e 1,9 s com duas idas ao LLM cada (decidir a ferramenta e responder).
+A falha do `read_file` é proposital: o 5º pedido pede um arquivo que não existe, e o modelo
+respondeu corretamente que não o encontrou. Os ~1.000 tokens de prompt por chamada são quase
+todos system prompt + schemas das ferramentas, o que aponta onde cortar latência. Com 5
+requisições, o p95 é só ilustrativo.
+
+```bash
+.venv/Scripts/python.exe scripts/demo_metrics.py                    # qwen2.5:3b, logs em texto
+.venv/Scripts/python.exe scripts/demo_metrics.py --log-format json  # logs JSON
+```
+
+**Logs estruturados.** `JARVIS_LOG_FORMAT=json` troca o formato de texto de sempre (que
+continua o padrão) por uma linha JSON por evento. Toda linha tem o `request_id`, o mesmo da
+tabela `metrics`, inclusive as que saem de dentro das ferramentas (o `run_blocking` copia o
+contexto para a thread). Linha real da demo:
+
+```json
+{"ts": "2026-11-08T04:23:41.213+00:00", "level": "INFO", "logger": "jarvis.agent", "msg": "requisição concluída: ok em 1.88s (2 iterações, 1 ferramenta(s))", "request_id": "05bd83571b72", "source": "demo", "model": "qwen2.5:3b", "mode": "native", "outcome": "ok", "latency_s": 1.878363, "llm_calls": 2, "prompt_tokens": 2106, "completion_tokens": 117, "tokens_per_s": 73.32076644641192, "iterations": 2, "tool_calls": 1, "error": null}
+```
+
+Para seguir um pedido ou achar os lentos:
+
+```bash
+python -m jarvis 2> jarvis.log                                   # com JARVIS_LOG_FORMAT=json
+jq -c 'select(.request_id == "05bd83571b72")' jarvis.log          # tudo de uma requisição
+jq -c 'select(.msg | startswith("requisição concluída")) | select(.latency_s > 5)' jarvis.log
+sqlite3 data/metrics.sqlite3 "select tool, count(*), sum(1-ok) from metric_tool_calls group by tool"
+```
+
+Com `JARVIS_LOG_LEVEL=DEBUG` sai também uma linha `ferramenta executada` por chamada, com
+`tool`, `duration_s` e `ok`. Limitações e o que ficou de fora:
+[`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#observabilidade-subprojeto-3).
+
+---
+
 ## Requisitos
 
 - Linux ou macOS, Python **3.8+**.
@@ -208,6 +303,7 @@ TELEGRAM_ALLOWED_USER_IDS=123456789
 ```
 
 Pronto. Mande `/status` para ver modelo, Ollama e integrações.
+E `/metrics` para latência, erros e ferramentas mais usadas (24 h e 7 dias).
 
 ---
 
@@ -290,6 +386,10 @@ Exemplos de pedidos:
 | `JARVIS_TTS_VOICE` | não | Voz edge-tts (padrão `pt-BR-FranciscaNeural`) |
 | `JARVIS_TTS_RATE` | não | Velocidade, ex.: `+0%`, `+15%`, `-10%` |
 | `JARVIS_TTS_MAX_CHARS` | não | Limite de caracteres por áudio (padrão 3000) |
+| `JARVIS_METRICS_ENABLED` | não | `true` (padrão) grava métricas por requisição; `/metrics` mostra o resumo |
+| `JARVIS_METRICS_DB_PATH` | não | Banco das métricas (padrão `data/metrics.sqlite3`) |
+| `JARVIS_LOG_FORMAT` | não | `text` (padrão, formato de sempre) ou `json` (uma linha JSON com `request_id`) |
+| `JARVIS_LOG_LEVEL` | não | `INFO` (padrão), `DEBUG`, `WARNING`... |
 
 ---
 
@@ -617,6 +717,10 @@ jarvis/
 │   ├── telegram_api.py      # envio de mensagens, arquivos e áudio
 │   ├── llm.py               # cliente Ollama (+ fallback sem tools)
 │   ├── agent.py             # loop do agente
+│   ├── observability.py     # request_id e rastro por requisição (contextvars)
+│   ├── metrics_store.py     # tabela de métricas (SQLite) e resumo do /metrics
+│   ├── metrics_utils.py     # percentis e tokens/s (avaliações e métricas)
+│   ├── logging_setup.py     # logs em texto ou JSON
 │   ├── telegram_bot.py      # bot, autorização, comandos, voz, documentos
 │   └── tools/
 │       ├── system.py        # terminal e arquivos
@@ -639,6 +743,7 @@ jarvis/
 │   ├── backup.sh
 │   ├── reindex.py
 │   ├── smoke_test.py
+│   ├── demo_metrics.py      # agente real + /metrics num banco temporário
 │   ├── jarvis.service
 │   ├── jarvis-backup.service
 │   ├── jarvis-backup.timer
