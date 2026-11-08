@@ -63,6 +63,8 @@ class Agent:
             "- Para perguntas sobre conteúdo antigo, notas, PDFs ou documentos, use "
             "knowledge_search antes de responder. Use read_pdf/read_docx/read_image para ler "
             "documentos específicos.\n"
+            "- Ao responder com o que veio do knowledge_search, cite as fontes no fim: "
+            "(fonte: arquivo, trecho N). Não invente fontes.\n"
             "- Antes de ações destrutivas ou irreversíveis (apagar, sobrescrever, "
             "git push --force, enviar e-mail), peça confirmação à usuária.\n"
             "- Se uma ferramenta não estiver configurada, diga exatamente o que falta no .env.\n"

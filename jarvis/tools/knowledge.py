@@ -1,13 +1,37 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from .. import security
 from ..config import Settings
 from ..rag import RagIndex
 from ..security import SecurityError
 from .base import ToolRegistry
+
+
+CITATION_HINT = (
+    "Ao responder, cite as fontes que usou no formato (fonte: arquivo, trecho N). "
+    "Não cite o que não está abaixo."
+)
+
+
+def format_results(results: List[Dict[str, Any]], max_chars: int = 1200) -> str:
+    """Resultados do RAG para o modelo: arquivo e trecho de cada um, para ele citar."""
+    lines = ["Resultados da memória local. " + CITATION_HINT]
+    for index, item in enumerate(results, start=1):
+        text = str(item["text"]).strip().replace("\n", " ")
+        if len(text) > max_chars:
+            text = text[:max_chars] + "..."
+        path = str(item["path"])
+        name = str(item.get("name") or Path(path).name)
+        chunk = int(item.get("chunk") or 0) + 1  # para humanos, começa em 1
+        total = item.get("chunks_total")
+        position = "trecho {} de {}".format(chunk, total) if total else "trecho {}".format(chunk)
+        lines.append(
+            "\n[{}] {}, {}\ncaminho: {}\n{}".format(index, name, position, path, text)
+        )
+    return "\n".join(lines)
 
 
 class KnowledgeTools:
@@ -77,17 +101,7 @@ class KnowledgeTools:
                 "Nada encontrado na memória local. "
                 "Use knowledge_index para indexar arquivos primeiro."
             )
-        lines = ["Resultados da memória local:"]
-        for index, item in enumerate(results, start=1):
-            text = str(item["text"]).strip().replace("\n", " ")
-            if len(text) > 1200:
-                text = text[:1200] + "..."
-            lines.append(
-                "\n[{}] score={:.2f} fonte={}\n{}".format(
-                    index, float(item["score"]), item["path"], text
-                )
-            )
-        return "\n".join(lines)
+        return format_results(results)
 
     def _index(self, args: Dict[str, Any]) -> str:
         raw = args.get("path")

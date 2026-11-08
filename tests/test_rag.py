@@ -315,3 +315,52 @@ def test_describe_menciona_a_configuracao(settings, tmp_path):
         assert rag_module.HYBRID_CANDIDATES == 20
     finally:
         rag.close()
+
+
+# ------------------------------------------------- knowledge_search (citação)
+
+
+def test_knowledge_search_devolve_arquivo_e_trecho_para_citar(settings, tmp_path):
+    import asyncio
+
+    from jarvis.agent import Agent
+    from jarvis.memory import Memory
+    from jarvis.reminders import ReminderService
+    from jarvis.tools import build_registry
+
+    rag = make_rag(settings, tmp_path, rag_mode="hybrid")
+    reminders = ReminderService(settings)
+    try:
+        corpus = make_corpus(tmp_path)
+        rag.index(paths=[corpus], force=True)
+        registry = build_registry(settings, reminders, rag)
+        output = asyncio.run(
+            registry.execute("knowledge_search", {"query": "lançamento do Falcon", "k": 2})
+        )
+        lines = output.splitlines()
+        assert lines[0].startswith("Resultados da memória local.")
+        assert "(fonte: arquivo, trecho N)" in lines[0]
+        assert "[1] falcon.md, trecho 1 de 1" in lines
+        assert "caminho: {}".format((corpus / "falcon.md").resolve()) in lines
+        assert any("adiado para 24 de novembro" in line for line in lines)
+        assert "score=" not in output  # a escala muda com o modo; não ajuda o modelo
+
+        memory = Memory(settings.db_path)
+        try:
+            prompt = Agent(settings, registry, memory)._system_prompt()
+        finally:
+            memory.close()
+        assert "(fonte: arquivo, trecho N)" in prompt
+    finally:
+        rag.close()
+        reminders.close()
+
+
+def test_format_results_sem_total_e_texto_longo():
+    from jarvis.tools.knowledge import format_results
+
+    text = format_results(
+        [{"path": "/x/notas.md", "chunk": 2, "score": 0.5, "text": "linha 1\nlinha 2" + "a" * 2000}],
+        max_chars=20,
+    )
+    assert "[1] notas.md, trecho 3\ncaminho: /x/notas.md\nlinha 1 linha 2aaaaa..." in text
