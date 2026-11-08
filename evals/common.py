@@ -251,10 +251,14 @@ def slug(text: str) -> str:
 
 
 def save_json(payload: Dict[str, Any], name: str, out_dir: Path = RESULTS_DIR) -> Path:
+    # Os resultados vão para o git: troca a home e o usuário da máquina por
+    # <HOME>/<USER> (o modelo copia o caminho da pasta temporária nas respostas).
+    from evals.sanitize import sanitize_obj
+
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / name
     with open(str(path), "w", encoding="utf-8", newline="\n") as handle:
-        json.dump(payload, handle, ensure_ascii=False, indent=2)
+        json.dump(sanitize_obj(payload), handle, ensure_ascii=False, indent=2)
         handle.write("\n")
     return path
 

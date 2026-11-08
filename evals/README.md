@@ -159,6 +159,17 @@ embeddings. Grava em [`results/`](results/):
 
 Os JSON são versionados de propósito: a tabela do README é reproduzível e auditável.
 
+**Sem dados da máquina.** O system prompt mostra a pasta de trabalho (um diretório temporário
+dentro da home) e o modelo copia esse caminho nas respostas. `common.save_json` passa tudo
+por [`sanitize.py`](sanitize.py), que troca a home e o nome do usuário (com qualquer escape,
+sem acento, truncado, nome curto 8.3) por `<HOME>`/`<USER>`. Os números não mudam: as
+métricas são calculadas antes de gravar. Para conferir ou limpar arquivos já gravados:
+
+```bash
+.venv/Scripts/python.exe evals/sanitize.py --check evals/results   # sai com 1 se achar algo
+.venv/Scripts/python.exe evals/sanitize.py evals/results           # regrava limpo
+```
+
 ## 4. MLflow
 
 Cada execução de `eval_tools.py`, `eval_rag.py` e `compare_models.py` vira um **run** no
@@ -216,6 +227,7 @@ evals/
   eval_rag.py        recuperação (modos vector/bm25/hybrid, --grid -> results/RAG.md)
   bench_vector_backend.py  microbenchmark sqlite-vec x NumPy
   compare_models.py  comparação + RESULTS.md
+  sanitize.py        tira home/usuário da máquina dos JSON antes de gravar
   report.py          tabelas Markdown
   tracking.py        MLflow opcional
   make_fixtures.py   gera o corpus fictício
