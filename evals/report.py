@@ -138,3 +138,124 @@ def single_summary(result: Dict[str, Any], script: str, files: List[str]) -> Dic
         "failures": [],
         "files": files,
     }
+
+
+# ------------------------------------------------------------ repetições
+
+
+def _pct1(value: float) -> str:
+    return "{:.1f}%".format(value * 100).replace(".", ",")
+
+
+def _ci(interval: List[float]) -> str:
+    return "[{}; {}]".format(
+        "{:.1f}".format(interval[0] * 100).replace(".", ","), _pct1(interval[1]))
+
+
+def _pp(value: Any) -> str:
+    if value is None:
+        return "—"
+    return "{:.1f}".format(value * 100).replace(".", ",") + " p.p."
+
+
+def _p(value: float) -> str:
+    return ("{:.3f}".format(value) if value >= 0.001 else "< 0,001").replace(".", ",")
+
+
+def repeated_row(repeated: Dict[str, Any]) -> List[str]:
+    tool = repeated["stats"]["tool"]
+    args = repeated["stats"].get("args")
+    return [
+        "`{}`".format(repeated["model"]),
+        repeated["effective_mode"],
+        " / ".join(str(h) for h in tool["hits_per_run"]) + " (de {})".format(tool["n_cases"]),
+        _pct1(tool["mean"]),
+        _pp(tool["stdev"]),
+        _ci(tool["ci95_bootstrap"]),
+        _ci(tool["ci95_wilson"]),
+        str(tool["unstable_cases"]),
+        "{} ± {}".format(_pct1(args["mean"]), _pp(args["stdev"])) if args else "—",
+    ]
+
+
+def comparison_row(comp: Dict[str, Any]) -> List[str]:
+    alpha = comp.get("alpha_bonferroni", 0.05)
+    significant = comp["mcnemar_p"] < alpha
+    return [
+        "`{}` × `{}`".format(comp["model_a"], comp["model_b"]),
+        comp["mode"],
+        "{} / {}".format(comp["only_a"], comp["only_b"]),
+        _p(comp["mcnemar_p"]),
+        ", ".join(_p(p) for p in comp["mcnemar_p_per_run"]),
+        "{:+.1f}".format(comp["diff_mean"] * 100).replace(".", ",") + " p.p.",
+        "[{:+.1f}; {:+.1f}]".format(
+            comp["diff_ci95_bootstrap"][0] * 100, comp["diff_ci95_bootstrap"][1] * 100
+        ).replace(".", ",") + " p.p.",
+        "sim" if significant else "não",
+    ]
+
+
+def render_repeats_markdown(summary: Dict[str, Any]) -> str:
+    reps = summary["repeated_results"]
+    comps = summary.get("comparisons") or []
+    first = reps[0] if reps else None
+    parts = [
+        "# Seleção de ferramentas com repetições",
+        "",
+        "Gerado por `evals/compare_models.py --repeats {}` em {} (commit `{}`, Ollama {}).".format(
+            summary["repeats"], summary["meta"]["timestamp"], summary["meta"]["git_commit"],
+            summary["meta"]["ollama"].get("version"),
+        ),
+        "Máquina: {} · GPU: {}. Um modelo por vez, seed {} igual em todas as rodadas (o que varia "
+        "é o não determinismo da GPU), temperatura 0,2, `num_ctx` {}.".format(
+            summary["meta"]["platform"], summary["meta"].get("gpu") or "—", common.DEFAULT_SEED,
+            first["num_ctx"] if first else "—",
+        ),
+        "",
+    ]
+    if not reps:
+        parts.append("Nenhum resultado.")
+        return "\n".join(parts) + "\n"
+    boot = first["stats"]["tool"]["bootstrap"]
+    parts += [
+        "Dataset `{}` ({} casos, sha256 `{}`), {} ferramentas reais.".format(
+            first["dataset"], first["stats"]["tool"]["n_cases"], first["dataset_sha256"],
+            first["n_tools"]),
+        "",
+        "IC 95% principal: bootstrap percentil sobre os casos ({} reamostragens, seed {}; cada caso "
+        "entra com a fração de rodadas em que acertou). Wilson: conferência, sobre a média de "
+        "acertos com n = nº de casos. Desvio: amostral, entre as rodadas. Ver `evals/stats.py`."
+        .format(boot["resamples"], boot["seed"]),
+        "",
+        md_table(
+            ["Modelo", "Modo", "Acertos por rodada", "Média", "Desvio entre rodadas",
+             "IC 95% bootstrap", "IC 95% Wilson", "Casos instáveis", "Args (média ± desvio)"],
+            [repeated_row(r) for r in reps],
+        ),
+    ]
+    if comps:
+        alpha = comps[0].get("alpha_bonferroni", 0.05)
+        parts += [
+            "",
+            "## Comparações pareadas (mesmos casos)",
+            "",
+            "McNemar exato bilateral sobre o acerto por maioria das rodadas; \"só A / só B\" são os "
+            "casos discordantes. Também rodada a rodada (rodada i × rodada i), como sensibilidade. "
+            "Diferença = média por caso da fração de acertos de A menos a de B, com IC bootstrap "
+            "pareado. Com {} comparações, o limiar corrigido por Bonferroni é p < {}."
+            .format(len(comps), "{:.4f}".format(alpha).replace(".", ",")),
+            "",
+            md_table(
+                ["Comparação", "Modo", "Só A / só B", "p (maioria)", "p por rodada",
+                 "Diferença A − B", "IC 95% da diferença", "Significativa?"],
+                [comparison_row(c) for c in comps],
+            ),
+        ]
+    if summary.get("failures"):
+        parts += ["", "## Falhas", ""]
+        parts.extend(
+            "- `{}`: {}".format(f["target"], f["error"].splitlines()[-1]) for f in summary["failures"]
+        )
+    parts += ["", "Arquivos brutos (cada rodada, cada caso): " + ", ".join(
+        "`{}`".format(name) for name in summary["files"]), ""]
+    return "\n".join(parts)

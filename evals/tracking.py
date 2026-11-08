@@ -146,6 +146,43 @@ def tool_metrics(result: Dict[str, Any]) -> Dict[str, float]:
     return _clean_metrics(metrics)
 
 
+def repeated_tool_params(repeated: Dict[str, Any]) -> Dict[str, Any]:
+    params = tool_params(dict(repeated, metrics={"n": repeated["stats"]["tool"]["n_cases"]}))
+    boot = repeated["stats"]["tool"]["bootstrap"]
+    params.update({
+        "repeats": repeated["repeats"],
+        "ci_method": "bootstrap percentil sobre os casos + Wilson",
+        "bootstrap_resamples": boot["resamples"],
+        "bootstrap_seed": boot["seed"],
+    })
+    return params
+
+
+def repeated_tool_metrics(repeated: Dict[str, Any]) -> Dict[str, float]:
+    tool = repeated["stats"]["tool"]
+    metrics: Dict[str, Any] = {
+        "tool_accuracy_mean": tool["mean"],
+        "tool_accuracy_std": tool["stdev"],
+        "tool_accuracy_ci95_low": tool["ci95_bootstrap"][0],
+        "tool_accuracy_ci95_high": tool["ci95_bootstrap"][1],
+        "tool_accuracy_wilson_low": tool["ci95_wilson"][0],
+        "tool_accuracy_wilson_high": tool["ci95_wilson"][1],
+        "unstable_cases": tool["unstable_cases"],
+        "majority_hits": tool["majority_hits"],
+    }
+    for index, value in enumerate(tool["accuracy_per_run"], start=1):
+        metrics["tool_accuracy_run{}".format(index)] = value
+    args = repeated["stats"].get("args")
+    if args:
+        metrics.update({
+            "args_accuracy_mean": args["mean"],
+            "args_accuracy_std": args["stdev"],
+            "args_accuracy_ci95_low": args["ci95_bootstrap"][0],
+            "args_accuracy_ci95_high": args["ci95_bootstrap"][1],
+        })
+    return _clean_metrics(metrics)
+
+
 def rag_params(result: Dict[str, Any]) -> Dict[str, Any]:
     meta = result["meta"]
     # Resultados anteriores ao subprojeto 4 não têm "config": eram vector/NumPy sem prefixo.

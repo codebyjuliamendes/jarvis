@@ -7,6 +7,7 @@ escolhida, sem executá-la.
 
     .venv/Scripts/python.exe evals/eval_tools.py --model qwen2.5:3b --mode native
     .venv/Scripts/python.exe evals/eval_tools.py --model qwen2.5:3b --mode json --limit 10
+    .venv/Scripts/python.exe evals/eval_tools.py --model qwen2.5:3b --repeats 3   # média, desvio, IC 95%
 """
 from __future__ import annotations
 
@@ -22,7 +23,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from evals import common  # noqa: E402
+from evals import common, stats  # noqa: E402
 from jarvis.agent import Agent  # noqa: E402
 from jarvis.llm import OllamaClient, OllamaError, ToolsNotSupported  # noqa: E402
 from jarvis.memory import Memory  # noqa: E402
@@ -294,6 +295,132 @@ async def run_eval(
     }
 
 
+# ---------------------------------------------------------------- repetições
+
+
+def case_outcomes(result: Dict[str, Any], field: str = "tool_ok") -> Dict[str, bool]:
+    """{id do caso: acertou} de uma rodada. Com ``args_ok``, só os casos que têm args esperados."""
+    return {
+        record["id"]: bool(record[field])
+        for record in result["records"]
+        if record.get(field) is not None
+    }
+
+
+def aggregate_repeats(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Junta N rodadas da mesma configuração num resultado com estatística (ver evals/stats.py)."""
+    if not results:
+        raise ValueError("nenhuma rodada")
+    first = results[0]
+    for other in results[1:]:
+        if (other["model"], other["mode"], other["dataset_sha256"]) != (
+            first["model"], first["mode"], first["dataset_sha256"]
+        ):
+            raise ValueError("rodadas de configurações diferentes")
+    tool_runs = [case_outcomes(r, "tool_ok") for r in results]
+    args_runs = [case_outcomes(r, "args_ok") for r in results]
+    return {
+        "kind": "tool_selection_repeated",
+        "model": first["model"],
+        "mode": first["mode"],
+        "effective_mode": first["effective_mode"],
+        "repeats": len(results),
+        "dataset": first["dataset"],
+        "dataset_sha256": first["dataset_sha256"],
+        "n_tools": first["n_tools"],
+        "seed": first["seed"],
+        "num_ctx": first["num_ctx"],
+        "meta": first["meta"],
+        "stats": {
+            "tool": stats.accuracy_summary(tool_runs),
+            "args": stats.accuracy_summary(args_runs) if args_runs[0] else None,
+            "invalid_json_per_run": [r["metrics"]["invalid_json"] for r in results],
+            "latency_p50_per_run": [r["metrics"]["latency_s"]["p50"] for r in results],
+            "tokens_per_s_per_run": [r["metrics"]["tokens_per_s"] for r in results],
+        },
+        "runs": [
+            {k: v for k, v in r.items() if k not in ("meta", "dataset", "n_tools", "num_ctx")}
+            for r in results
+        ],
+    }
+
+
+def runs_outcomes(repeated: Dict[str, Any], field: str = "tool_ok") -> List[Dict[str, bool]]:
+    return [case_outcomes(run, field) for run in repeated["runs"]]
+
+
+async def run_repeated(
+    model: str,
+    mode: str = "native",
+    cases: Optional[List[Dict[str, Any]]] = None,
+    repeats: int = 3,
+    ollama_url: str = common.DEFAULT_OLLAMA_URL,
+    seed: int = common.DEFAULT_SEED,
+    verbose: bool = False,
+) -> Dict[str, Any]:
+    """N rodadas idênticas (mesmo seed: o que varia é o não determinismo da GPU)."""
+    if repeats < 1:
+        raise ValueError("repeats deve ser >= 1")
+    results = []
+    for index in range(repeats):
+        print("   rodada {}/{}".format(index + 1, repeats), flush=True)
+        results.append(await run_eval(model, mode, cases, ollama_url, seed, verbose))
+    return aggregate_repeats(results)
+
+
+def fmt_pp(value: Optional[float]) -> str:
+    """Desvio em pontos percentuais."""
+    if value is None:
+        return "—"
+    return "{:.1f}".format(value * 100).replace(".", ",") + " p.p."
+
+
+def fmt_ci(interval: List[float]) -> str:
+    return "[{}; {}]".format(
+        "{:.1f}".format(interval[0] * 100).replace(".", ","),
+        "{:.1f}%".format(interval[1] * 100).replace(".", ","),
+    )
+
+
+def print_repeated_summary(repeated: Dict[str, Any]) -> None:
+    tool = repeated["stats"]["tool"]
+    print("\n== {} ({}) · {} rodadas ==".format(
+        repeated["model"], repeated["effective_mode"], repeated["repeats"]))
+    print("acertos por rodada: {} de {}".format(
+        ", ".join(str(h) for h in tool["hits_per_run"]), tool["n_cases"]))
+    print("acurácia média: {} · desvio entre rodadas: {}".format(
+        common.fmt_pct(tool["mean"]), fmt_pp(tool["stdev"])))
+    print("IC 95% bootstrap (casos): {} · Wilson: {}".format(
+        fmt_ci(tool["ci95_bootstrap"]), fmt_ci(tool["ci95_wilson"])))
+    print("casos instáveis (mudaram entre rodadas): {}".format(tool["unstable_cases"]))
+
+
+def repeated_filename(repeated: Dict[str, Any]) -> str:
+    stamp = repeated["meta"]["timestamp"][:19].replace(":", "").replace("-", "")
+    return "{}_tools_{}_{}_x{}.json".format(
+        stamp, common.slug(repeated["model"]), repeated["mode"], repeated["repeats"])
+
+
+def log_repeated_to_mlflow(
+    repeated: Dict[str, Any], saved: List[Path], nested: bool = False
+) -> Optional[str]:
+    """Um run por (modelo, modo) com a média, o desvio, os ICs e cada rodada como métrica."""
+    from evals import tracking
+
+    run_id = tracking.log_run(
+        run_name="tools {} {} x{}".format(
+            repeated["model"], repeated["effective_mode"], repeated["repeats"]),
+        params=tracking.repeated_tool_params(repeated),
+        metrics=tracking.repeated_tool_metrics(repeated),
+        artifacts=list(saved),
+        tags={"eval": "tool_selection", "repeats": str(repeated["repeats"])},
+        nested=nested,
+    )
+    if run_id:
+        print("MLflow: run {} registrado em {}".format(run_id[:8], tracking.tracking_uri()))
+    return run_id
+
+
 def print_summary(result: Dict[str, Any]) -> None:
     m = result["metrics"]
     lat = m["latency_s"]
@@ -327,6 +454,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--limit", type=int, default=0, help="usar só os N primeiros casos")
     parser.add_argument("--ollama-url", default=common.DEFAULT_OLLAMA_URL)
     parser.add_argument("--seed", type=int, default=common.DEFAULT_SEED)
+    parser.add_argument("--repeats", type=int, default=1,
+                        help="rodadas idênticas; com N > 1 reporta média, desvio e IC 95%%")
     parser.add_argument("--no-save", action="store_true")
     parser.add_argument("--no-mlflow", action="store_true")
     parser.add_argument("-v", "--verbose", action="store_true")
@@ -335,9 +464,25 @@ def main(argv: Optional[List[str]] = None) -> int:
     if not common.model_available(args.ollama_url, args.model):
         print("Modelo '{}' não encontrado no Ollama em {}.".format(args.model, args.ollama_url))
         return 2
+    if args.repeats < 1:
+        parser.error("--repeats deve ser >= 1")
     cases = common.load_jsonl(DATA_PATH)
     if args.limit:
         cases = cases[: args.limit]
+    if args.repeats > 1:
+        repeated = asyncio.run(run_repeated(
+            args.model, args.mode, cases, args.repeats, args.ollama_url, args.seed, args.verbose))
+        for run in repeated["runs"]:
+            print_summary(run)
+        print_repeated_summary(repeated)
+        saved_repeated: List[Path] = []
+        if not args.no_save:
+            path = common.save_json(repeated, repeated_filename(repeated))
+            saved_repeated.append(path)
+            print("\nresultado salvo em {}".format(path.relative_to(common.BASE_DIR)))
+        if not args.no_mlflow:
+            log_repeated_to_mlflow(repeated, saved_repeated)
+        return 0
     result = asyncio.run(
         run_eval(args.model, args.mode, cases, args.ollama_url, args.seed, args.verbose)
     )
