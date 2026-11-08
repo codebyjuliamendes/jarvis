@@ -168,7 +168,7 @@ class Settings:
         return cls(
             telegram_token=(os.getenv("TELEGRAM_BOT_TOKEN") or "").strip(),
             allowed_user_ids=_as_ids(os.getenv("TELEGRAM_ALLOWED_USER_IDS")),
-            ollama_url=(os.getenv("OLLAMA_URL") or "http://localhost:11434").rstrip("/"),
+            ollama_url=(os.getenv("OLLAMA_URL") or "http://127.0.0.1:11434").rstrip("/"),
             ollama_model=(os.getenv("OLLAMA_MODEL") or "qwen2.5:3b").strip(),
             ollama_timeout=_as_float(os.getenv("OLLAMA_TIMEOUT"), 300.0),
             ollama_num_ctx=_as_int(os.getenv("OLLAMA_NUM_CTX"), 8192),

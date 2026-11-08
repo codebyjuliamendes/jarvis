@@ -177,7 +177,7 @@ O `install_ollama.sh` já tenta baixar esse modelo automaticamente (pule com
 Confira:
 
 ```bash
-curl -s http://localhost:11434/api/tags
+curl -s http://127.0.0.1:11434/api/tags
 ```
 
 ### 3. Criar o bot no Telegram
@@ -250,7 +250,7 @@ Exemplos de pedidos:
 |---|---|---|
 | `TELEGRAM_BOT_TOKEN` | sim | Token do @BotFather |
 | `TELEGRAM_ALLOWED_USER_IDS` | sim | IDs autorizados, separados por vírgula |
-| `OLLAMA_URL` | não | Padrão `http://localhost:11434` |
+| `OLLAMA_URL` | não | Padrão `http://127.0.0.1:11434` (no Windows, `localhost` custa ~2 s por conexão) |
 | `OLLAMA_MODEL` | não | Padrão `qwen2.5:3b` |
 | `OLLAMA_TIMEOUT` | não | Segundos de espera (padrão 300) |
 | `OLLAMA_NUM_CTX` | não | Contexto (padrão 8192) |

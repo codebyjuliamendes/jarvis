@@ -20,7 +20,12 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
    `tests/test_security.py` (vira "XPASS" e falha quando o filtro for corrigido, para lembrar
    de promovê-lo). Não corrigi porque muda política de segurança e merece revisão própria.
 
-3. **`localhost` custa ~2 s por conexão no Windows.** Medido em 08/11/2026 nesta máquina:
+3. **[RESOLVIDO no subprojeto 3, commit `fix(config): usa 127.0.0.1 como host padrão do
+   Ollama`]** O padrão do `OLLAMA_URL` (em `jarvis/config.py`, `.env.example` e na tabela
+   do README) agora é `http://127.0.0.1:11434`, equivalente no Linux/macOS. Quem já tem um
+   `.env` com `localhost` precisa trocar à mão. Continua aberto: o cliente HTTP ainda não é
+   persistente (um `AsyncClient` por chamada). Registro original:
+   **`localhost` custa ~2 s por conexão no Windows.** Medido em 08/11/2026 nesta máquina:
    uma chamada de embedding com `httpx` levou 2,16–2,20 s via `http://localhost:11434` e
    0,09–0,14 s via `http://127.0.0.1:11434` (o cliente tenta IPv6 `::1` antes do IPv4).
    Indexar o corpus de teste caiu de 40,0 s para 2,7 s só com essa troca. O
