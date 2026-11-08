@@ -29,7 +29,8 @@ from typing import Any, Dict, FrozenSet, Iterable, List, Optional, Sequence, Tup
 from . import __version__, observability
 from .tools.base import ToolRegistry
 
-logger = logging.getLogger(__name__)
+# Nome fixo: com `python -m`, __name__ seria "__main__" nos logs.
+logger = logging.getLogger("jarvis.mcp_server")
 
 SERVER_NAME = "jarvis"
 
