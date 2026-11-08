@@ -2,3 +2,7 @@
 # hash do dataset e os trechos do RAG não mudarem com o autocrlf do Windows.
 evals/fixtures/** -text
 evals/data/*.jsonl -text
+# Fine-tuning: o TEMPLATE do Modelfile tem de chegar ao Ollama com \n (um \r\n do
+# autocrlf mudaria o prompt que o modelo vê), e o dataset fica byte a byte igual.
+finetune/Modelfile text eol=lf
+finetune/data/** -text

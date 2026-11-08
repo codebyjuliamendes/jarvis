@@ -32,3 +32,7 @@ evals/mlartifacts/
 evals/mlruns/
 mlruns/
 mlartifacts/
+
+!finetune/data/
+# pesos exportados do Colab (centenas de MB)
+*.gguf

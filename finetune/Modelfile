@@ -1,0 +1,84 @@
+# Modelfile do Jarvis ajustado com LoRA (subprojeto 2).
+#
+# Importa no Ollama o GGUF q4_K_M exportado pelo finetune/train_lora.ipynb:
+#
+#   ollama create jarvis-qwen-lora -f finetune/Modelfile
+#
+# O caminho do FROM é relativo a este arquivo: copie o GGUF baixado do Colab para
+# finetune/jarvis-qwen-lora.Q4_K_M.gguf (o *.gguf está no .gitignore).
+#
+# TEMPLATE: cópia LITERAL do template oficial do qwen2.5 no Ollama
+# (`ollama show qwen2.5:1.5b --template`, idêntico ao do qwen2.5:3b). O texto de
+# treino foi gerado por finetune/chat_format.py, que reproduz este template byte a
+# byte (conferido por finetune/check_template.py). Se trocar o template aqui,
+# o modelo passa a ver um prompt diferente do treino.
+#
+# SYSTEM: o mesmo padrão do modelo oficial; o Jarvis sempre manda o próprio system
+# prompt, então ele só aparece se alguém conversar com o modelo direto.
+#
+# Licença: o Qwen2.5-1.5B-Instruct é Apache 2.0. Se treinar o 3B, a licença é a
+# Qwen Research (uso não comercial) e o README do modelo derivado deve dizer
+# "Built with Qwen".
+
+FROM ./jarvis-qwen-lora.Q4_K_M.gguf
+
+TEMPLATE """{{- if .Messages }}
+{{- if or .System .Tools }}<|im_start|>system
+{{- if .System }}
+{{ .System }}
+{{- end }}
+{{- if .Tools }}
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{{- range .Tools }}
+{"type": "function", "function": {{ .Function }}}
+{{- end }}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call>
+{{- end }}<|im_end|>
+{{ end }}
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 -}}
+{{- if eq .Role "user" }}<|im_start|>user
+{{ .Content }}<|im_end|>
+{{ else if eq .Role "assistant" }}<|im_start|>assistant
+{{ if .Content }}{{ .Content }}
+{{- else if .ToolCalls }}<tool_call>
+{{ range .ToolCalls }}{"name": "{{ .Function.Name }}", "arguments": {{ .Function.Arguments }}}
+{{ end }}</tool_call>
+{{- end }}{{ if not $last }}<|im_end|>
+{{ end }}
+{{- else if eq .Role "tool" }}<|im_start|>user
+<tool_response>
+{{ .Content }}
+</tool_response><|im_end|>
+{{ end }}
+{{- if and (ne .Role "assistant") $last }}<|im_start|>assistant
+{{ end }}
+{{- end }}
+{{- else }}
+{{- if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ end }}{{ .Response }}{{ if .Response }}<|im_end|>{{ end }}"""
+
+SYSTEM You are Qwen, created by Alibaba Cloud. You are a helpful assistant.
+
+# O agente e os evals mandam temperature 0.2 e num_ctx 8192 em cada chamada; estes
+# valores valem para quem usar o modelo direto (ollama run). O prompt com as 25
+# ferramentas tem ~3.900 tokens, então 8192 é o mínimo confortável.
+PARAMETER num_ctx 8192
+PARAMETER temperature 0.2
+PARAMETER stop "<|im_start|>"
+PARAMETER stop "<|im_end|>"
