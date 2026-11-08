@@ -24,3 +24,11 @@ backups/
 
 # evals: os datasets são versionados (a regra data/ acima pegaria evals/data)
 !evals/data/
+
+# MLflow das avaliações: banco e artefatos locais (pesados e por máquina).
+# Os JSON de evals/results/ continuam versionados.
+evals/mlflow.db
+evals/mlartifacts/
+evals/mlruns/
+mlruns/
+mlartifacts/

@@ -1,0 +1,5 @@
+# Dependências só das avaliações (evals/). O bot NÃO precisa delas.
+#   uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt
+# mlflow 2.17.2 é a última versão com suporte a Python 3.8 (o .venv do projeto).
+mlflow==2.17.2
+pytest

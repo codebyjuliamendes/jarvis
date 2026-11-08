@@ -340,10 +340,39 @@ def main(argv: Optional[List[str]] = None) -> int:
         run_eval(args.model, args.mode, cases, args.ollama_url, args.seed, args.verbose)
     )
     print_summary(result)
+    saved: List[Path] = []
     if not args.no_save:
         path = common.save_json(result, result_filename(result))
+        saved.append(path)
         print("\nresultado salvo em {}".format(path.relative_to(common.BASE_DIR)))
+    if not args.no_mlflow:
+        log_to_mlflow(result, saved)
     return 0
+
+
+def log_to_mlflow(result: Dict[str, Any], saved: List[Path], nested: bool = False) -> Optional[str]:
+    """Um run por (modelo, modo): params, métricas, JSON e tabela Markdown."""
+    from evals import report, tracking
+
+    with tempfile.TemporaryDirectory() as tmp:
+        files = [p.name for p in saved]
+        json_path = saved[0] if saved else common.save_json(result, result_filename(result), Path(tmp))
+        md_path = Path(tmp) / "tabela.md"
+        md_path.write_text(
+            report.render_markdown(report.single_summary(result, "eval_tools.py", files)),
+            encoding="utf-8",
+        )
+        run_id = tracking.log_run(
+            run_name="tools {} {}".format(result["model"], result["effective_mode"]),
+            params=tracking.tool_params(result),
+            metrics=tracking.tool_metrics(result),
+            artifacts=[json_path, md_path],
+            tags={"eval": "tool_selection"},
+            nested=nested,
+        )
+    if run_id:
+        print("MLflow: run {} registrado em {}".format(run_id[:8], tracking.tracking_uri()))
+    return run_id
 
 
 if __name__ == "__main__":
