@@ -124,6 +124,56 @@ uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt   # M
 
 ---
 
+## Fine-tuning
+
+Preparação de um **LoRA** para o `qwen2.5` acertar mais a escolha de ferramenta — inclusive
+quando o certo é não chamar nenhuma. Tudo em [`finetune/`](finetune/README.md). **O treino
+ainda não foi feito**: ele roda no Google Colab gratuito (T4), não nesta máquina, e o modelo
+ajustado só ganha número depois de medido pelo mesmo eval da seção anterior.
+
+O que está pronto e testado:
+
+- **Dataset sintético em pt-BR** gerado a partir dos schemas e do system prompt **reais**:
+  2.134 conversas (1.689 treino / 445 val), as 25 ferramentas com 50–65 exemplos cada,
+  **22,4% sem ferramenta** (com 99 "negativos difíceis", como "o que faz o git stash?") e 5%
+  de continuações (resultado da ferramenta -> resposta). Determinístico (seed 42); treino e
+  val divididos por modelo de frase.
+- **Checagem de vazamento** contra os 78 casos do eval: duplicata exata, quase-duplicata
+  (Jaccard de 4-gramas ≥ 0,35, limiar = 1,5 × a maior similaridade entre casos distintos do
+  eval) e entidades do eval. **60 exemplos removidos**; a checagem roda de novo no `pytest`.
+- **Texto de treino idêntico ao da inferência.** O Ollama 0.40.14 não manda as ferramentas do
+  `qwen2.5` em JSON (imprime a struct do Go); o `apply_chat_template` do Hugging Face teria
+  treinado num formato que o modelo nunca vê. `finetune/chat_format.py` reproduz o template
+  do Ollama e `finetune/check_template.py` prova: mesmos tokens de prompt e mesma saída em 6
+  conversas.
+- **Notebook do Colab** (Unsloth, LoRA r=16/alpha=32, perda só na resposta, avaliação no
+  val, exportação GGUF q4_K_M) e **Modelfile** com o template oficial — validado num modelo
+  temporário sobre o `qwen2.5:1.5b`.
+
+| Modelo (modo nativo, 78 casos) | Acurácia ferramenta | Acurácia args | Sem ferramenta |
+|---|---|---|---|
+| `qwen2.5:1.5b` (linha de base, medida) | 56,4% (44/78) | 42,6% (26/61) | 100,0% (8/8) |
+| `qwen2.5:3b` (linha de base, medida) | 84,6% (66/78) | 82,0% (50/61) | 62,5% (5/8) |
+| `jarvis-qwen-lora` (1,5B + LoRA) | pendente (treino no Colab) | pendente | pendente |
+
+Os dois modelos erram em sentidos opostos: o 1,5B quase não chama ferramenta (31 dos 34
+erros), o 3B chama demais em conversa simples. O dataset ataca os dois lados. Ressalvas que
+valem para quando houver número: os modelos de frase foram escritos por quem tinha lido o
+eval (os filtros pegam cópia e paráfrase, não a política), e 1 caso = 1,3 ponto. Lista
+completa em [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#fine-tuning-subprojeto-2).
+
+Para reproduzir:
+
+```bash
+.venv/Scripts/python.exe finetune/generate_dataset.py          # dados + relatório de vazamento
+.venv/Scripts/python.exe finetune/check_template.py            # renderizador = template do Ollama
+# treino: finetune/train_lora.ipynb no Colab (T4) -> jarvis-qwen-lora.Q4_K_M.gguf
+ollama create jarvis-qwen-lora -f finetune/Modelfile
+.venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b jarvis-qwen-lora --skip-rag --markdown evals/results/FINETUNE.md
+```
+
+---
+
 ## RAG
 
 A memória local (`knowledge_search`) tem três modos de busca, escolhidos por
@@ -850,6 +900,8 @@ jarvis/
 │       ├── documents.py     # leitura de PDF/DOCX/imagem
 │       ├── voice_tools.py   # ferramenta speak (TTS)
 │       └── reminders.py     # ferramenta de lembretes
+├── evals/                   # avaliação de ferramentas e RAG (ver evals/README.md)
+├── finetune/                # LoRA: dataset, vazamento, template, notebook, Modelfile
 ├── scripts/
 │   ├── install_ollama.sh
 │   ├── google_auth.py
@@ -878,5 +930,6 @@ jarvis/
 
 - **WhatsApp**: API oficial (Meta Cloud API) ou bridge QR; exige decisão/conta.
 - **Google Drive** e outras integrações (Trello, Linear, Slack, Mercado Pago).
+- **Rodar o treino do LoRA no Colab** e medir o antes/depois (ver [Fine-tuning](#fine-tuning)).
 - **Migrar para VPS** para ficar 24h no ar (basta copiar `.env`, `data/` e instalar Ollama
   ou trocar o cliente por uma API).

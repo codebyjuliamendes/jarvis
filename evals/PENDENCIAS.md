@@ -198,3 +198,63 @@ em `evals/results/RAG.md`.
     embedding mudar, a tabela `chunks_vec` é recriada e os documentos antigos saem da busca
     vetorial até serem reindexados (a busca em NumPy já se comportava assim).
 
+
+## Fine-tuning (subprojeto 2)
+
+A especificação está em `docs/superpowers/specs/2026-11-08-finetune-design.md`; o passo a
+passo, em `finetune/README.md`. **O que foi preparado está testado; o treino e a medição do
+antes/depois NÃO foram feitos.**
+
+1. **[PENDENTE] Treinar no Colab.** Por pedido explícito, nada foi treinado nesta máquina
+   (nem pesos baixados do Hugging Face, nem torch/transformers/unsloth instalados). O
+   `finetune/train_lora.ipynb` foi validado só como arquivo (`json.load`, `nbformat` 5.10.4,
+   código compilado com `ast`), **nunca executado**: a instalação do Unsloth no Colab, os
+   nomes de parâmetro do `TrainingArguments` (`eval_strategy`) e o nome do arquivo que o
+   `save_pretrained_gguf` gera mudam entre versões e podem pedir ajuste na primeira rodada.
+   O tempo de treino na T4 não foi medido (~13 milhões de tokens em 2 épocas).
+2. **[PENDENTE] Medir o antes/depois** com
+   `evals/compare_models.py qwen2.5:1.5b jarvis-qwen-lora --skip-rag --markdown evals/results/FINETUNE.md`
+   e só então preencher a linha do modelo ajustado no README. A linha de base do 1,5B
+   (56,4% / 42,6%) foi medida antes de o subprojeto 4 acrescentar uma linha ao system prompt;
+   por isso a base tem de ser medida de novo na mesma execução.
+3. **Os modelos de frase foram escritos por quem tinha lido o eval.** Os filtros de vazamento
+   pegam cópia (exata), paráfrase próxima (Jaccard de 4-gramas ≥ 0,35; 60 removidos) e
+   entidades do eval (0), mas não "ensinar para a prova" no nível da política — ex.:
+   "anotações -> `knowledge_search`", "agenda do Google -> `google`", que coincidem com
+   gabaritos do eval (e com o system prompt). Um ganho no eval de 78 casos pode ser em parte
+   isso. O teste honesto de generalização é um conjunto novo, escrito por outra pessoa sem
+   ver os modelos de frase, de preferência com pedidos reais do Telegram.
+4. **O limiar de 0,35 é uma escolha**, com regra fixada antes (1,5 × a maior similaridade
+   entre casos distintos do eval) e sensibilidade registrada (0,30 removeria 122; 0,50, só 7).
+   O mais parecido que passou tem 0,349 ("pesquisa na internet: notícias sobre a taxa Selic"
+   × "pesquisa na internet as notícias de hoje sobre inteligência artificial"): mesmo começo
+   de frase, pedido diferente.
+5. **Achado: o Ollama 0.40.14 manda as ferramentas do `qwen2.5` como struct do Go, não
+   JSON** (`{{ .Function }}` imprime `{nome descrição {object <nil> <nil> [obrigatórios]
+   {properties}}}`). Afeta a linha de base de todos os `qwen2.5` do subprojeto 1. O treino
+   reproduz o formato (conferido por `finetune/check_template.py`: mesmos tokens e mesma
+   saída em 6 conversas). Dois desdobramentos: (a) se uma atualização do Ollama mudar isso, o
+   modelo ajustado passa a ver outro prompt — rodar o `check_template.py` depois de cada
+   atualização; (b) **experimento barato e não feito:** um Modelfile com as ferramentas em
+   JSON (`{{ json .Function }}` ou equivalente) para a base, medido com o mesmo eval — pode
+   render pontos sem treino nenhum. Não testei se a função `json` existe nos templates desta
+   versão.
+6. **A paráfrase via Ollama ficou desligada no dataset versionado.** Funciona (`--paraphrase-frac`),
+   mas o `qwen2.5:3b` produziu erros de português e, uma vez, caracteres chineses no meio
+   da frase (agora descartados por filtro). O dataset é 100% de modelos de frase, com a
+   variedade limitada a 334 formas de pedir e aos pools de entidades.
+7. **Respostas sem ferramenta e de continuação são fixas e curtas.** O modelo pode aprender
+   o estilo delas (ex.: "Pronto! Salvei em ..."); como a perda inclui o texto, isso também é
+   treinado. As saídas de ferramenta das continuações são inventadas no formato real das 6
+   ferramentas cobertas, não executadas.
+8. **O val é sintético e da mesma família.** A divisão por modelo de frase evita que a mesma
+   frase apareça nos dois lados, mas entidades e estilo são compartilhados; a perda no val e
+   a "conferência de sanidade" do notebook medem ajuste à distribuição sintética, não o
+   desempenho no Jarvis. O número que vale é o `eval_tools.py` via Ollama.
+9. **Contexto de 4.608 tokens no treino, 8.192 no serviço.** Todo exemplo cabe (o notebook
+   confere), mas conversas longas com histórico no Telegram ficam fora da distribuição de
+   treino (só primeira decisão e uma continuação).
+10. **Versionamento do dataset ligado ao código.** Testes falham se o `tools.json` não for
+    igual ao registro atual ou se o system prompt dos exemplos não for o do `Agent` atual
+    (fora data/hora e pasta). Nos dois casos, regere os dados (e treine de novo) antes de
+    comparar números.

@@ -73,19 +73,25 @@ ganhar); o 3B fica opcional (licença Qwen Research, não comercial).
 
 ## Formato do JSONL
 
-Uma conversa por linha, no formato de mensagens do Ollama/OpenAI, com os schemas:
+Uma conversa por linha, no formato de mensagens do Ollama/OpenAI. Os 25 schemas são os
+mesmos em todo exemplo, então ficam uma vez só em `finetune/data/tools.json` (com eles em
+cada linha o dataset passaria de 20 MB):
 
 ```json
-{"id": "ft-00042", "kind": "tool", "tool": "reminder", "template": "reminder.add.03",
+{"id": "ft-01484", "kind": "tool", "tool": "reminder", "template": "reminder.minutes.02", "split": "train",
  "messages": [{"role": "system", "content": "Você é o Jarvis..."},
-              {"role": "user", "content": "me avisa em 25 minutos de ligar pro Caio"},
+              {"role": "user", "content": "Em 30 minutos me lembra: renovar o seguro do carro"},
               {"role": "assistant", "content": "", "tool_calls": [{"type": "function",
-                "function": {"name": "reminder", "arguments": {"action": "add", "when": "25m", "text": "ligar pro Caio"}}}]}],
- "tools": [ ...os 25 schemas do registro... ]}
+                "function": {"name": "reminder", "arguments": {"action": "add", "when": "30m", "text": "renovar o seguro do carro"}}}]}]}
 ```
 
 `kind` ∈ `tool`, `no_tool`, `continuation`. A perda é calculada só sobre a **última**
 mensagem do assistente (e o `<|im_end|>` que a fecha).
+
+**Revisão durante a implementação:** a decisão 1 se mostrou mais importante do que parecia.
+No Ollama 0.40.14 o `{{ .Function }}` do template oficial imprime a struct do Go (`%v`), não
+JSON — o `apply_chat_template` do Hugging Face teria treinado o modelo num formato de
+ferramentas que ele nunca veria no Ollama. Detalhes em `finetune/README.md`.
 
 ## Avaliação depois do treino
 
