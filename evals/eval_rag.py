@@ -8,6 +8,7 @@ evals/data/rag_retrieval.jsonl, no modo de busca escolhido.
     .venv/Scripts/python.exe evals/eval_rag.py --embed-model nomic-embed-text
     .venv/Scripts/python.exe evals/eval_rag.py --mode hybrid --prefixes on
     .venv/Scripts/python.exe evals/eval_rag.py --grid      # todas as combinações
+    .venv/Scripts/python.exe evals/eval_rag.py --grid --dataset paraphrase   # perguntas com sinônimos
 """
 from __future__ import annotations
 
@@ -30,8 +31,13 @@ from jarvis.metrics_utils import latency_summary, mean, ratio  # noqa: E402
 from jarvis.rag import RAG_MODES, VECTOR_BACKENDS, RagIndex, use_prefixes  # noqa: E402
 
 DATA_PATH = common.DATA_DIR / "rag_retrieval.jsonl"
+# Mesmos trechos esperados, perguntas com sinônimos e baixa sobreposição lexical (só teste:
+# ver docs/superpowers/specs/2026-11-08-rag-parafrases-design.md).
+PARAPHRASE_PATH = common.DATA_DIR / "rag_paraphrase.jsonl"
+DATASETS = {"original": DATA_PATH, "paraphrase": PARAPHRASE_PATH}
 TOP_K = 5
 GRID_MD = common.RESULTS_DIR / "RAG.md"
+GRID_MD_PARAPHRASE = common.RESULTS_DIR / "RAG_PARAPHRASE.md"
 
 
 def _default(name: str) -> Any:
@@ -111,8 +117,9 @@ def run_eval(
     prefixes: bool = DEFAULT_PREFIXES,
     rrf_k: int = DEFAULT_RRF_K,
     vector_backend: str = "auto",
+    dataset_path: Path = DATA_PATH,
 ) -> Dict[str, Any]:
-    questions = questions if questions is not None else common.load_jsonl(DATA_PATH)
+    questions = questions if questions is not None else common.load_jsonl(dataset_path)
     available = {p.name for p in common.FIXTURES_DIR.iterdir() if p.is_file()}
     for question in questions:
         if question["expected_doc"] not in available:
@@ -188,8 +195,8 @@ def run_eval(
         "embed_model": embed_model,
         "k": k,
         "config": config,
-        "dataset": DATA_PATH.relative_to(common.BASE_DIR).as_posix(),
-        "dataset_sha256": common.file_sha256(DATA_PATH),
+        "dataset": dataset_path.resolve().relative_to(common.BASE_DIR).as_posix(),
+        "dataset_sha256": common.file_sha256(dataset_path),
         "fixtures_sha256": common.dir_sha256(common.FIXTURES_DIR),
         "corpus": {"documents": stats["documents"], "chunks": stats["chunks"], "index_s": index_s},
         "meta": common.run_metadata(ollama_url),
@@ -234,6 +241,8 @@ def print_summary(result: Dict[str, Any]) -> None:
 def result_filename(result: Dict[str, Any]) -> str:
     stamp = result["meta"]["timestamp"][:19].replace(":", "").replace("-", "")
     name = "{}_rag_{}".format(stamp, common.slug(result["embed_model"]))
+    if Path(str(result.get("dataset", ""))).name == PARAPHRASE_PATH.name:
+        name += "_parafrases"
     config = result.get("config")
     if config:
         name += "_" + config["mode"]
@@ -271,13 +280,28 @@ def grid_row(result: Dict[str, Any]) -> List[str]:
     ]
 
 
-def render_grid(main: List[Dict[str, Any]], sensitivity: List[Dict[str, Any]], files: List[str]) -> str:
+PARAPHRASE_NOTE = (
+    "Conjunto de paráfrases: mesmos documentos e trechos esperados do original, perguntas "
+    "escritas com sinônimos e baixa sobreposição lexical (`evals/lexical_overlap.py`). É só "
+    "teste: nada do RAG foi ajustado com ele. O critério para o padrão foi fixado antes desta "
+    "grade (`docs/superpowers/specs/2026-11-08-rag-parafrases-design.md`). As colunas dev/teste "
+    "são só informativas aqui. Latência = `RagIndex.search` inteiro (inclui o embedding da "
+    "pergunta no Ollama, exceto no bm25)."
+)
+
+
+def render_grid(
+    main: List[Dict[str, Any]],
+    sensitivity: List[Dict[str, Any]],
+    files: List[str],
+    paraphrase: bool = False,
+) -> str:
     from evals import report
 
     first = main[0]
     meta = first["meta"]
     parts = [
-        "# RAG: comparação de configurações",
+        "# RAG: comparação de configurações" + (" (paráfrases)" if paraphrase else ""),
         "",
         "Gerado por `evals/eval_rag.py --grid` em {} (commit `{}`, Ollama {}).".format(
             meta["timestamp"], meta["git_commit"], meta["ollama"].get("version")),
@@ -287,6 +311,7 @@ def render_grid(main: List[Dict[str, Any]], sensitivity: List[Dict[str, Any]], f
             first["corpus"]["documents"], first["corpus"]["chunks"], first["dataset"],
             first["metrics"]["n"], first["dataset_sha256"]),
         "",
+        PARAPHRASE_NOTE if paraphrase else
         "Divisão fixa: ids ímpares = dev (18), pares = teste (18). O padrão do bot é escolhido "
         "pelo MRR no dev; o teste só confirma. Latência = `RagIndex.search` inteiro (inclui o "
         "embedding da pergunta no Ollama, exceto no bm25).",
@@ -317,7 +342,8 @@ def _run_with_retry(args: argparse.Namespace, config: Dict[str, Any]) -> Dict[st
     """
     for attempt in range(GRID_RETRIES + 1):
         try:
-            return run_eval(args.embed_model, None, args.ollama_url, args.k, args.verbose, **config)
+            return run_eval(args.embed_model, None, args.ollama_url, args.k, args.verbose,
+                            dataset_path=DATASETS[args.dataset], **config)
         except RuntimeError as exc:
             if attempt == GRID_RETRIES:
                 raise
@@ -341,9 +367,11 @@ def run_grid(args: argparse.Namespace) -> int:
     main_results: List[Dict[str, Any]] = []
     sensitivity: List[Dict[str, Any]] = []
     files: List[str] = []
+    paraphrase = args.dataset == "paraphrase"
+    grid_md = Path(args.markdown) if args.markdown else (GRID_MD_PARAPHRASE if paraphrase else GRID_MD)
     parent = nullcontext() if args.no_mlflow else tracking.parent_run(
-        "rag grid {}".format(args.embed_model),
-        {"eval": "rag_grid", "embed_model": args.embed_model,
+        "rag grid {}{}".format(args.embed_model, " parafrases" if paraphrase else ""),
+        {"eval": "rag_grid", "embed_model": args.embed_model, "dataset": args.dataset,
          "n_configs": len(configs) + len(sensitivity_configs)},
     )
     with parent as run:
@@ -359,12 +387,12 @@ def run_grid(args: argparse.Namespace) -> int:
                 if not args.no_mlflow:
                     log_to_mlflow(result, saved, nested=run is not None)
                 bucket.append(result)
-        markdown = render_grid(main_results, sensitivity, files)
+        markdown = render_grid(main_results, sensitivity, files, paraphrase=paraphrase)
         if not args.no_save:
-            GRID_MD.write_text(markdown, encoding="utf-8")
-            print("\ntabela salva em {}".format(GRID_MD.relative_to(common.BASE_DIR)))
+            grid_md.write_text(markdown, encoding="utf-8")
+            print("\ntabela salva em {}".format(grid_md))
             if run is not None:
-                tracking.log_artifacts_to_active([GRID_MD])
+                tracking.log_artifacts_to_active([grid_md])
     print("\n" + markdown)
     return 0
 
@@ -384,6 +412,10 @@ def main(argv: Optional[List[str]] = None) -> int:
                         help="roda todas as combinações e gera evals/results/RAG.md")
     parser.add_argument("--no-sensitivity", action="store_true",
                         help="com --grid, pula a sensibilidade do k do RRF")
+    parser.add_argument("--dataset", choices=sorted(DATASETS), default="original",
+                        help="original (rag_retrieval.jsonl) ou paraphrase (rag_paraphrase.jsonl)")
+    parser.add_argument("--markdown", default="",
+                        help="com --grid: onde gravar a tabela (padrão RAG.md / RAG_PARAPHRASE.md)")
     parser.add_argument("--no-save", action="store_true")
     parser.add_argument("--no-mlflow", action="store_true")
     parser.add_argument("-v", "--verbose", action="store_true")
@@ -397,7 +429,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     result = run_eval(
         args.embed_model, None, args.ollama_url, args.k, args.verbose,
         mode=args.mode, prefixes=args.prefixes == "on", rrf_k=args.rrf_k,
-        vector_backend=args.vector_backend,
+        vector_backend=args.vector_backend, dataset_path=DATASETS[args.dataset],
     )
     print_summary(result)
     saved: List[Path] = []

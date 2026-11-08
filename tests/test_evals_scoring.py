@@ -205,3 +205,37 @@ def test_rag_rotulo_e_nome_do_arquivo_por_configuracao():
     assert eval_rag.result_filename(hybrid) == "20261108T020000_rag_nomic-embed-text_hybrid-prefixos-k60.json"
     assert eval_rag.result_filename(vector) == "20261108T020000_rag_nomic-embed-text_vector-numpy.json"
     assert eval_rag.result_filename(base) == "20261108T020000_rag_nomic-embed-text.json"  # formato antigo
+
+
+def test_paraphrases_mesmos_trechos_e_baixa_sobreposicao():
+    from evals import lexical_overlap
+
+    chunks = lexical_overlap.load_chunks()
+    original = common.load_jsonl(eval_rag.DATA_PATH)
+    paraphrase = common.load_jsonl(eval_rag.PARAPHRASE_PATH)
+    assert len(paraphrase) == len(original) == 36
+    # mesmos documentos e trechos esperados, na mesma ordem (e a mesma paridade de id)
+    for orig, para in zip(original, paraphrase):
+        assert para["id"][-3:] == orig["id"][-3:]
+        assert (para["expected_doc"], para["expected_snippet"]) == (
+            orig["expected_doc"], orig["expected_snippet"])
+        assert para["question"] != orig["question"]
+    overlap_orig = lexical_overlap.summarize(lexical_overlap.overlap_records(original, chunks))
+    overlap_para = lexical_overlap.summarize(lexical_overlap.overlap_records(paraphrase, chunks))
+    assert overlap_orig["mean_overlap"] > 0.6
+    assert overlap_para["mean_overlap"] < 0.15
+
+
+def test_tokens_de_conteudo_sao_os_do_bm25():
+    from evals import lexical_overlap
+
+    assert lexical_overlap.content_tokens("Qual o valor do aluguel?") == ["valor", "aluguel"]
+    assert lexical_overlap.content_tokens("o que é") == []
+
+
+def test_rag_nome_do_arquivo_marca_as_parafrases():
+    para = {"meta": {"timestamp": "2026-11-08T05:00:00-03:00"}, "embed_model": "nomic-embed-text",
+            "dataset": "evals/data/rag_paraphrase.jsonl",
+            "config": {"mode": "bm25", "prefixes": False, "rrf_k": 60, "vector_backend": "sqlite-vec"}}
+    assert eval_rag.result_filename(para) == "20261108T050000_rag_nomic-embed-text_parafrases_bm25.json"
+    assert set(eval_rag.DATASETS) == {"original", "paraphrase"}

@@ -191,6 +191,7 @@ def rag_params(result: Dict[str, Any]) -> Dict[str, Any]:
         "eval": "rag_retrieval",
         "embed_model": result["embed_model"],
         "rag_mode": config.get("mode", "vector"),
+        "rag_dataset": Path(str(result.get("dataset", ""))).stem,
         "prefixes": config.get("prefixes", False),
         "rrf_k": config.get("rrf_k"),
         "vector_backend": config.get("vector_backend", "numpy"),
