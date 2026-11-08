@@ -165,3 +165,17 @@ def test_dataset_versionado_renderiza(committed):
 def test_dataset_versionado_e_leve():
     total = sum((DATA_DIR / n).stat().st_size for n in ("train.jsonl", "val.jsonl", "tools.json"))
     assert total < 5 * 1024 * 1024
+
+
+def test_dataset_versionado_usa_o_system_prompt_atual(real, committed):
+    """Se o system prompt do Agent mudar, o dataset precisa ser regerado."""
+    import re
+    from datetime import datetime
+
+    sys_template, _ = real
+    train, val = committed
+    for row in (train + val)[::97]:
+        system = row["messages"][0]["content"]
+        workspace = re.search(r"Pasta de trabalho: (.*)\n", system).group(1)
+        expected = gd.system_prompt(sys_template, datetime(2026, 1, 1), workspace)
+        assert gd.DATE_RE.sub("D", system) == gd.DATE_RE.sub("D", expected), row["id"]
