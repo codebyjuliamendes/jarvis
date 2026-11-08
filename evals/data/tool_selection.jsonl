@@ -1,0 +1,78 @@
+{"id": "ts-001", "category": "direto", "prompt": "roda os testes do projeto com pytest", "expected_tool": "run_shell", "expected_args": {"command": {"contains": "pytest"}}}
+{"id": "ts-002", "category": "direto", "prompt": "instala a biblioteca requests no ambiente com pip", "expected_tool": "run_shell", "expected_args": {"command": {"contains_all": ["pip", "install", "requests"]}}}
+{"id": "ts-003", "category": "direto", "prompt": "quanto espaço livre tem no disco? usa o df -h", "expected_tool": "run_shell", "expected_args": {"command": {"contains": "df"}}}
+{"id": "ts-004", "category": "direto", "prompt": "qual é a versão do Python instalada nesta máquina? roda o comando pra ver", "expected_tool": "run_shell", "expected_args": {"command": {"contains": "python"}}}
+{"id": "ts-005", "category": "direto", "prompt": "abre o arquivo notas/ideias.txt e me mostra o conteúdo", "expected_tool": "read_file", "expected_args": {"path": {"contains": "ideias.txt"}}}
+{"id": "ts-006", "category": "direto", "prompt": "lê as linhas 10 a 30 do jarvis/agent.py", "expected_tool": "read_file", "expected_args": {"path": {"contains": "agent.py"}, "start_line": 10, "end_line": 30}}
+{"id": "ts-007", "category": "direto", "prompt": "cria um arquivo todo.md com o texto '- comprar café'", "expected_tool": "write_file", "expected_args": {"path": {"contains": "todo.md"}, "content": {"contains": "comprar cafe"}}}
+{"id": "ts-008", "category": "direto", "prompt": "salva num arquivo chamado lista_compras.txt: arroz, feijão e ovos", "expected_tool": "write_file", "expected_args": {"path": {"contains": "lista_compras.txt"}, "content": {"contains": "arroz"}}}
+{"id": "ts-009", "category": "direto", "prompt": "no arquivo config.yaml troca 'debug: true' por 'debug: false'", "expected_tool": "replace_in_file", "expected_args": {"path": {"contains": "config.yaml"}, "old": {"contains": "debug: true"}, "new": {"contains": "debug: false"}}}
+{"id": "ts-010", "category": "direto", "prompt": "corrige o erro de digitação 'recieve' para 'receive' no README.md", "expected_tool": "replace_in_file", "expected_args": {"path": {"contains": "readme.md"}, "old": {"contains": "recieve"}, "new": {"contains": "receive"}}}
+{"id": "ts-011", "category": "direto", "prompt": "o que tem dentro da pasta Downloads?", "expected_tool": "list_dir", "expected_args": {"path": {"contains": "downloads"}}}
+{"id": "ts-012", "category": "direto", "prompt": "lista os arquivos da pasta src", "expected_tool": "list_dir", "expected_args": {"path": {"contains": "src"}}}
+{"id": "ts-013", "category": "direto", "prompt": "procura onde aparece 'TODO' no código do projeto", "expected_tool": "search_files", "expected_args": {"pattern": {"contains": "todo"}}}
+{"id": "ts-014", "category": "direto", "prompt": "em quais arquivos eu uso a função parse_when?", "expected_tool": "search_files", "expected_args": {"pattern": {"contains": "parse_when"}}}
+{"id": "ts-015", "category": "direto", "prompt": "acha todos os arquivos PDF na minha pasta Documentos", "expected_tool": "find_files", "expected_args": {"name": {"contains": "pdf"}}}
+{"id": "ts-016", "category": "direto", "prompt": "onde está o arquivo chamado orcamento_2026.xlsx?", "expected_tool": "find_files", "expected_args": {"name": {"contains": "orcamento_2026"}}}
+{"id": "ts-017", "category": "direto", "prompt": "qual o status do git nesse repositório?", "expected_tool": "git", "expected_args": {"args": {"contains": "status"}}}
+{"id": "ts-018", "category": "direto", "prompt": "mostra os últimos 5 commits do repositório local", "expected_tool": "git", "expected_args": {"args": {"contains": "log"}}}
+{"id": "ts-019", "category": "direto", "prompt": "faz commit das mudanças com a mensagem 'corrige bug do login'", "expected_tool": "git", "expected_args": {"args": {"contains_all": ["commit", "corrige bug do login"]}}}
+{"id": "ts-020", "category": "direto", "prompt": "lista as issues abertas do repositório julia/jarvis no GitHub", "expected_tool": "github", "expected_args": {"action": "list_issues", "repo": {"contains": "julia/jarvis"}}}
+{"id": "ts-021", "category": "direto", "prompt": "quais pull requests estão abertos no meu repositório do GitHub?", "expected_tool": "github", "expected_args": {"action": "list_prs"}}
+{"id": "ts-022", "category": "direto", "prompt": "abre uma issue no GitHub com o título 'Bot não responde áudio'", "expected_tool": "github", "expected_args": {"action": "create_issue", "title": {"contains": "nao responde audio"}}}
+{"id": "ts-023", "category": "direto", "prompt": "busca no meu Obsidian as notas sobre meditação", "expected_tool": "obsidian", "expected_args": {"action": "search", "query": {"contains": "medita"}}}
+{"id": "ts-024", "category": "direto", "prompt": "acrescenta na nota diario.md do Obsidian: hoje corri 5 km", "expected_tool": "obsidian", "expected_args": {"action": "write", "path": {"contains": "diario"}, "mode": "append"}}
+{"id": "ts-025", "category": "direto", "prompt": "lista as notas da pasta Projetos no Obsidian", "expected_tool": "obsidian", "expected_args": {"action": "list", "folder": {"contains": "projetos"}}}
+{"id": "ts-026", "category": "direto", "prompt": "procura no Notion a página do planejamento de 2027", "expected_tool": "notion", "expected_args": {"action": "search", "query": {"contains": "planejamento"}}}
+{"id": "ts-027", "category": "direto", "prompt": "cria uma página no Notion chamada 'Ideias de viagem'", "expected_tool": "notion", "expected_args": {"action": "create_page", "title": {"contains": "ideias de viagem"}}}
+{"id": "ts-028", "category": "direto", "prompt": "lê a planilha vendas.xlsx e me diz o total do mês", "expected_tool": "spreadsheet", "expected_args": {"action": "read", "path": {"contains": "vendas.xlsx"}}}
+{"id": "ts-029", "category": "direto", "prompt": "abre a aba 2027 da planilha orcamento.xlsx", "expected_tool": "spreadsheet", "expected_args": {"path": {"contains": "orcamento.xlsx"}, "sheet": {"contains": "2027"}}}
+{"id": "ts-030", "category": "direto", "prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?", "expected_tool": "google", "expected_args": {"action": "calendar_list", "days": 3}}
+{"id": "ts-031", "category": "direto", "prompt": "procura no Gmail os e-mails da Receita Federal", "expected_tool": "google", "expected_args": {"action": "gmail_search", "query": {"contains": "receita"}}}
+{"id": "ts-032", "category": "direto", "prompt": "marca no Google Agenda uma reunião com o Pedro amanhã às 15h", "expected_tool": "google", "expected_args": {"action": "calendar_create", "summary": {"contains": "pedro"}}}
+{"id": "ts-033", "category": "direto", "prompt": "tenho e-mails não lidos no Outlook?", "expected_tool": "microsoft", "expected_args": {"action": {"any_of": ["mail_list", "mail_search"]}}}
+{"id": "ts-034", "category": "direto", "prompt": "quais são minhas reuniões no calendário do Outlook esta semana?", "expected_tool": "microsoft", "expected_args": {"action": "calendar_list"}}
+{"id": "ts-035", "category": "direto", "prompt": "mostra as conversas recentes dos meus chats do Teams", "expected_tool": "microsoft", "expected_args": {"action": {"any_of": ["teams_chats", "teams_messages"]}}}
+{"id": "ts-036", "category": "direto", "prompt": "manda um e-mail pelo Outlook para ana@empresa.com dizendo que o relatório está pronto", "expected_tool": "microsoft", "expected_args": {"action": "mail_send", "to": {"contains": "ana@empresa.com"}}}
+{"id": "ts-037", "category": "direto", "prompt": "quanto eu faturei no Stripe nos últimos 30 dias?", "expected_tool": "stripe", "expected_args": {"action": "revenue", "days": 30}}
+{"id": "ts-038", "category": "direto", "prompt": "qual o saldo da minha conta no Stripe?", "expected_tool": "stripe", "expected_args": {"action": "overview"}}
+{"id": "ts-039", "category": "direto", "prompt": "lista as faturas do Stripe", "expected_tool": "stripe", "expected_args": {"action": "invoices"}}
+{"id": "ts-040", "category": "direto", "prompt": "pesquisa na internet as notícias de hoje sobre inteligência artificial", "expected_tool": "web_search", "expected_args": {"query": {"contains": "inteligencia artificial"}}}
+{"id": "ts-041", "category": "direto", "prompt": "qual a cotação do dólar agora?", "expected_tool": "web_search", "expected_args": {"query": {"contains": "dolar"}}}
+{"id": "ts-042", "category": "direto", "prompt": "procura na web a documentação do FastAPI sobre injeção de dependências", "expected_tool": "web_search", "expected_args": {"query": {"contains": "fastapi"}}}
+{"id": "ts-043", "category": "direto", "prompt": "lê o conteúdo da página https://docs.python.org/3/whatsnew/3.13.html", "expected_tool": "web_fetch", "expected_args": {"url": {"contains": "docs.python.org/3/whatsnew/3.13.html"}}}
+{"id": "ts-044", "category": "direto", "prompt": "resume esse artigo pra mim: https://exemplo.com.br/blog/produtividade", "expected_tool": "web_fetch", "expected_args": {"url": {"contains": "exemplo.com.br/blog/produtividade"}}}
+{"id": "ts-045", "category": "direto", "prompt": "me manda aqui no Telegram o arquivo relatorio_mensal.pdf", "expected_tool": "send_file", "expected_args": {"path": {"contains": "relatorio_mensal.pdf"}}}
+{"id": "ts-046", "category": "direto", "prompt": "envia pra mim o backup.zip que está na pasta backups", "expected_tool": "send_file", "expected_args": {"path": {"contains": "backup.zip"}}}
+{"id": "ts-047", "category": "direto", "prompt": "lê o PDF contrato_aluguel.pdf e me diz o valor do aluguel", "expected_tool": "read_pdf", "expected_args": {"path": {"contains": "contrato_aluguel.pdf"}}}
+{"id": "ts-048", "category": "direto", "prompt": "extrai o texto da apostila_calculo.pdf", "expected_tool": "read_pdf", "expected_args": {"path": {"contains": "apostila_calculo.pdf"}}}
+{"id": "ts-049", "category": "direto", "prompt": "abre o documento Word proposta_comercial.docx", "expected_tool": "read_docx", "expected_args": {"path": {"contains": "proposta_comercial.docx"}}}
+{"id": "ts-050", "category": "direto", "prompt": "o que está escrito no arquivo ata_reuniao.docx?", "expected_tool": "read_docx", "expected_args": {"path": {"contains": "ata_reuniao.docx"}}}
+{"id": "ts-051", "category": "direto", "prompt": "faz OCR do print comprovante.png", "expected_tool": "read_image", "expected_args": {"path": {"contains": "comprovante.png"}}}
+{"id": "ts-052", "category": "direto", "prompt": "lê o texto dessa foto do quadro: uploads/quadro_aula.jpg", "expected_tool": "read_image", "expected_args": {"path": {"contains": "quadro_aula.jpg"}}}
+{"id": "ts-053", "category": "direto", "prompt": "me manda em áudio: bom dia, a reunião foi adiada", "expected_tool": "speak", "expected_args": {"text": {"contains": "reuniao foi adiada"}}}
+{"id": "ts-054", "category": "direto", "prompt": "fala em voz alta a frase 'beba água'", "expected_tool": "speak", "expected_args": {"text": {"contains": "beba agua"}}}
+{"id": "ts-055", "category": "direto", "prompt": "nos meus documentos indexados, qual é a multa por atraso do aluguel?", "expected_tool": "knowledge_search", "expected_args": {"query": {"contains": "multa"}}}
+{"id": "ts-056", "category": "direto", "prompt": "procura na minha memória local o que foi decidido sobre o orçamento do condomínio", "expected_tool": "knowledge_search", "expected_args": {"query": {"regex": "condominio|orcamento"}}}
+{"id": "ts-057", "category": "direto", "prompt": "indexa a pasta Documentos/faculdade para a busca semântica", "expected_tool": "knowledge_index", "expected_args": {"path": {"contains": "faculdade"}}}
+{"id": "ts-058", "category": "direto", "prompt": "reindexa minha memória local", "expected_tool": "knowledge_index"}
+{"id": "ts-059", "category": "direto", "prompt": "me lembra de tomar remédio daqui a 10 minutos", "expected_tool": "reminder", "expected_args": {"action": "add", "when": {"regex": "10\\s*(m|min)"}, "text": {"contains": "remedio"}}}
+{"id": "ts-060", "category": "direto", "prompt": "amanhã às 9h me lembra da consulta no dentista", "expected_tool": "reminder", "expected_args": {"action": "add", "when": {"regex": "(^|[^0-9])0?9(:|h)00|t09:00"}, "text": {"contains": "dentista"}}}
+{"id": "ts-061", "category": "direto", "prompt": "quais lembretes eu tenho pendentes?", "expected_tool": "reminder", "expected_args": {"action": "list"}}
+{"id": "ts-062", "category": "direto", "prompt": "cancela o lembrete número 3", "expected_tool": "reminder", "expected_args": {"action": "delete", "id": 3}}
+{"id": "ts-063", "category": "sem_ferramenta", "prompt": "oi, tudo bem?", "expected_tool": null}
+{"id": "ts-064", "category": "sem_ferramenta", "prompt": "obrigada, Jarvis!", "expected_tool": null}
+{"id": "ts-065", "category": "sem_ferramenta", "prompt": "quanto é 15% de 240?", "expected_tool": null}
+{"id": "ts-066", "category": "sem_ferramenta", "prompt": "me explica em duas frases o que é uma API REST", "expected_tool": null}
+{"id": "ts-067", "category": "sem_ferramenta", "prompt": "traduz para o inglês: 'onde fica a estação de trem?'", "expected_tool": null}
+{"id": "ts-068", "category": "sem_ferramenta", "prompt": "me dá três ideias de nome para um gato", "expected_tool": null}
+{"id": "ts-069", "category": "sem_ferramenta", "prompt": "escreve um haicai sobre café", "expected_tool": null}
+{"id": "ts-070", "category": "sem_ferramenta", "prompt": "qual a diferença entre lista e tupla em Python?", "expected_tool": null}
+{"id": "ts-071", "category": "ambiguo", "prompt": "o que eu anotei sobre o projeto Falcon?", "expected_tool": "knowledge_search", "acceptable_tools": ["obsidian", "search_files"]}
+{"id": "ts-072", "category": "ambiguo", "prompt": "o que tenho marcado pra amanhã?", "expected_tool": "google", "acceptable_tools": ["microsoft", "reminder"]}
+{"id": "ts-073", "category": "ambiguo", "prompt": "procura minhas anotações sobre o curso de inglês", "expected_tool": "knowledge_search", "acceptable_tools": ["obsidian", "search_files"]}
+{"id": "ts-074", "category": "ambiguo", "prompt": "tem algum PDF sobre imposto de renda nos meus arquivos?", "expected_tool": "find_files", "acceptable_tools": ["knowledge_search", "search_files"]}
+{"id": "ts-075", "category": "ambiguo", "prompt": "abre o arquivo dados.csv", "expected_tool": "spreadsheet", "acceptable_tools": ["read_file"]}
+{"id": "ts-076", "category": "ambiguo", "prompt": "quem ganhou a Copa do Mundo de 2022?", "expected_tool": null, "acceptable_tools": ["web_search"]}
+{"id": "ts-077", "category": "ambiguo", "prompt": "vê se chegou algum e-mail do banco", "expected_tool": "google", "acceptable_tools": ["microsoft"]}
+{"id": "ts-078", "category": "ambiguo", "prompt": "qual é o README desse projeto?", "expected_tool": "read_file", "acceptable_tools": ["find_files", "list_dir"]}

@@ -1,0 +1,4 @@
+# Corpus e datasets das avaliações: bytes idênticos em qualquer SO, para o
+# hash do dataset e os trechos do RAG não mudarem com o autocrlf do Windows.
+evals/fixtures/** -text
+evals/data/*.jsonl -text

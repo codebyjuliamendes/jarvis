@@ -21,3 +21,6 @@ backups/
 *.wav
 
 .DS_Store
+
+# evals: os datasets são versionados (a regra data/ acima pegaria evals/data)
+!evals/data/
