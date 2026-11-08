@@ -39,3 +39,6 @@ mlartifacts/
 
 # pasta de trabalho padrão do docker-compose (montada no contêiner)
 workspace/
+
+# venv do servidor MCP (Python 3.12; ver requirements-mcp.txt)
+.venv-mcp/
