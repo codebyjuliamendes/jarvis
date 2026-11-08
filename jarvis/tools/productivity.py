@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -259,7 +258,8 @@ class ProductivityTools:
         if block_type in {"bookmark", "link_preview"}:
             return data.get("url") or ""
         if block_type == "image":
-            return "[imagem] " + ((data.get("file") or {}).get("url") or data.get("external", {}).get("url", ""))
+            url = (data.get("file") or {}).get("url") or data.get("external", {}).get("url", "")
+            return "[imagem] " + url
         return text
 
     def _notion_blocks(self, block_id: str, depth: int = 0) -> Tuple[str, Optional[str]]:

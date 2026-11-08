@@ -108,6 +108,10 @@ class Settings:
     rag_model: str = "nomic-embed-text"
     rag_roots: List[Path] = field(default_factory=list)
     rag_extensions: str = ".md,.txt,.pdf,.docx,.csv,.xlsx"
+    rag_mode: str = "bm25"
+    rag_rrf_k: int = 60
+    rag_prefixes: str = "auto"
+    rag_vector_backend: str = "auto"
     ms_graph_client_id: Optional[str] = None
     ms_graph_tenant: str = "organizations"
     ms_graph_token: Optional[Path] = None
@@ -117,9 +121,23 @@ class Settings:
     tts_voice: str = "pt-BR-FranciscaNeural"
     tts_rate: str = "+0%"
     tts_max_chars: int = 3000
+    metrics_enabled: bool = True
+    metrics_db_path: Optional[Path] = None
+    log_format: str = "text"
+    log_level: str = "INFO"
+    # Servidor MCP (jarvis/mcp_server.py, opcional): ferramentas expostas (vazio = só
+    # leitura) e a segunda chave para as que escrevem, executam ou enviam.
+    mcp_tools: List[str] = field(default_factory=list)
+    mcp_allow_unsafe: bool = False
+
+    def resolved_metrics_db_path(self) -> Path:
+        """Banco das métricas: separado do histórico, ao lado dele por padrão."""
+        if self.metrics_db_path is not None:
+            return self.metrics_db_path
+        return Path(self.db_path).parent / "metrics.sqlite3"
 
     @classmethod
-    def load(cls) -> "Settings":
+    def load(cls) -> Settings:
         _load_env()
 
         home = Path.home()
@@ -168,7 +186,7 @@ class Settings:
         return cls(
             telegram_token=(os.getenv("TELEGRAM_BOT_TOKEN") or "").strip(),
             allowed_user_ids=_as_ids(os.getenv("TELEGRAM_ALLOWED_USER_IDS")),
-            ollama_url=(os.getenv("OLLAMA_URL") or "http://localhost:11434").rstrip("/"),
+            ollama_url=(os.getenv("OLLAMA_URL") or "http://127.0.0.1:11434").rstrip("/"),
             ollama_model=(os.getenv("OLLAMA_MODEL") or "qwen2.5:3b").strip(),
             ollama_timeout=_as_float(os.getenv("OLLAMA_TIMEOUT"), 300.0),
             ollama_num_ctx=_as_int(os.getenv("OLLAMA_NUM_CTX"), 8192),
@@ -208,6 +226,12 @@ class Settings:
                 os.getenv("JARVIS_RAG_EXTENSIONS")
                 or ".md,.txt,.pdf,.docx,.csv,.xlsx"
             ).strip(),
+            rag_mode=(os.getenv("JARVIS_RAG_MODE") or "bm25").strip().lower(),
+            rag_rrf_k=_as_int(os.getenv("JARVIS_RAG_RRF_K"), 60),
+            rag_prefixes=(os.getenv("JARVIS_RAG_PREFIXES") or "auto").strip().lower(),
+            rag_vector_backend=(
+                os.getenv("JARVIS_RAG_VECTOR_BACKEND") or "auto"
+            ).strip().lower(),
             ms_graph_client_id=(os.getenv("MS_GRAPH_CLIENT_ID") or "").strip() or None,
             ms_graph_tenant=(os.getenv("MS_GRAPH_TENANT") or "organizations").strip(),
             ms_graph_token=_as_path(
@@ -221,4 +245,10 @@ class Settings:
             tts_voice=(os.getenv("JARVIS_TTS_VOICE") or "pt-BR-FranciscaNeural").strip(),
             tts_rate=(os.getenv("JARVIS_TTS_RATE") or "+0%").strip(),
             tts_max_chars=_as_int(os.getenv("JARVIS_TTS_MAX_CHARS"), 3000),
+            metrics_enabled=_as_bool(os.getenv("JARVIS_METRICS_ENABLED"), True),
+            metrics_db_path=_as_path(os.getenv("JARVIS_METRICS_DB_PATH")),
+            log_format=(os.getenv("JARVIS_LOG_FORMAT") or "text").strip().lower(),
+            log_level=(os.getenv("JARVIS_LOG_LEVEL") or "INFO").strip().upper(),
+            mcp_tools=_as_list(os.getenv("JARVIS_MCP_TOOLS")),
+            mcp_allow_unsafe=_as_bool(os.getenv("JARVIS_MCP_ALLOW_UNSAFE"), False),
         )

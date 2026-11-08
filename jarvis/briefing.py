@@ -53,7 +53,7 @@ Tarefa:
 7. Se uma integração não estiver configurada, escreva "não configurado" na seção e siga.
 8. Não invente compromissos, e-mails, prazos ou tarefas. Use apenas o que as ferramentas retornarem.
 9. Responda em TEXTO normal (markdown simples). NÃO responda em JSON.
-"""
+"""  # noqa: E501 - prompt: o texto que o modelo vê não muda
 
 
 class BriefingService:
@@ -157,6 +157,7 @@ class BriefingService:
             use_history=False,
             allow_tools=BRIEFING_TOOLS,
             max_iterations=self.settings.briefing_max_iterations,
+            source="briefing",
         )
 
     def _run(self) -> None:

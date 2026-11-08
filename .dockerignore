@@ -1,0 +1,38 @@
+# Segredos: nunca no contexto de build (o compose injeta o .env em tempo de execução)
+.env
+.env.*
+!.env.example
+credentials.json
+token.json
+*.pem
+*.key
+
+# Estado local e artefatos pesados
+data/
+workspace/
+backups/
+jarvis-backups/
+mlruns/
+mlartifacts/
+evals/mlflow.db
+evals/mlartifacts/
+*.gguf
+*.log
+*.mp3
+*.wav
+
+# Ambiente e caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.git/
+.github/
+
+# Não precisam estar na imagem do bot
+evals/
+finetune/
+tests/
+docs/

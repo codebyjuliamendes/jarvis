@@ -1,0 +1,43 @@
+# Configuração de ferramentas. O projeto não é um pacote instalável: as dependências
+# ficam em requirements*.txt e a execução é por ./run.sh / python -m jarvis.
+
+[tool.ruff]
+# O .venv do projeto e o CI rodam Python 3.8; nada de sintaxe 3.9+.
+target-version = "py38"
+# 110: o código foi escrito perto de 100 colunas, com prompts e mensagens um pouco mais
+# longos. Reformatar tudo para 88/100 seria ruído no histórico sem ganho de leitura.
+line-length = 110
+# O notebook do fine-tuning fica fora: roda no Colab, foi validado só como arquivo
+# (tests/test_finetune_notebook.py) e tem o estilo normal de notebook (imports no meio
+# das células, "a; b"). Mexer em células nunca executadas aqui arrisca a primeira rodada.
+extend-exclude = ["mlruns", "evals/mlartifacts", "evals/fixtures", "finetune/data", "*.ipynb"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle (erros)
+    "W",   # pycodestyle (avisos)
+    "F",   # pyflakes
+    "I",   # ordem dos imports (isort)
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade, limitado ao alvo py38
+]
+ignore = [
+    # O código usa typing.List/Dict/Optional de propósito: roda em 3.8, onde list[int] e
+    # X | None só funcionam em anotações adiadas, e os mesmos nomes aparecem fora de
+    # anotações (aliases, casts). Trocar ~800 anotações seria ruído sem mudar nada.
+    "UP006",  # non-pep585-annotation
+    "UP007",  # non-pep604-annotation-union
+    "UP045",  # non-pep604-annotation-optional
+    # Estilo do projeto: str.format em todo lugar (inclusive em mensagens com chaves
+    # literais). Converter 366 chamadas para f-string não muda comportamento e só gera diff.
+    "UP032",  # f-string
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Arquivos que são majoritariamente texto: o corpus fictício dos evals e os modelos de
+# frase do fine-tuning. Quebrar frases no meio piora a leitura e a revisão do conteúdo.
+"evals/make_fixtures.py" = ["E501"]
+"finetune/templates.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["jarvis", "evals", "finetune"]

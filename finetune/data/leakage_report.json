@@ -1,0 +1,861 @@
+{
+ "threshold": 0.35,
+ "ngram": 4,
+ "eval_cases": 78,
+ "eval_entities": [
+  "agent.py",
+  "ana@empresa.com",
+  "apostila_calculo.pdf",
+  "ata_reuniao.docx",
+  "backup.zip",
+  "comprovante.png",
+  "config.yaml",
+  "contrato_aluguel.pdf",
+  "dados.csv",
+  "diario.md",
+  "docs.python.org",
+  "documentos/faculdade",
+  "exemplo.com.br",
+  "https://docs.python.org/3/whatsnew/3.13.html",
+  "https://exemplo.com.br/blog/produtividade",
+  "ideias.txt",
+  "jarvis/agent.py",
+  "julia/jarvis",
+  "lista_compras.txt",
+  "notas/ideias.txt",
+  "orcamento.xlsx",
+  "orcamento_2026.xlsx",
+  "proposta_comercial.docx",
+  "quadro_aula.jpg",
+  "readme.md",
+  "relatorio_mensal.pdf",
+  "todo.md",
+  "uploads/quadro_aula.jpg",
+  "vendas.xlsx"
+ ],
+ "checked": 2194,
+ "removed": 60,
+ "kept": 2134,
+ "removed_by_reason": {
+  "exato": 0,
+  "quase_duplicata": 60,
+  "entidade": 0
+ },
+ "kept_similarity": {
+  "p50": 0.1375573394495413,
+  "p95": 0.2857142857142857,
+  "max": 0.3488372093023256
+ },
+ "top_kept_similar": [
+  {
+   "prompt": "ei, pesquisa na internet: notícias sobre a taxa Selic",
+   "similarity": 0.349,
+   "eval_prompt": "pesquisa na internet as notícias de hoje sobre inteligência artificial"
+  },
+  {
+   "prompt": "ei, o que está escrito no contrato_freela.docx?",
+   "similarity": 0.348,
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?"
+  },
+  {
+   "prompt": "Jarvis, o que está escrito no relatorio_estagio.docx?",
+   "similarity": 0.348,
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?"
+  },
+  {
+   "prompt": "jarvis, me dá as informações do repositório juliamendes/site-pessoal no GitHub",
+   "similarity": 0.347,
+   "eval_prompt": "lista as issues abertas do repositório julia/jarvis no GitHub"
+  },
+  {
+   "prompt": "Lista as issues do juliamendes/laudo-llm no GitHub",
+   "similarity": 0.346,
+   "eval_prompt": "lista as issues abertas do repositório julia/jarvis no GitHub"
+  },
+  {
+   "prompt": "ei, o que está escrito no briefing_cliente.docx?",
+   "similarity": 0.343,
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?"
+  },
+  {
+   "prompt": "Lista os clientes do Stripe",
+   "similarity": 0.342,
+   "eval_prompt": "lista as faturas do Stripe"
+  },
+  {
+   "prompt": "Por favor, que reuniões tenho no calendário do Outlook hoje?",
+   "similarity": 0.341,
+   "eval_prompt": "quais são minhas reuniões no calendário do Outlook esta semana?"
+  },
+  {
+   "prompt": "Lista os arquivos com prefixo fatura_",
+   "similarity": 0.34,
+   "eval_prompt": "lista os arquivos da pasta src"
+  },
+  {
+   "prompt": "lista os arquivos do workspace por favor",
+   "similarity": 0.34,
+   "eval_prompt": "lista os arquivos da pasta src"
+  }
+ ],
+ "removed_examples": [
+  {
+   "id": null,
+   "template": "replace_in_file.one.01",
+   "prompt": "Jarvis substitui DEBUG = True por DEBUG = False no arquivo app/main.py",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.37,
+   "eval_id": "ts-009",
+   "eval_prompt": "no arquivo config.yaml troca 'debug: true' por 'debug: false'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "replace_in_file.one.00",
+   "prompt": "em app/main.py, troca 'DEBUG = True' por 'DEBUG = False'",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.415,
+   "eval_id": "ts-009",
+   "eval_prompt": "no arquivo config.yaml troca 'debug: true' por 'debug: false'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "list_dir.workspace.01",
+   "prompt": "Lista os arquivos do workspace",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.425,
+   "eval_id": "ts-012",
+   "eval_prompt": "lista os arquivos da pasta src",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "list_dir.workspace.01",
+   "prompt": "jarvis, lista os arquivos do workspace",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.362,
+   "eval_id": "ts-012",
+   "eval_prompt": "lista os arquivos da pasta src",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "list_dir.workspace.01",
+   "prompt": "Lista os arquivos do workspace valeu",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.37,
+   "eval_id": "ts-012",
+   "eval_prompt": "lista os arquivos da pasta src",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "obsidian.list.02",
+   "prompt": "mostra as notas da pasta Projetos do meu vault",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.433,
+   "eval_id": "ts-025",
+   "eval_prompt": "lista as notas da pasta Projetos no Obsidian",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "obsidian.list.00",
+   "prompt": "Quais notas tenho na pasta Projetos do Obsidian?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.45,
+   "eval_id": "ts-025",
+   "eval_prompt": "lista as notas da pasta Projetos no Obsidian",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.search.00",
+   "prompt": "procura no Notion a página sobre MLOps",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.41,
+   "eval_id": "ts-026",
+   "eval_prompt": "procura no Notion a página do planejamento de 2027",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.search.00",
+   "prompt": "procura no Notion a página sobre Kubernetes",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.379,
+   "eval_id": "ts-026",
+   "eval_prompt": "procura no Notion a página do planejamento de 2027",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.search.00",
+   "prompt": "procura no Notion a página sobre jardinagem",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.379,
+   "eval_id": "ts-026",
+   "eval_prompt": "procura no Notion a página do planejamento de 2027",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.search.00",
+   "prompt": "procura no Notion a página sobre o projeto Atlas",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.357,
+   "eval_id": "ts-026",
+   "eval_prompt": "procura no Notion a página do planejamento de 2027",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.search.00",
+   "prompt": "por favor, procura no Notion a página sobre orçamento doméstico",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.375,
+   "eval_id": "ts-026",
+   "eval_prompt": "procura no Notion a página do planejamento de 2027",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.create.00",
+   "prompt": "cria uma página no Notion com o título 'Leituras de dezembro'",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.354,
+   "eval_id": "ts-027",
+   "eval_prompt": "cria uma página no Notion chamada 'Ideias de viagem'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "notion.create.00",
+   "prompt": "Cria uma página no Notion com o título 'Metas de 2027'",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.389,
+   "eval_id": "ts-027",
+   "eval_prompt": "cria uma página no Notion chamada 'Ideias de viagem'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.read.00",
+   "prompt": "lê a planilha metas_vendas.xlsx",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.393,
+   "eval_id": "ts-028",
+   "eval_prompt": "lê a planilha vendas.xlsx e me diz o total do mês",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.read.04",
+   "prompt": "Analisa a planilha orcamento_viagem.xlsx",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.356,
+   "eval_id": "ts-029",
+   "eval_prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.read.00",
+   "prompt": "lê a planilha orcamento_viagem.xlsx",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.415,
+   "eval_id": "ts-029",
+   "eval_prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.tab.01",
+   "prompt": "Na planilha orcamento_viagem.xlsx, lê a aba Janeiro",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.406,
+   "eval_id": "ts-029",
+   "eval_prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.tab.00",
+   "prompt": "Abre a aba 2025 do orcamento_viagem.xlsx",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.404,
+   "eval_id": "ts-029",
+   "eval_prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.tab.01",
+   "prompt": "na planilha orcamento_viagem.xlsx, lê a aba 2025",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.5,
+   "eval_id": "ts-029",
+   "eval_prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "spreadsheet.tab.01",
+   "prompt": "Na planilha orcamento_viagem.xlsx, lê a aba Resumo",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.413,
+   "eval_id": "ts-029",
+   "eval_prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "Jarvis, o que tem na minha agenda do Google hoje?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.417,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.03",
+   "prompt": "lista os eventos da agenda do Google nos próximos 5 dias",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.405,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.03",
+   "prompt": "lista os eventos da agenda do Google nos próximos 2 dias",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.405,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "ei, o que tem na minha agenda do Google hoje?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.441,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "O que tem na minha agenda do Google nas próximas duas semanas?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.456,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "o que tem na minha agenda do Google nos próximos 2 dias?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.719,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "o que tem na minha agenda do Google hoje?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.462,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "o que tem na minha agenda do Google nos próximos 5 dias?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.719,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.cal_list.00",
+   "prompt": "O que tem na minha agenda do Google nesta semana?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.431,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.gmail_unread.00",
+   "prompt": "por favor, quais e-mails não lidos tenho no Gmail?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.362,
+   "eval_id": "ts-033",
+   "eval_prompt": "tenho e-mails não lidos no Outlook?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.gmail_unread.00",
+   "prompt": "Quais e-mails não lidos tenho no Gmail?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.438,
+   "eval_id": "ts-033",
+   "eval_prompt": "tenho e-mails não lidos no Outlook?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "google.gmail_unread.00",
+   "prompt": "Jarvis, quais e-mails não lidos tenho no Gmail?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.382,
+   "eval_id": "ts-033",
+   "eval_prompt": "tenho e-mails não lidos no Outlook?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "microsoft.cal_list.00",
+   "prompt": "minha agenda do Outlook nos próximos 3 dias",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.485,
+   "eval_id": "ts-030",
+   "eval_prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "microsoft.cal_list.01",
+   "prompt": "que reuniões tenho no calendário do Outlook hoje?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.385,
+   "eval_id": "ts-034",
+   "eval_prompt": "quais são minhas reuniões no calendário do Outlook esta semana?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "microsoft.cal_list.01",
+   "prompt": "que reuniões tenho no calendário do Outlook nesta semana?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.506,
+   "eval_id": "ts-034",
+   "eval_prompt": "quais são minhas reuniões no calendário do Outlook esta semana?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "microsoft.teams_chats.00",
+   "prompt": "Jarvis, mostra meus chats do Teams",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.39,
+   "eval_id": "ts-035",
+   "eval_prompt": "mostra as conversas recentes dos meus chats do Teams",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "microsoft.teams_chats.00",
+   "prompt": "mostra meus chats do Teams",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.442,
+   "eval_id": "ts-035",
+   "eval_prompt": "mostra as conversas recentes dos meus chats do Teams",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "microsoft.teams_chats.00",
+   "prompt": "mostra meus chats do Teams pfv",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.411,
+   "eval_id": "ts-035",
+   "eval_prompt": "mostra as conversas recentes dos meus chats do Teams",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "stripe.revenue.00",
+   "prompt": "quanto entrou no Stripe nos ultimos 15 dias?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.492,
+   "eval_id": "ts-037",
+   "eval_prompt": "quanto eu faturei no Stripe nos últimos 30 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "stripe.revenue.00",
+   "prompt": "Ei, quanto entrou no Stripe nos últimos 15 dias?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.468,
+   "eval_id": "ts-037",
+   "eval_prompt": "quanto eu faturei no Stripe nos últimos 30 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "stripe.revenue.00",
+   "prompt": "quanto entrou no Stripe nos últimos 90 dias?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.517,
+   "eval_id": "ts-037",
+   "eval_prompt": "quanto eu faturei no Stripe nos últimos 30 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "stripe.revenue.00",
+   "prompt": "quanto entrou no Stripe nos últimos 7 dias?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.5,
+   "eval_id": "ts-037",
+   "eval_prompt": "quanto eu faturei no Stripe nos últimos 30 dias?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "web_search.query.00",
+   "prompt": "Pesquisa na internet: notícias sobre a taxa Selic",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.361,
+   "eval_id": "ts-040",
+   "eval_prompt": "pesquisa na internet as notícias de hoje sobre inteligência artificial",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "o que está escrito no briefing_cliente.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.359,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "O que está escrito no pauta_assembleia.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.359,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "o que está escrito no relatorio_estagio.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.387,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "O que está escrito no contrato_freela.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.365,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "o que está escrito no carta_recomendacao.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.435,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "o que está escrito no plano_de_aula.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.377,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_docx.path.02",
+   "prompt": "O que esta escrito no tcc_capitulo2.docx?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.377,
+   "eval_id": "ts-050",
+   "eval_prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "speak.text.01",
+   "prompt": "fala em voz alta: a pizza chegou",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.37,
+   "eval_id": "ts-054",
+   "eval_prompt": "fala em voz alta a frase 'beba água'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "knowledge_index.path.01",
+   "prompt": "Adiciona Documentos/impostos à busca semântica",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.351,
+   "eval_id": "ts-057",
+   "eval_prompt": "indexa a pasta Documentos/faculdade para a busca semântica",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "chat.thanks.03",
+   "prompt": "jarvis, perfeito, obrigada",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.48,
+   "eval_id": "ts-064",
+   "eval_prompt": "obrigada, Jarvis!",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "chat.translate.01",
+   "prompt": "traduz para o inglês: onde fica o banheiro?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.509,
+   "eval_id": "ts-067",
+   "eval_prompt": "traduz para o inglês: 'onde fica a estação de trem?'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "chat.translate.01",
+   "prompt": "Jarvis traduz para o inglês: onde fica o banheiro?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.453,
+   "eval_id": "ts-067",
+   "eval_prompt": "traduz para o inglês: 'onde fica a estação de trem?'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "chat.translate.01",
+   "prompt": "Por favor, traduz para o inglês: onde fica o banheiro?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.433,
+   "eval_id": "ts-067",
+   "eval_prompt": "traduz para o inglês: 'onde fica a estação de trem?'",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "chat.creative.00",
+   "prompt": "me dá três ideias de lanche saudável",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.358,
+   "eval_id": "ts-068",
+   "eval_prompt": "me dá três ideias de nome para um gato",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "read_file.whole.03",
+   "prompt": "me mostra o arquivo notas/estudos_sql.md",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.353,
+   "eval_id": "ts-005",
+   "eval_prompt": "abre o arquivo notas/ideias.txt e me mostra o conteúdo",
+   "entities": []
+  },
+  {
+   "id": null,
+   "template": "list_dir.path.00",
+   "prompt": "o que tem na pasta Downloads/instaladores?",
+   "reasons": [
+    "quase_duplicata"
+   ],
+   "similarity": 0.451,
+   "eval_id": "ts-011",
+   "eval_prompt": "o que tem dentro da pasta Downloads?",
+   "entities": []
+  }
+ ],
+ "eval_self_similarity": {
+  "max_per_case_p50": 0.11583184257602863,
+  "max_per_case_p95": 0.21685606060606055,
+  "max": 0.234375,
+  "top_pairs": [
+   {
+    "similarity": 0.234,
+    "a": "lista os arquivos da pasta src",
+    "b": "acha todos os arquivos PDF na minha pasta Documentos"
+   },
+   {
+    "similarity": 0.222,
+    "a": "lista as issues abertas do repositório julia/jarvis no GitHub",
+    "b": "quais pull requests estão abertos no meu repositório do GitHub?"
+   },
+   {
+    "similarity": 0.216,
+    "a": "procura na minha memória local o que foi decidido sobre o orçamento do condomínio",
+    "b": "reindexa minha memória local"
+   },
+   {
+    "similarity": 0.211,
+    "a": "busca no meu Obsidian as notas sobre meditação",
+    "b": "lista as notas da pasta Projetos no Obsidian"
+   },
+   {
+    "similarity": 0.206,
+    "a": "abre o arquivo notas/ideias.txt e me mostra o conteúdo",
+    "b": "abre o arquivo dados.csv"
+   }
+  ]
+ },
+ "sensitivity": {
+  "0.3": 122,
+  "0.35": 60,
+  "0.4": 34,
+  "0.5": 7
+ }
+}

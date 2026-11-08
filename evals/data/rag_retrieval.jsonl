@@ -1,0 +1,36 @@
+{"id": "rag-001", "question": "Para quando ficou o lançamento da nova versão do app de reservas de salas?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "adiado de 3 de novembro para 24 de novembro"}
+{"id": "rag-002", "question": "Quanto dinheiro foi aprovado para a segunda fase do Falcon?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "R$ 48.000"}
+{"id": "rag-003", "question": "Quem vai cuidar do teste de carga e da migração do banco?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "Rafael cuida da migração do banco"}
+{"id": "rag-004", "question": "Quantas reservas por minuto derrubaram o servidor no teste?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "320 reservas por minuto"}
+{"id": "rag-005", "question": "Qual sala é a mais disputada e qual a ocupação dela?", "expected_doc": "reuniao_projeto_falcon.md", "expected_snippet": "taxa de ocupação de 92%"}
+{"id": "rag-006", "question": "Quando começa o piloto de assinatura eletrônica dos contratos?", "expected_doc": "reuniao_projeto_orion.md", "expected_snippet": "começa em 6 de outubro"}
+{"id": "rag-007", "question": "Qual o valor mensal que eu pago de aluguel?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "R$ 2.350,00"}
+{"id": "rag-008", "question": "O que acontece se eu atrasar o pagamento do aluguel?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "multa de 2% sobre o valor do"}
+{"id": "rag-009", "question": "Qual índice corrige o valor do aluguel todo ano?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "variação do IPCA"}
+{"id": "rag-010", "question": "Quanto pago de multa se sair do apartamento antes de completar um ano?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "multa proporcional"}
+{"id": "rag-011", "question": "Quem paga o conserto de uma infiltração no apartamento alugado?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "infiltrações"}
+{"id": "rag-012", "question": "Qual é o número da minha vaga na garagem do prédio alugado?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "vaga de garagem número 27"}
+{"id": "rag-013", "question": "Posso anunciar o apartamento alugado no Airbnb?", "expected_doc": "contrato_aluguel.pdf", "expected_snippet": "proibido sublocar"}
+{"id": "rag-014", "question": "Quanto o ateliê faturou no terceiro trimestre?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "R$ 184.300"}
+{"id": "rag-015", "question": "Por que a margem bruta da loja de luminárias caiu?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "frete subiu 18%"}
+{"id": "rag-016", "question": "Qual foi o custo de aquisição de cliente do ateliê?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "caiu para R$ 38"}
+{"id": "rag-017", "question": "Quantas unidades da Luminária Origami foram vendidas?", "expected_doc": "relatorio_trimestral.docx", "expected_snippet": "Luminária Origami | 412"}
+{"id": "rag-018", "question": "Até que horas posso fazer barulho num sábado no condomínio?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "das 23h às 9h aos sábados"}
+{"id": "rag-019", "question": "Em que dia da semana a piscina do prédio fica fechada?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "Às segundas ela fica fechada"}
+{"id": "rag-020", "question": "Com quanto tempo de antecedência tenho que agendar uma mudança?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "48 horas de antecedência"}
+{"id": "rag-021", "question": "De quanto é a taxa extra aprovada para a impermeabilização da cobertura?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "taxa extra de R$ 95 por mês"}
+{"id": "rag-022", "question": "Qual o orçamento do condomínio aprovado para 2025?", "expected_doc": "ata_assembleia_2025.txt", "expected_snippet": "R$ 574.000"}
+{"id": "rag-023", "question": "Onde jogo fora o óleo de cozinha usado no prédio?", "expected_doc": "regulamento_condominio.txt", "expected_snippet": "Óleo de cozinha usado"}
+{"id": "rag-024", "question": "A que temperatura e por quanto tempo asso o pão de queijo?", "expected_doc": "receitas_familia.md", "expected_snippet": "200 °C por cerca de 25 minutos"}
+{"id": "rag-025", "question": "Quanto leite de coco vai na moqueca?", "expected_doc": "receitas_familia.md", "expected_snippet": "200 ml de leite de coco"}
+{"id": "rag-026", "question": "Qual é o código da reserva do voo para Portugal?", "expected_doc": "viagem_lisboa.md", "expected_snippet": "QX7LMB"}
+{"id": "rag-027", "question": "Até quando dá para cancelar o hotel em Alfama sem pagar nada?", "expected_doc": "viagem_lisboa.md", "expected_snippet": "sem custo até 20 de fevereiro"}
+{"id": "rag-028", "question": "Qual bonde pegar para ir a Belém?", "expected_doc": "viagem_lisboa.md", "expected_snippet": "elétrico 15"}
+{"id": "rag-029", "question": "Quando e onde é a primeira prova de Cálculo?", "expected_doc": "notas_aula_calculo.md", "expected_snippet": "19 de novembro de 2026"}
+{"id": "rag-030", "question": "Quando posso usar a regra de L'Hôpital?", "expected_doc": "notas_aula_calculo.md", "expected_snippet": "infinito sobre infinito"}
+{"id": "rag-031", "question": "Que média preciso para passar direto em Cálculo?", "expected_doc": "notas_aula_calculo.md", "expected_snippet": "igual ou maior que 7"}
+{"id": "rag-032", "question": "Como faço o reset de fábrica do roteador?", "expected_doc": "manual_roteador.txt", "expected_snippet": "botão RESET"}
+{"id": "rag-033", "question": "O que significa a luz vermelha no roteador?", "expected_doc": "manual_roteador.txt", "expected_snippet": "Luz vermelha: sem conexão"}
+{"id": "rag-034", "question": "Como crio uma rede Wi-Fi separada para visitas?", "expected_doc": "manual_roteador.txt", "expected_snippet": "Nimbus-Visitas"}
+{"id": "rag-035", "question": "Qual é o tempo que quero bater na corrida de dezembro?", "expected_doc": "plano_treino.txt", "expected_snippet": "menos de 60 minutos"}
+{"id": "rag-036", "question": "A que horas é a largada da prova de 10 km?", "expected_doc": "plano_treino.txt", "expected_snippet": "largada é às 6h30"}

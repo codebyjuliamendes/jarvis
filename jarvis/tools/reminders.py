@@ -55,7 +55,7 @@ def parse_when(value: str, timezone_name: Optional[str] = None) -> datetime:
             except ValueError:
                 raise ValueError(
                     "use 'hoje 14:30' ou 'amanhã 09:00' (formato HH:MM)"
-                )
+                ) from None
             candidate = now.replace(
                 hour=parsed_time.hour,
                 minute=parsed_time.minute,
@@ -100,7 +100,7 @@ def parse_when(value: str, timezone_name: Optional[str] = None) -> datetime:
         raise ValueError(
             "não entendi a data/hora. Use '10m', 'hoje 18:00', "
             "'amanhã 09:30', '2026-11-20 18:30' ou ISO 8601."
-        )
+        ) from None
     if parsed.tzinfo is None:
         if tz is not None:
             return tz.localize(parsed)

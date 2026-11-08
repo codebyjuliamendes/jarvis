@@ -1,0 +1,7 @@
+# Servidor MCP (jarvis/mcp_server.py) — opcional, exige Python >= 3.10.
+# Instale num venv à parte junto com o requirements.txt:
+#   uv venv --python 3.12 .venv-mcp
+#   uv pip install --python .venv-mcp -r requirements.txt -r requirements-mcp.txt
+# Versão fixa: a API do SDK mudou da 1.x para a 2.x (servidor de baixo nível com on_* e
+# mcp.Client); o módulo foi escrito e testado contra esta.
+mcp==2.3.0; python_version >= "3.10"

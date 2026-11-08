@@ -1,0 +1,28 @@
+MANUAL RÁPIDO — ROTEADOR NIMBUS AX1800 (produto fictício)
+
+PRIMEIRO ACESSO
+Conecte o cabo de rede do modem na porta azul (WAN). Acesse http://192.168.10.1 no navegador. O usuário padrão é admin e a senha padrão vem impressa na etiqueta embaixo do aparelho.
+
+REDE WI-FI
+O roteador cria duas redes: Nimbus-2G, de maior alcance, e Nimbus-5G, mais rápida e com menos interferência. Para trocar a senha do Wi-Fi, entre em Configurações > Sem fio > Segurança e escolha WPA3.
+
+RESET DE FÁBRICA
+Com o roteador ligado, segure o botão RESET na parte de trás por 10 segundos, até a luz ficar laranja piscando. Todas as configurações voltam ao padrão de fábrica.
+
+LUZES
+Luz verde fixa: internet funcionando. Luz vermelha: sem conexão com o provedor. Luz laranja piscando: reiniciando ou atualizando o firmware — não desligue o aparelho nesse momento.
+
+GARANTIA
+A garantia é de 24 meses a partir da data da nota fiscal. O suporte técnico atende pelo telefone 0800 555 0199, de segunda a sábado, das 8h às 20h.
+
+REDE DE CONVIDADOS
+Em Configurações > Convidados, ative a rede Nimbus-Visitas. Ela tem senha própria, não enxerga os outros aparelhos da casa e pode ser desligada automaticamente depois de 4, 8 ou 24 horas.
+
+CONTROLE DOS PAIS
+Em Configurações > Família é possível bloquear sites por categoria e definir horários sem internet para cada aparelho, por exemplo desligar o tablet das crianças das 22h às 7h.
+
+ATUALIZAÇÃO DE FIRMWARE
+O roteador procura atualizações toda madrugada às 3h. Para atualizar manualmente, vá em Sistema > Firmware > Verificar agora. A atualização leva cerca de 5 minutos e reinicia o aparelho.
+
+MESH
+O Nimbus AX1800 pode ser combinado com até três satélites Nimbus Mesh para cobrir casas grandes. Pareie cada satélite apertando o botão WPS dos dois aparelhos em até 2 minutos.

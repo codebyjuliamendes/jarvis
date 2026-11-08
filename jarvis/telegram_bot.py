@@ -5,9 +5,10 @@ import logging
 import re
 import shutil
 import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from telegram import Update
 from telegram.constants import ChatAction, ParseMode
@@ -20,10 +21,12 @@ from telegram.ext import (
     filters,
 )
 
+from . import observability
 from .agent import Agent
 from .briefing import BriefingService
 from .config import Settings
 from .memory import Memory
+from .metrics_store import metrics_report
 from .rag import RagIndex
 from .reminders import ReminderService
 from .telegram_api import send_audio
@@ -52,6 +55,7 @@ HELP_TEXT = (
     "/start - apresentação\n"
     "/help - esta ajuda\n"
     "/status - modelo, Ollama e integrações\n"
+    "/metrics - latência, erros e ferramentas (24 h e 7 dias)\n"
     "/briefing - gera o briefing de hoje agora\n"
     "/reindex - reindexa os arquivos na memória local\n"
     "/voice on|off - liga/desliga respostas em áudio\n"
@@ -128,6 +132,7 @@ class JarvisBot:
         self.app.add_handler(CommandHandler("start", self._cmd_start))
         self.app.add_handler(CommandHandler("help", self._cmd_help))
         self.app.add_handler(CommandHandler("status", self._cmd_status))
+        self.app.add_handler(CommandHandler("metrics", self._cmd_metrics))
         self.app.add_handler(CommandHandler("briefing", self._cmd_briefing))
         self.app.add_handler(CommandHandler("reindex", self._cmd_reindex))
         self.app.add_handler(CommandHandler("voice", self._cmd_voice))
@@ -323,6 +328,27 @@ class JarvisBot:
             lines.append("[atenção] Nenhum usuário autorizado configurado.")
         await self._reply(update, "\n".join(lines))
 
+    async def _cmd_metrics(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
+        if not await self._guard(update):
+            return
+        store = getattr(self.agent, "metrics", None)
+        if store is None:
+            await self._reply(
+                update,
+                "Métricas desativadas. Ligue com JARVIS_METRICS_ENABLED=true e reinicie.",
+            )
+            return
+        try:
+            text = await run_blocking(metrics_report, store, time.time())
+        except Exception as exc:  # noqa: BLE001
+            logger.exception("Falha ao ler as métricas")
+            await self._reply(update, "Não consegui ler as métricas: {}".format(exc))
+            return
+        # Bloco monoespaçado: alinha as colunas e evita que "_" vire itálico.
+        await self._reply(update, "```\n{}\n```".format(text))
+
     async def _keep_typing(
         self, context: ContextTypes.DEFAULT_TYPE, chat_id: int
     ) -> None:
@@ -399,18 +425,21 @@ class JarvisBot:
             )
             return
 
-        async with lock:
-            typing_task = asyncio.create_task(self._keep_typing(context, chat_id))
-            try:
-                reply = await self.agent.respond(chat_id, text)
-            except Exception as exc:  # noqa: BLE001
-                logger.exception("Erro inesperado no agente")
-                reply = "Deu erro aqui: {}".format(exc)
-            finally:
-                typing_task.cancel()
+        # Um id por mensagem: o agente reaproveita este, então os logs do envio
+        # da resposta (e do áudio) também saem com o mesmo request_id.
+        with observability.request_id_scope():
+            async with lock:
+                typing_task = asyncio.create_task(self._keep_typing(context, chat_id))
+                try:
+                    reply = await self.agent.respond(chat_id, text)
+                except Exception as exc:  # noqa: BLE001
+                    logger.exception("Erro inesperado no agente")
+                    reply = "Deu erro aqui: {}".format(exc)
+                finally:
+                    typing_task.cancel()
 
-        await self._reply(update, reply)
-        await self._maybe_send_audio(chat_id, reply)
+            await self._reply(update, reply)
+            await self._maybe_send_audio(chat_id, reply)
 
     async def _on_text(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE

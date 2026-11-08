@@ -1,0 +1,2565 @@
+{
+  "kind": "tool_selection",
+  "model": "llama3.2:3b",
+  "mode": "native",
+  "effective_mode": "native",
+  "dataset": "evals/data/tool_selection.jsonl",
+  "dataset_sha256": "a0afd6d2936e",
+  "n_tools": 25,
+  "seed": 42,
+  "num_ctx": 8192,
+  "warmup_s": 8.435909600000059,
+  "meta": {
+    "timestamp": "2026-11-08T03:09:29-03:00",
+    "git_commit": "0fa0ad2",
+    "python": "3.8.20",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+    "ollama": {
+      "url": "http://127.0.0.1:11434",
+      "version": "0.40.14"
+    }
+  },
+  "metrics": {
+    "n": 78,
+    "tool_accuracy": 0.7435897435897436,
+    "tool_hits": 58,
+    "args_accuracy": 0.6557377049180327,
+    "args_hits": 40,
+    "args_n": 61,
+    "args_accuracy_given_tool": 0.7843137254901961,
+    "args_hits_given_tool": 40,
+    "args_n_given_tool": 51,
+    "invalid_json_rate": 0.0,
+    "invalid_json": 0,
+    "leaked_calls": 4,
+    "unknown_tool_calls": 0,
+    "errors": 0,
+    "latency_s": {
+      "n": 78,
+      "mean": 0.8161041705128232,
+      "p50": 0.7668199999999956,
+      "p95": 1.2899142849999183,
+      "min": 0.316587800000093,
+      "max": 2.358843200000024
+    },
+    "tokens_per_s": 65.20592345085647,
+    "mean_prompt_tokens": 3984.3846153846152,
+    "by_category": {
+      "ambiguo": {
+        "n": 8,
+        "hits": 6,
+        "accuracy": 0.75
+      },
+      "direto": {
+        "n": 62,
+        "hits": 52,
+        "accuracy": 0.8387096774193549
+      },
+      "sem_ferramenta": {
+        "n": 8,
+        "hits": 0,
+        "accuracy": 0.0
+      }
+    },
+    "errors_by_pair": {
+      "None -> knowledge_search": 3,
+      "find_files -> list_dir": 2,
+      "google -> None": 2,
+      "None -> speak": 2,
+      "None -> web_search": 2,
+      "run_shell -> None": 1,
+      "replace_in_file -> write_file": 1,
+      "search_files -> knowledge_search": 1,
+      "search_files -> knowledge_index": 1,
+      "microsoft -> google": 1,
+      "microsoft -> None": 1,
+      "web_fetch -> web_search": 1,
+      "None -> run_shell": 1,
+      "spreadsheet -> None": 1
+    }
+  },
+  "records": [
+    {
+      "id": "ts-001",
+      "category": "direto",
+      "prompt": "roda os testes do projeto com pytest",
+      "expected_tool": "run_shell",
+      "predicted": "run_shell",
+      "args": {
+        "command": "pytest -v",
+        "cwd": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 0.9614368000000013,
+      "timings": {
+        "total_s": 0.9180417,
+        "load_s": 0.0359749,
+        "prompt_eval_count": 3980.0,
+        "prompt_eval_s": 0.023176,
+        "eval_count": 52.0,
+        "eval_s": 0.808947,
+        "tokens_per_s": 64.28109628937372
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-002",
+      "category": "direto",
+      "prompt": "instala a biblioteca requests no ambiente com pip",
+      "expected_tool": "run_shell",
+      "predicted": "run_shell",
+      "args": {
+        "command": "pip install requests"
+      },
+      "error": null,
+      "latency_s": 0.37549479999995583,
+      "timings": {
+        "total_s": 0.3300959,
+        "load_s": 0.034557,
+        "prompt_eval_count": 3981.0,
+        "prompt_eval_s": 0.022761,
+        "eval_count": 15.0,
+        "eval_s": 0.223127,
+        "tokens_per_s": 67.22628816772512
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-003",
+      "category": "direto",
+      "prompt": "quanto espaço livre tem no disco? usa o df -h",
+      "expected_tool": "run_shell",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.8842359999999871,
+      "timings": {
+        "total_s": 0.826759,
+        "load_s": 0.0313976,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.02344,
+        "eval_count": 46.0,
+        "eval_s": 0.699269,
+        "tokens_per_s": 65.78298194257145
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"name\": \"run_shell\", \"parameters\": {\"command\": \"df -h\", \"cwd\": \"<HOME>\\AppData\\\\Local\\\\Temp\"}}",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-004",
+      "category": "direto",
+      "prompt": "qual é a versão do Python instalada nesta máquina? roda o comando pra ver",
+      "expected_tool": "run_shell",
+      "predicted": "run_shell",
+      "args": {
+        "command": "python --version",
+        "cwd": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 1.0236162999999578,
+      "timings": {
+        "total_s": 0.9952399,
+        "load_s": 0.027311,
+        "prompt_eval_count": 3990.0,
+        "prompt_eval_s": 0.02399,
+        "eval_count": 57.0,
+        "eval_s": 0.883681,
+        "tokens_per_s": 64.50291451326892
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-005",
+      "category": "direto",
+      "prompt": "abre o arquivo notas/ideias.txt e me mostra o conteúdo",
+      "expected_tool": "read_file",
+      "predicted": "read_file",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\notas\\ideias.txt",
+        "start_line": "1",
+        "end_line": "null"
+      },
+      "error": null,
+      "latency_s": 1.1816733999999087,
+      "timings": {
+        "total_s": 1.1518546,
+        "load_s": 0.0277888,
+        "prompt_eval_count": 3986.0,
+        "prompt_eval_s": 0.022066,
+        "eval_count": 68.0,
+        "eval_s": 1.048117,
+        "tokens_per_s": 64.87825309578989
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-006",
+      "category": "direto",
+      "prompt": "lê as linhas 10 a 30 do jarvis/agent.py",
+      "expected_tool": "read_file",
+      "predicted": "read_file",
+      "args": {
+        "end_line": "30",
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_\\\\agent.py",
+        "start_line": "10"
+      },
+      "error": null,
+      "latency_s": 1.1104565000000548,
+      "timings": {
+        "total_s": 1.0879896,
+        "load_s": 0.0218325,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.022019,
+        "eval_count": 65.0,
+        "eval_s": 1.002115,
+        "tokens_per_s": 64.86281514596628
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-007",
+      "category": "direto",
+      "prompt": "cria um arquivo todo.md com o texto '- comprar café'",
+      "expected_tool": "write_file",
+      "predicted": "write_file",
+      "args": {
+        "content": "- comprar Îcafe'",
+        "create_dirs": "true",
+        "path": "<HOME>\\AppData\\Local\\Temp\\todo.md"
+      },
+      "error": null,
+      "latency_s": 1.063869000000068,
+      "timings": {
+        "total_s": 1.0301165,
+        "load_s": 0.0304934,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.021435,
+        "eval_count": 61.0,
+        "eval_s": 0.933972,
+        "tokens_per_s": 65.31245048031418
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "content"
+      ]
+    },
+    {
+      "id": "ts-008",
+      "category": "direto",
+      "prompt": "salva num arquivo chamado lista_compras.txt: arroz, feijão e ovos",
+      "expected_tool": "write_file",
+      "predicted": "write_file",
+      "args": {
+        "content": "arroz, feijão e ovos",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\lista_compras.txt",
+        "create_dirs": "false"
+      },
+      "error": null,
+      "latency_s": 1.3328884999999673,
+      "timings": {
+        "total_s": 1.3008377,
+        "load_s": 0.0333322,
+        "prompt_eval_count": 3991.0,
+        "prompt_eval_s": 0.025618,
+        "eval_count": 77.0,
+        "eval_s": 1.191265,
+        "tokens_per_s": 64.63717141022359
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-009",
+      "category": "direto",
+      "prompt": "no arquivo config.yaml troca 'debug: true' por 'debug: false'",
+      "expected_tool": "replace_in_file",
+      "predicted": "write_file",
+      "args": {
+        "create_dirs": "false",
+        "content": "debug: false",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\config.yaml"
+      },
+      "error": null,
+      "latency_s": 1.1644569000000047,
+      "timings": {
+        "total_s": 1.1308139,
+        "load_s": 0.0266614,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 0.023482,
+        "eval_count": 66.0,
+        "eval_s": 1.01745,
+        "tokens_per_s": 64.86805248415156
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-010",
+      "category": "direto",
+      "prompt": "corrige o erro de digitação 'recieve' para 'receive' no README.md",
+      "expected_tool": "replace_in_file",
+      "predicted": "replace_in_file",
+      "args": {
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_\\\\README.md",
+        "old": "recieve",
+        "new": "receive",
+        "all": "false"
+      },
+      "error": null,
+      "latency_s": 1.2544211000000587,
+      "timings": {
+        "total_s": 1.217918,
+        "load_s": 0.0131063,
+        "prompt_eval_count": 3990.0,
+        "prompt_eval_s": 0.025036,
+        "eval_count": 72.0,
+        "eval_s": 1.114199,
+        "tokens_per_s": 64.6204134090948
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-011",
+      "category": "direto",
+      "prompt": "o que tem dentro da pasta Downloads?",
+      "expected_tool": "list_dir",
+      "predicted": "list_dir",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 0.8195581000001084,
+      "timings": {
+        "total_s": 0.7771594,
+        "load_s": 0.0314943,
+        "prompt_eval_count": 3979.0,
+        "prompt_eval_s": 0.022507,
+        "eval_count": 44.0,
+        "eval_s": 0.669712,
+        "tokens_per_s": 65.69988293475404
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-012",
+      "category": "direto",
+      "prompt": "lista os arquivos da pasta src",
+      "expected_tool": "list_dir",
+      "predicted": "list_dir",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 0.8830001000000038,
+      "timings": {
+        "total_s": 0.8555752,
+        "load_s": 0.0330969,
+        "prompt_eval_count": 3978.0,
+        "prompt_eval_s": 0.023287,
+        "eval_count": 48.0,
+        "eval_s": 0.738134,
+        "tokens_per_s": 65.02884300140626
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-013",
+      "category": "direto",
+      "prompt": "procura onde aparece 'TODO' no código do projeto",
+      "expected_tool": "search_files",
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "TODO no projeto"
+      },
+      "error": null,
+      "latency_s": 0.5281792999999197,
+      "timings": {
+        "total_s": 0.4933009,
+        "load_s": 0.0362324,
+        "prompt_eval_count": 3983.0,
+        "prompt_eval_s": 0.02298,
+        "eval_count": 25.0,
+        "eval_s": 0.372581,
+        "tokens_per_s": 67.09950319527834
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-014",
+      "category": "direto",
+      "prompt": "em quais arquivos eu uso a função parse_when?",
+      "expected_tool": "search_files",
+      "predicted": "knowledge_index",
+      "args": {
+        "force": "false",
+        "max_files": "400",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 1.0472698999999466,
+      "timings": {
+        "total_s": 1.0060352,
+        "load_s": 0.0295504,
+        "prompt_eval_count": 3983.0,
+        "prompt_eval_s": 0.022597,
+        "eval_count": 57.0,
+        "eval_s": 0.88576,
+        "tokens_per_s": 64.35151734104046
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-015",
+      "category": "direto",
+      "prompt": "acha todos os arquivos PDF na minha pasta Documentos",
+      "expected_tool": "find_files",
+      "predicted": "list_dir",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 0.9400214999999434,
+      "timings": {
+        "total_s": 0.8823736,
+        "load_s": 0.051653,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.021105,
+        "eval_count": 48.0,
+        "eval_s": 0.736704,
+        "tokens_per_s": 65.15506906437321
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-016",
+      "category": "direto",
+      "prompt": "onde está o arquivo chamado orcamento_2026.xlsx?",
+      "expected_tool": "find_files",
+      "predicted": "list_dir",
+      "args": {
+        "path": "<HOME>\\Desktop"
+      },
+      "error": null,
+      "latency_s": 0.6137923999999657,
+      "timings": {
+        "total_s": 0.5833866,
+        "load_s": 0.0375374,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.022794,
+        "eval_count": 31.0,
+        "eval_s": 0.470792,
+        "tokens_per_s": 65.84648847049228
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-017",
+      "category": "direto",
+      "prompt": "qual o status do git nesse repositório?",
+      "expected_tool": "git",
+      "predicted": "git",
+      "args": {
+        "args": "status",
+        "cwd": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 0.8918853999999783,
+      "timings": {
+        "total_s": 0.8501404,
+        "load_s": 0.0403569,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.021201,
+        "eval_count": 49.0,
+        "eval_s": 0.753881,
+        "tokens_per_s": 64.99699554704257
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-018",
+      "category": "direto",
+      "prompt": "mostra os últimos 5 commits do repositório local",
+      "expected_tool": "git",
+      "predicted": "git",
+      "args": {
+        "args": [
+          "status",
+          "--short"
+        ],
+        "cwd": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 1.012626100000034,
+      "timings": {
+        "total_s": 0.9786305,
+        "load_s": 0.0269772,
+        "prompt_eval_count": 3983.0,
+        "prompt_eval_s": 0.023787,
+        "eval_count": 57.0,
+        "eval_s": 0.875786,
+        "tokens_per_s": 65.08439276261552
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "args"
+      ]
+    },
+    {
+      "id": "ts-019",
+      "category": "direto",
+      "prompt": "faz commit das mudanças com a mensagem 'corrige bug do login'",
+      "expected_tool": "git",
+      "predicted": "git",
+      "args": {
+        "args": "['commit', '-m', 'corrige bug do login']",
+        "cwd": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 1.0763667999999598,
+      "timings": {
+        "total_s": 1.0469933,
+        "load_s": 0.0273288,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 0.023066,
+        "eval_count": 60.0,
+        "eval_s": 0.927591,
+        "tokens_per_s": 64.68368063079525
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-020",
+      "category": "direto",
+      "prompt": "lista as issues abertas do repositório julia/jarvis no GitHub",
+      "expected_tool": "github",
+      "predicted": "github",
+      "args": {
+        "action": "list_issues",
+        "query": "issue:open is:open repo: julia/jarvis"
+      },
+      "error": null,
+      "latency_s": 0.5672256999999945,
+      "timings": {
+        "total_s": 0.5412992,
+        "load_s": 0.0210573,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.024579,
+        "eval_count": 29.0,
+        "eval_s": 0.44477,
+        "tokens_per_s": 65.20223935966904
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "repo"
+      ]
+    },
+    {
+      "id": "ts-021",
+      "category": "direto",
+      "prompt": "quais pull requests estão abertos no meu repositório do GitHub?",
+      "expected_tool": "github",
+      "predicted": "github",
+      "args": {
+        "action": "list_prs",
+        "repo": "seu-repositorio",
+        "state": "open"
+      },
+      "error": null,
+      "latency_s": 0.6615861999999879,
+      "timings": {
+        "total_s": 0.6227047,
+        "load_s": 0.0211738,
+        "prompt_eval_count": 3986.0,
+        "prompt_eval_s": 0.023009,
+        "eval_count": 34.0,
+        "eval_s": 0.517197,
+        "tokens_per_s": 65.73897373727999
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-022",
+      "category": "direto",
+      "prompt": "abre uma issue no GitHub com o título 'Bot não responde áudio'",
+      "expected_tool": "github",
+      "predicted": "github",
+      "args": {
+        "action": "create_issue",
+        "body": "Título: Bot não responde áudio",
+        "limit": 10,
+        "number": null,
+        "repo": "<USER>/GitHub",
+        "state": "open",
+        "title": "Bot não responde áudio"
+      },
+      "error": null,
+      "latency_s": 1.0972829000000957,
+      "timings": {
+        "total_s": 1.0538344,
+        "load_s": 0.0284432,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 0.02272,
+        "eval_count": 61.0,
+        "eval_s": 0.943505,
+        "tokens_per_s": 64.65254556149675
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-023",
+      "category": "direto",
+      "prompt": "busca no meu Obsidian as notas sobre meditação",
+      "expected_tool": "obsidian",
+      "predicted": "obsidian",
+      "args": {
+        "action": "search",
+        "query": "meditação"
+      },
+      "error": null,
+      "latency_s": 0.6529848000000129,
+      "timings": {
+        "total_s": 0.5952634,
+        "load_s": 0.0305515,
+        "prompt_eval_count": 3983.0,
+        "prompt_eval_s": 0.021694,
+        "eval_count": 33.0,
+        "eval_s": 0.49931,
+        "tokens_per_s": 66.09120586409244
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-024",
+      "category": "direto",
+      "prompt": "acrescenta na nota diario.md do Obsidian: hoje corri 5 km",
+      "expected_tool": "obsidian",
+      "predicted": "obsidian",
+      "args": {
+        "action": "append",
+        "content": "Hoje corri 5 km",
+        "path": "diario.md"
+      },
+      "error": null,
+      "latency_s": 0.723202399999991,
+      "timings": {
+        "total_s": 0.691698,
+        "load_s": 0.0385731,
+        "prompt_eval_count": 3990.0,
+        "prompt_eval_s": 0.026885,
+        "eval_count": 37.0,
+        "eval_s": 0.56937,
+        "tokens_per_s": 64.98410523912393
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "action",
+        "mode"
+      ]
+    },
+    {
+      "id": "ts-025",
+      "category": "direto",
+      "prompt": "lista as notas da pasta Projetos no Obsidian",
+      "expected_tool": "obsidian",
+      "predicted": "obsidian",
+      "args": {
+        "action": "list",
+        "path": "Projetos"
+      },
+      "error": null,
+      "latency_s": 0.581758700000023,
+      "timings": {
+        "total_s": 0.5395451,
+        "load_s": 0.0457396,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.02185,
+        "eval_count": 25.0,
+        "eval_s": 0.374152,
+        "tokens_per_s": 66.81776390344032
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "folder"
+      ]
+    },
+    {
+      "id": "ts-026",
+      "category": "direto",
+      "prompt": "procura no Notion a página do planejamento de 2027",
+      "expected_tool": "notion",
+      "predicted": "notion",
+      "args": {
+        "action": "search",
+        "query": "planejamento de 2027"
+      },
+      "error": null,
+      "latency_s": 0.5859201000000667,
+      "timings": {
+        "total_s": 0.5410145,
+        "load_s": 0.0296426,
+        "prompt_eval_count": 3986.0,
+        "prompt_eval_s": 0.021971,
+        "eval_count": 29.0,
+        "eval_s": 0.441083,
+        "tokens_per_s": 65.7472629867848
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-027",
+      "category": "direto",
+      "prompt": "cria uma página no Notion chamada 'Ideias de viagem'",
+      "expected_tool": "notion",
+      "predicted": "notion",
+      "args": {
+        "content": "",
+        "limit": null,
+        "mode": "overwrite",
+        "page_id": "",
+        "parent_page_id": "",
+        "query": "",
+        "title": "Ideias de viagem",
+        "action": "create_page"
+      },
+      "error": null,
+      "latency_s": 0.7613452000000507,
+      "timings": {
+        "total_s": 0.7274965,
+        "load_s": 0.0282857,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.024031,
+        "eval_count": 41.0,
+        "eval_s": 0.621798,
+        "tokens_per_s": 65.93781260152011
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-028",
+      "category": "direto",
+      "prompt": "lê a planilha vendas.xlsx e me diz o total do mês",
+      "expected_tool": "spreadsheet",
+      "predicted": "spreadsheet",
+      "args": {
+        "action": "read",
+        "path": "<HOME>\\Desktop\\vendas.xlsx",
+        "max_rows": "100",
+        "sheet": "Vendas"
+      },
+      "error": null,
+      "latency_s": 1.0795844000000443,
+      "timings": {
+        "total_s": 1.0067935,
+        "load_s": 0.0347945,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.023755,
+        "eval_count": 58.0,
+        "eval_s": 0.89867,
+        "tokens_per_s": 64.53981995615743
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-029",
+      "category": "direto",
+      "prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+      "expected_tool": "spreadsheet",
+      "predicted": "spreadsheet",
+      "args": {
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_\\\\orcamento.xlsx",
+        "sheet": "2027",
+        "action": "read"
+      },
+      "error": null,
+      "latency_s": 1.2000605999999152,
+      "timings": {
+        "total_s": 1.1573792,
+        "load_s": 0.0278802,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.021636,
+        "eval_count": 66.0,
+        "eval_s": 1.017966,
+        "tokens_per_s": 64.83517131220493
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-030",
+      "category": "direto",
+      "prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+      "expected_tool": "google",
+      "predicted": "google",
+      "args": {
+        "action": "calendar_list",
+        "days": "3"
+      },
+      "error": null,
+      "latency_s": 0.543733100000054,
+      "timings": {
+        "total_s": 0.5134585,
+        "load_s": 0.0470563,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 0.032843,
+        "eval_count": 23.0,
+        "eval_s": 0.343414,
+        "tokens_per_s": 66.97455549278713
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-031",
+      "category": "direto",
+      "prompt": "procura no Gmail os e-mails da Receita Federal",
+      "expected_tool": "google",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.6420765000000301,
+      "timings": {
+        "total_s": 0.6226241,
+        "load_s": 0.018618,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.023062,
+        "eval_count": 36.0,
+        "eval_s": 0.549271,
+        "tokens_per_s": 65.54141762445133
+      },
+      "invalid_json": false,
+      "leaked": true,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"name\": \"gmail_search\", \"parameters\": {\"action\": \"gmail_search\", \"query\": \"Re\\u00e7a Federal\", \"limit\": \"10\"}}",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-032",
+      "category": "direto",
+      "prompt": "marca no Google Agenda uma reunião com o Pedro amanhã às 15h",
+      "expected_tool": "google",
+      "predicted": "google",
+      "args": {
+        "action": "calendar_create",
+        "body": "Reunião com Pedro amanhå ás 15h",
+        "days": "1",
+        "end": "2026-11-21T15:00:00",
+        "limit": "",
+        "message_id": "",
+        "query": "",
+        "start": "2026-11-20T12:00:00",
+        "description": "",
+        "location": "",
+        "subject": "Reunião com Pedro",
+        "to": ""
+      },
+      "error": null,
+      "latency_s": 2.1293377999999166,
+      "timings": {
+        "total_s": 2.0974918,
+        "load_s": 0.0442647,
+        "prompt_eval_count": 3989.0,
+        "prompt_eval_s": 0.025067,
+        "eval_count": 126.0,
+        "eval_s": 1.952703,
+        "tokens_per_s": 64.52594173307462
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "summary"
+      ]
+    },
+    {
+      "id": "ts-033",
+      "category": "direto",
+      "prompt": "tenho e-mails não lidos no Outlook?",
+      "expected_tool": "microsoft",
+      "predicted": "microsoft",
+      "args": {
+        "action": "mail_list",
+        "unread": "true"
+      },
+      "error": null,
+      "latency_s": 0.4975059999999303,
+      "timings": {
+        "total_s": 0.4688471,
+        "load_s": 0.0175615,
+        "prompt_eval_count": 3981.0,
+        "prompt_eval_s": 0.023607,
+        "eval_count": 24.0,
+        "eval_s": 0.364455,
+        "tokens_per_s": 65.85175124500968
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-034",
+      "category": "direto",
+      "prompt": "quais são minhas reuniões no calendário do Outlook esta semana?",
+      "expected_tool": "microsoft",
+      "predicted": "google",
+      "args": {
+        "limit": "10",
+        "query": "",
+        "action": "calendar_list",
+        "days": "7"
+      },
+      "error": null,
+      "latency_s": 0.6495026999999709,
+      "timings": {
+        "total_s": 0.606796,
+        "load_s": 0.0244211,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.0234,
+        "eval_count": 34.0,
+        "eval_s": 0.514842,
+        "tokens_per_s": 66.03967819253285
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-035",
+      "category": "direto",
+      "prompt": "mostra as conversas recentes dos meus chats do Teams",
+      "expected_tool": "microsoft",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.36161440000000766,
+      "timings": {
+        "total_s": 0.3305752,
+        "load_s": 0.0167185,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.021816,
+        "eval_count": 16.0,
+        "eval_s": 0.237382,
+        "tokens_per_s": 67.40190915907692
+      },
+      "invalid_json": false,
+      "leaked": true,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"name\": \"teams\", \"parameters\": {\"action\": \"list\"}}",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-036",
+      "category": "direto",
+      "prompt": "manda um e-mail pelo Outlook para ana@empresa.com dizendo que o relatório está pronto",
+      "expected_tool": "microsoft",
+      "predicted": "microsoft",
+      "args": {
+        "to": "ana@empresa.com",
+        "action": "mail_send",
+        "body": "O relatório é pronto"
+      },
+      "error": null,
+      "latency_s": 0.8009627999999793,
+      "timings": {
+        "total_s": 0.7724725,
+        "load_s": 0.0215316,
+        "prompt_eval_count": 3990.0,
+        "prompt_eval_s": 0.024394,
+        "eval_count": 44.0,
+        "eval_s": 0.677135,
+        "tokens_per_s": 64.97965693694758
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-037",
+      "category": "direto",
+      "prompt": "quanto eu faturei no Stripe nos últimos 30 dias?",
+      "expected_tool": "stripe",
+      "predicted": "stripe",
+      "args": {
+        "action": "overview",
+        "days": "30"
+      },
+      "error": null,
+      "latency_s": 0.4479661999999962,
+      "timings": {
+        "total_s": 0.4179695,
+        "load_s": 0.0191972,
+        "prompt_eval_count": 3985.0,
+        "prompt_eval_s": 0.022033,
+        "eval_count": 22.0,
+        "eval_s": 0.328727,
+        "tokens_per_s": 66.9248342849842
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "action"
+      ]
+    },
+    {
+      "id": "ts-038",
+      "category": "direto",
+      "prompt": "qual o saldo da minha conta no Stripe?",
+      "expected_tool": "stripe",
+      "predicted": "stripe",
+      "args": {
+        "action": "overview"
+      },
+      "error": null,
+      "latency_s": 0.316587800000093,
+      "timings": {
+        "total_s": 0.2801663,
+        "load_s": 0.0300611,
+        "prompt_eval_count": 3980.0,
+        "prompt_eval_s": 0.022459,
+        "eval_count": 12.0,
+        "eval_s": 0.175138,
+        "tokens_per_s": 68.51739770923501
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-039",
+      "category": "direto",
+      "prompt": "lista as faturas do Stripe",
+      "expected_tool": "stripe",
+      "predicted": "stripe",
+      "args": {
+        "action": "invoices"
+      },
+      "error": null,
+      "latency_s": 0.4024627999999666,
+      "timings": {
+        "total_s": 0.3665879,
+        "load_s": 0.0340384,
+        "prompt_eval_count": 3977.0,
+        "prompt_eval_s": 0.025209,
+        "eval_count": 16.0,
+        "eval_s": 0.236061,
+        "tokens_per_s": 67.77909099766586
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-040",
+      "category": "direto",
+      "prompt": "pesquisa na internet as notícias de hoje sobre inteligência artificial",
+      "expected_tool": "web_search",
+      "predicted": "web_search",
+      "args": {
+        "query": "notícias de hoje sobre inteligência artificial",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 0.7372839999999314,
+      "timings": {
+        "total_s": 0.6987511,
+        "load_s": 0.0313955,
+        "prompt_eval_count": 3985.0,
+        "prompt_eval_s": 0.022947,
+        "eval_count": 38.0,
+        "eval_s": 0.576339,
+        "tokens_per_s": 65.93341765870433
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-041",
+      "category": "direto",
+      "prompt": "qual a cotação do dólar agora?",
+      "expected_tool": "web_search",
+      "predicted": "web_search",
+      "args": {
+        "query": "cotaçó do dólar agora",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 0.7731835999999248,
+      "timings": {
+        "total_s": 0.7326112,
+        "load_s": 0.0282376,
+        "prompt_eval_count": 3981.0,
+        "prompt_eval_s": 0.023104,
+        "eval_count": 41.0,
+        "eval_s": 0.631847,
+        "tokens_per_s": 64.88912663983527
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-042",
+      "category": "direto",
+      "prompt": "procura na web a documentação do FastAPI sobre injeção de dependências",
+      "expected_tool": "web_search",
+      "predicted": "web_search",
+      "args": {
+        "query": "FastAPI injeção de dependçncias documentação",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 2.358843200000024,
+      "timings": {
+        "total_s": 2.3189544,
+        "load_s": 0.0272964,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 1.126046,
+        "eval_count": 54.0,
+        "eval_s": 0.898099,
+        "tokens_per_s": 60.12700158891169
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-043",
+      "category": "direto",
+      "prompt": "lê o conteúdo da página https://docs.python.org/3/whatsnew/3.13.html",
+      "expected_tool": "web_fetch",
+      "predicted": "web_fetch",
+      "args": {
+        "url": "https://docs.python.org/3/whatsnew/3.13.html"
+      },
+      "error": null,
+      "latency_s": 0.627265399999942,
+      "timings": {
+        "total_s": 0.5899443,
+        "load_s": 0.0267938,
+        "prompt_eval_count": 3994.0,
+        "prompt_eval_s": 0.024989,
+        "eval_count": 32.0,
+        "eval_s": 0.486566,
+        "tokens_per_s": 65.76702852233818
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-044",
+      "category": "direto",
+      "prompt": "resume esse artigo pra mim: https://exemplo.com.br/blog/produtividade",
+      "expected_tool": "web_fetch",
+      "predicted": "web_search",
+      "args": {
+        "query": "produtividade",
+        "max_results": 5
+      },
+      "error": null,
+      "latency_s": 0.44674940000004426,
+      "timings": {
+        "total_s": 0.4054826,
+        "load_s": 0.0157587,
+        "prompt_eval_count": 3990.0,
+        "prompt_eval_s": 0.021716,
+        "eval_count": 22.0,
+        "eval_s": 0.331794,
+        "tokens_per_s": 66.30620204102546
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-045",
+      "category": "direto",
+      "prompt": "me manda aqui no Telegram o arquivo relatorio_mensal.pdf",
+      "expected_tool": "send_file",
+      "predicted": "send_file",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\relatorio_mensal.pdf"
+      },
+      "error": null,
+      "latency_s": 1.0048367000000553,
+      "timings": {
+        "total_s": 0.9645637,
+        "load_s": 0.029965,
+        "prompt_eval_count": 3985.0,
+        "prompt_eval_s": 0.023091,
+        "eval_count": 55.0,
+        "eval_s": 0.846911,
+        "tokens_per_s": 64.94188881712482
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-046",
+      "category": "direto",
+      "prompt": "envia pra mim o backup.zip que está na pasta backups",
+      "expected_tool": "send_file",
+      "predicted": "send_file",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\backups\\backup.zip"
+      },
+      "error": null,
+      "latency_s": 0.9820505000000139,
+      "timings": {
+        "total_s": 0.9455501,
+        "load_s": 0.0238438,
+        "prompt_eval_count": 3983.0,
+        "prompt_eval_s": 0.023159,
+        "eval_count": 54.0,
+        "eval_s": 0.836221,
+        "tokens_per_s": 64.57623044625763
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-047",
+      "category": "direto",
+      "prompt": "lê o PDF contrato_aluguel.pdf e me diz o valor do aluguel",
+      "expected_tool": "read_pdf",
+      "predicted": "read_pdf",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\contrato_aluguel.pdf",
+        "max_pages": "50",
+        "ocr": "false"
+      },
+      "error": null,
+      "latency_s": 1.2823305999999093,
+      "timings": {
+        "total_s": 1.1736835,
+        "load_s": 0.0209709,
+        "prompt_eval_count": 3989.0,
+        "prompt_eval_s": 0.022272,
+        "eval_count": 68.0,
+        "eval_s": 1.049401,
+        "tokens_per_s": 64.79887097496572
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-048",
+      "category": "direto",
+      "prompt": "extrai o texto da apostila_calculo.pdf",
+      "expected_tool": "read_pdf",
+      "predicted": "read_pdf",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\apostila_calculo.pdf",
+        "max_pages": "50",
+        "ocr": "false"
+      },
+      "error": null,
+      "latency_s": 1.1823141999999507,
+      "timings": {
+        "total_s": 1.153663,
+        "load_s": 0.0426727,
+        "prompt_eval_count": 3981.0,
+        "prompt_eval_s": 0.024428,
+        "eval_count": 68.0,
+        "eval_s": 1.03844,
+        "tokens_per_s": 65.48283964408151
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-049",
+      "category": "direto",
+      "prompt": "abre o documento Word proposta_comercial.docx",
+      "expected_tool": "read_docx",
+      "predicted": "read_docx",
+      "args": {
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmps4lf8at_\\proposta_comercial.docx"
+      },
+      "error": null,
+      "latency_s": 1.0191937999999254,
+      "timings": {
+        "total_s": 0.9818151,
+        "load_s": 0.0384467,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.02236,
+        "eval_count": 56.0,
+        "eval_s": 0.854739,
+        "tokens_per_s": 65.51707597289932
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-050",
+      "category": "direto",
+      "prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+      "expected_tool": "read_docx",
+      "predicted": "read_docx",
+      "args": {
+        "path": "<HOME>\\Desktop\\ata_reuniao.docx"
+      },
+      "error": null,
+      "latency_s": 0.7722947999999406,
+      "timings": {
+        "total_s": 0.7393672,
+        "load_s": 0.0229504,
+        "prompt_eval_count": 3985.0,
+        "prompt_eval_s": 0.022926,
+        "eval_count": 42.0,
+        "eval_s": 0.643376,
+        "tokens_per_s": 65.28064459973639
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-051",
+      "category": "direto",
+      "prompt": "faz OCR do print comprovante.png",
+      "expected_tool": "read_image",
+      "predicted": "read_image",
+      "args": {
+        "path": "comprovante.png"
+      },
+      "error": null,
+      "latency_s": 0.4369719000000032,
+      "timings": {
+        "total_s": 0.4122648,
+        "load_s": 0.0319518,
+        "prompt_eval_count": 3980.0,
+        "prompt_eval_s": 0.021021,
+        "eval_count": 20.0,
+        "eval_s": 0.299841,
+        "tokens_per_s": 66.70201873659705
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-052",
+      "category": "direto",
+      "prompt": "lê o texto dessa foto do quadro: uploads/quadro_aula.jpg",
+      "expected_tool": "read_image",
+      "predicted": "read_image",
+      "args": {
+        "path": "uploads/quadro_aula.jpg"
+      },
+      "error": null,
+      "latency_s": 0.4774237000000312,
+      "timings": {
+        "total_s": 0.4443157,
+        "load_s": 0.0280044,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 0.023755,
+        "eval_count": 23.0,
+        "eval_s": 0.346691,
+        "tokens_per_s": 66.34149718337078
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-053",
+      "category": "direto",
+      "prompt": "me manda em áudio: bom dia, a reunião foi adiada",
+      "expected_tool": "speak",
+      "predicted": "speak",
+      "args": {
+        "text": "Bom dia, a reunião foi adiada",
+        "caption": "Reunião adiada"
+      },
+      "error": null,
+      "latency_s": 0.8753532000000632,
+      "timings": {
+        "total_s": 0.8423843,
+        "load_s": 0.0267756,
+        "prompt_eval_count": 3989.0,
+        "prompt_eval_s": 0.023457,
+        "eval_count": 47.0,
+        "eval_s": 0.721387,
+        "tokens_per_s": 65.15226917036209
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-054",
+      "category": "direto",
+      "prompt": "fala em voz alta a frase 'beba água'",
+      "expected_tool": "speak",
+      "predicted": "speak",
+      "args": {
+        "text": "beba água",
+        "caption": ""
+      },
+      "error": null,
+      "latency_s": 0.5638114000000769,
+      "timings": {
+        "total_s": 0.5331681,
+        "load_s": 0.0271086,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.022608,
+        "eval_count": 29.0,
+        "eval_s": 0.441051,
+        "tokens_per_s": 65.7520332115787
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-055",
+      "category": "direto",
+      "prompt": "nos meus documentos indexados, qual é a multa por atraso do aluguel?",
+      "expected_tool": "knowledge_search",
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "multa por atraso do aluguel"
+      },
+      "error": null,
+      "latency_s": 0.6287221000000045,
+      "timings": {
+        "total_s": 0.5923657,
+        "load_s": 0.0309054,
+        "prompt_eval_count": 3992.0,
+        "prompt_eval_s": 0.024452,
+        "eval_count": 32.0,
+        "eval_s": 0.485012,
+        "tokens_per_s": 65.97774900414835
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-056",
+      "category": "direto",
+      "prompt": "procura na minha memória local o que foi decidido sobre o orçamento do condomínio",
+      "expected_tool": "knowledge_search",
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "orçamento condomínio decisão"
+      },
+      "error": null,
+      "latency_s": 0.7393902000000026,
+      "timings": {
+        "total_s": 0.6982286,
+        "load_s": 0.0209848,
+        "prompt_eval_count": 3992.0,
+        "prompt_eval_s": 0.02399,
+        "eval_count": 39.0,
+        "eval_s": 0.597879,
+        "tokens_per_s": 65.23059013613121
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-057",
+      "category": "direto",
+      "prompt": "indexa a pasta Documentos/faculdade para a busca semântica",
+      "expected_tool": "knowledge_index",
+      "predicted": "knowledge_index",
+      "args": {
+        "force": "false",
+        "max_files": "400",
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_"
+      },
+      "error": null,
+      "latency_s": 0.8862129999999979,
+      "timings": {
+        "total_s": 0.8572765,
+        "load_s": 0.0157193,
+        "prompt_eval_count": 3988.0,
+        "prompt_eval_s": 0.023365,
+        "eval_count": 50.0,
+        "eval_s": 0.768378,
+        "tokens_per_s": 65.07213897326577
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-058",
+      "category": "direto",
+      "prompt": "reindexa minha memória local",
+      "expected_tool": "knowledge_index",
+      "predicted": "knowledge_index",
+      "args": {
+        "force": "true"
+      },
+      "error": null,
+      "latency_s": 0.40017009999996844,
+      "timings": {
+        "total_s": 0.3636852,
+        "load_s": 0.0235455,
+        "prompt_eval_count": 3978.0,
+        "prompt_eval_s": 0.022942,
+        "eval_count": 17.0,
+        "eval_s": 0.253526,
+        "tokens_per_s": 67.05426662354158
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-059",
+      "category": "direto",
+      "prompt": "me lembra de tomar remédio daqui a 10 minutos",
+      "expected_tool": "reminder",
+      "predicted": "reminder",
+      "args": {
+        "action": "add",
+        "id": "null",
+        "text": "lembre de tomar remçio",
+        "when": "10m"
+      },
+      "error": null,
+      "latency_s": 0.8701978000000281,
+      "timings": {
+        "total_s": 0.822788,
+        "load_s": 0.0199141,
+        "prompt_eval_count": 3986.0,
+        "prompt_eval_s": 0.024003,
+        "eval_count": 45.0,
+        "eval_s": 0.6915,
+        "tokens_per_s": 65.0759219088937
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "text"
+      ]
+    },
+    {
+      "id": "ts-060",
+      "category": "direto",
+      "prompt": "amanhã às 9h me lembra da consulta no dentista",
+      "expected_tool": "reminder",
+      "predicted": "reminder",
+      "args": {
+        "id": "0",
+        "text": "consulta no dentista",
+        "when": "amanhão 09:00",
+        "action": "add"
+      },
+      "error": null,
+      "latency_s": 0.849254999999971,
+      "timings": {
+        "total_s": 0.8188364,
+        "load_s": 0.0167048,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.02342,
+        "eval_count": 47.0,
+        "eval_s": 0.723141,
+        "tokens_per_s": 64.99424040401526
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-061",
+      "category": "direto",
+      "prompt": "quais lembretes eu tenho pendentes?",
+      "expected_tool": "reminder",
+      "predicted": "reminder",
+      "args": {
+        "action": "list",
+        "id": null,
+        "text": null,
+        "when": null
+      },
+      "error": null,
+      "latency_s": 0.7177384999999958,
+      "timings": {
+        "total_s": 0.6722457,
+        "load_s": 0.0451257,
+        "prompt_eval_count": 3983.0,
+        "prompt_eval_s": 0.02529,
+        "eval_count": 31.0,
+        "eval_s": 0.469551,
+        "tokens_per_s": 66.02051747307534
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-062",
+      "category": "direto",
+      "prompt": "cancela o lembrete número 3",
+      "expected_tool": "reminder",
+      "predicted": "reminder",
+      "args": {
+        "action": "delete",
+        "id": "3"
+      },
+      "error": null,
+      "latency_s": 0.473705099999961,
+      "timings": {
+        "total_s": 0.437537,
+        "load_s": 0.0242553,
+        "prompt_eval_count": 3980.0,
+        "prompt_eval_s": 0.022394,
+        "eval_count": 22.0,
+        "eval_s": 0.333157,
+        "tokens_per_s": 66.03493247928154
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-063",
+      "category": "sem_ferramenta",
+      "prompt": "oi, tudo bem?",
+      "expected_tool": null,
+      "predicted": "speak",
+      "args": {
+        "text": "Tudo bem?"
+      },
+      "error": null,
+      "latency_s": 0.4728225000000066,
+      "timings": {
+        "total_s": 0.4157554,
+        "load_s": 0.0215848,
+        "prompt_eval_count": 3976.0,
+        "prompt_eval_s": 0.022055,
+        "eval_count": 20.0,
+        "eval_s": 0.294666,
+        "tokens_per_s": 67.87345672727767
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-064",
+      "category": "sem_ferramenta",
+      "prompt": "obrigada, Jarvis!",
+      "expected_tool": null,
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "como criar um lembrete no telegram"
+      },
+      "error": null,
+      "latency_s": 0.5734520000000884,
+      "timings": {
+        "total_s": 0.5352355,
+        "load_s": 0.0172812,
+        "prompt_eval_count": 3977.0,
+        "prompt_eval_s": 0.020871,
+        "eval_count": 30.0,
+        "eval_s": 0.456233,
+        "tokens_per_s": 65.75587473944235
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-065",
+      "category": "sem_ferramenta",
+      "prompt": "quanto é 15% de 240?",
+      "expected_tool": null,
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "15% de 240"
+      },
+      "error": null,
+      "latency_s": 0.5513796000000184,
+      "timings": {
+        "total_s": 0.52128,
+        "load_s": 0.039556,
+        "prompt_eval_count": 3981.0,
+        "prompt_eval_s": 0.021964,
+        "eval_count": 27.0,
+        "eval_s": 0.409815,
+        "tokens_per_s": 65.88338640606128
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-066",
+      "category": "sem_ferramenta",
+      "prompt": "me explica em duas frases o que é uma API REST",
+      "expected_tool": null,
+      "predicted": "web_search",
+      "args": {
+        "max_results": "10",
+        "query": "API REST"
+      },
+      "error": null,
+      "latency_s": 1.4926484000000073,
+      "timings": {
+        "total_s": 1.453503,
+        "load_s": 0.0218644,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.021884,
+        "eval_count": 88.0,
+        "eval_s": 1.365695,
+        "tokens_per_s": 64.43605636690475
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-067",
+      "category": "sem_ferramenta",
+      "prompt": "traduz para o inglês: 'onde fica a estação de trem?'",
+      "expected_tool": null,
+      "predicted": "web_search",
+      "args": {
+        "query": "where is train station",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 0.5879785000000766,
+      "timings": {
+        "total_s": 0.5589184,
+        "load_s": 0.0412011,
+        "prompt_eval_count": 3987.0,
+        "prompt_eval_s": 0.022146,
+        "eval_count": 27.0,
+        "eval_s": 0.407081,
+        "tokens_per_s": 66.32586635092278
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-068",
+      "category": "sem_ferramenta",
+      "prompt": "me dá três ideias de nome para um gato",
+      "expected_tool": null,
+      "predicted": "run_shell",
+      "args": {
+        "command": "echo \"Nomes de gato: \\\n1. Luna\\n2. Leo\\n3. Zorro\" | sort -rn"
+      },
+      "error": null,
+      "latency_s": 0.8046530000000303,
+      "timings": {
+        "total_s": 0.7712093,
+        "load_s": 0.0290827,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.022316,
+        "eval_count": 42.0,
+        "eval_s": 0.651601,
+        "tokens_per_s": 64.45662299474678
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-069",
+      "category": "sem_ferramenta",
+      "prompt": "escreve um haicai sobre café",
+      "expected_tool": null,
+      "predicted": "speak",
+      "args": {
+        "text": "Café, çubescça do ám",
+        "caption": ""
+      },
+      "error": null,
+      "latency_s": 0.9449351000000661,
+      "timings": {
+        "total_s": 0.8949028,
+        "load_s": 0.0752432,
+        "prompt_eval_count": 3980.0,
+        "prompt_eval_s": 0.020664,
+        "eval_count": 47.0,
+        "eval_s": 0.718212,
+        "tokens_per_s": 65.44028782587871
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-070",
+      "category": "sem_ferramenta",
+      "prompt": "qual a diferença entre lista e tupla em Python?",
+      "expected_tool": null,
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "diferença lista e tupla em Python"
+      },
+      "error": null,
+      "latency_s": 0.690685300000041,
+      "timings": {
+        "total_s": 0.6488808,
+        "load_s": 0.0325443,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.021948,
+        "eval_count": 36.0,
+        "eval_s": 0.546726,
+        "tokens_per_s": 65.84651178103839
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-071",
+      "category": "ambiguo",
+      "prompt": "o que eu anotei sobre o projeto Falcon?",
+      "expected_tool": "knowledge_search",
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "projeto Falcon"
+      },
+      "error": null,
+      "latency_s": 0.5272286000000577,
+      "timings": {
+        "total_s": 0.4953395,
+        "load_s": 0.0467593,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.022272,
+        "eval_count": 25.0,
+        "eval_s": 0.380337,
+        "tokens_per_s": 65.73118050570942
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-072",
+      "category": "ambiguo",
+      "prompt": "o que tenho marcado pra amanhã?",
+      "expected_tool": "google",
+      "predicted": "reminder",
+      "args": {
+        "when": null,
+        "action": "list",
+        "id": null,
+        "text": null
+      },
+      "error": null,
+      "latency_s": 0.4968470999999681,
+      "timings": {
+        "total_s": 0.454035,
+        "load_s": 0.0268589,
+        "prompt_eval_count": 3982.0,
+        "prompt_eval_s": 0.020774,
+        "eval_count": 24.0,
+        "eval_s": 0.361206,
+        "tokens_per_s": 66.44407900200993
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-073",
+      "category": "ambiguo",
+      "prompt": "procura minhas anotações sobre o curso de inglês",
+      "expected_tool": "knowledge_search",
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "curso de inglçãs anotações"
+      },
+      "error": null,
+      "latency_s": 0.8119002999999338,
+      "timings": {
+        "total_s": 0.7687256,
+        "load_s": 0.0199595,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.022751,
+        "eval_count": 45.0,
+        "eval_s": 0.673564,
+        "tokens_per_s": 66.80879619457096
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-074",
+      "category": "ambiguo",
+      "prompt": "tem algum PDF sobre imposto de renda nos meus arquivos?",
+      "expected_tool": "find_files",
+      "predicted": "knowledge_search",
+      "args": {
+        "k": "5",
+        "query": "imposto de renda pdf"
+      },
+      "error": null,
+      "latency_s": 0.5705811000000267,
+      "timings": {
+        "total_s": 0.5321549,
+        "load_s": 0.023511,
+        "prompt_eval_count": 3986.0,
+        "prompt_eval_s": 0.021748,
+        "eval_count": 29.0,
+        "eval_s": 0.443302,
+        "tokens_per_s": 65.41815737352866
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-075",
+      "category": "ambiguo",
+      "prompt": "abre o arquivo dados.csv",
+      "expected_tool": "spreadsheet",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5319437000000562,
+      "timings": {
+        "total_s": 0.4853513,
+        "load_s": 0.072457,
+        "prompt_eval_count": 3977.0,
+        "prompt_eval_s": 0.021293,
+        "eval_count": 18.0,
+        "eval_s": 0.268972,
+        "tokens_per_s": 66.92146394420237
+      },
+      "invalid_json": false,
+      "leaked": true,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"name\": \"open\", \"parameters\": {\"command\": \"open dados.csv\"}}",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-076",
+      "category": "ambiguo",
+      "prompt": "quem ganhou a Copa do Mundo de 2022?",
+      "expected_tool": null,
+      "predicted": "web_search",
+      "args": {
+        "query": "Copa do Mundo 2022 vencedor",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 0.6088105999999698,
+      "timings": {
+        "total_s": 0.5869906,
+        "load_s": 0.0175853,
+        "prompt_eval_count": 3984.0,
+        "prompt_eval_s": 0.021976,
+        "eval_count": 33.0,
+        "eval_s": 0.511707,
+        "tokens_per_s": 64.4900304275689
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-077",
+      "category": "ambiguo",
+      "prompt": "vê se chegou algum e-mail do banco",
+      "expected_tool": "google",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.815374800000086,
+      "timings": {
+        "total_s": 0.7778845,
+        "load_s": 0.0357371,
+        "prompt_eval_count": 3981.0,
+        "prompt_eval_s": 0.020553,
+        "eval_count": 44.0,
+        "eval_s": 0.67255,
+        "tokens_per_s": 65.42264515649394
+      },
+      "invalid_json": false,
+      "leaked": true,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"name\": \"mail_list\", \"parameters\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_\"}}",
+      "mode": "native",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-078",
+      "category": "ambiguo",
+      "prompt": "qual é o README desse projeto?",
+      "expected_tool": "read_file",
+      "predicted": "read_file",
+      "args": {
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmps4lf8at_\\\\README.md",
+        "start_line": "1",
+        "end_line": "1"
+      },
+      "error": null,
+      "latency_s": 1.2016365000000633,
+      "timings": {
+        "total_s": 1.1498418,
+        "load_s": 0.0291327,
+        "prompt_eval_count": 3979.0,
+        "prompt_eval_s": 0.023642,
+        "eval_count": 66.0,
+        "eval_s": 1.016345,
+        "tokens_per_s": 64.93857892743114
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "",
+      "mode": "native",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    }
+  ]
+}

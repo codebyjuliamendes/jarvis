@@ -1,18 +1,21 @@
 from __future__ import annotations
 
-import json
-import re
+import logging
 from datetime import datetime
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Set, Tuple
 
+from . import observability
 from .config import Settings
 from .llm import OllamaClient, OllamaError, OllamaUnavailable, ToolsNotSupported
 from .memory import Memory
+from .tool_parsing import extract_text_tool, parse_tool_call
 from .tools.base import ToolRegistry
+from .tools.knowledge import ensure_citation
 
+if TYPE_CHECKING:  # evita importar sqlite3 só para a anotação
+    from .metrics_store import MetricsStore
 
-_JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL)
-_JSON_CANDIDATE_RE = re.compile(r"\{.*\}", re.DOTALL)
+logger = logging.getLogger(__name__)
 
 
 class Agent:
@@ -22,10 +25,13 @@ class Agent:
         tools: ToolRegistry,
         memory: Memory,
         llm: Optional[OllamaClient] = None,
+        metrics: Optional[MetricsStore] = None,
     ) -> None:
         self.settings = settings
         self.tools = tools
         self.memory = memory
+        # Opcional: sem gravador (testes, smoke, evals) nada é persistido.
+        self.metrics = metrics
         self.llm = llm or OllamaClient(
             url=settings.ollama_url,
             model=settings.ollama_model,
@@ -58,6 +64,8 @@ class Agent:
             "- Para perguntas sobre conteúdo antigo, notas, PDFs ou documentos, use "
             "knowledge_search antes de responder. Use read_pdf/read_docx/read_image para ler "
             "documentos específicos.\n"
+            "- Ao responder com o que veio do knowledge_search, cite as fontes no fim: "
+            "(fonte: arquivo, trecho N). Não invente fontes.\n"
             "- Antes de ações destrutivas ou irreversíveis (apagar, sobrescrever, "
             "git push --force, enviar e-mail), peça confirmação à usuária.\n"
             "- Se uma ferramenta não estiver configurada, diga exatamente o que falta no .env.\n"
@@ -84,6 +92,76 @@ class Agent:
         use_history: bool = True,
         allow_tools: Optional[Iterable[str]] = None,
         max_iterations: Optional[int] = None,
+        source: str = "chat",
+    ) -> str:
+        model = str(getattr(self.llm, "model", None) or self.settings.ollama_model)
+        with observability.trace_scope(model=model, source=source, chat_id=chat_id) as trace:
+            try:
+                reply = await self._respond(
+                    trace,
+                    chat_id,
+                    text,
+                    remember=remember,
+                    use_history=use_history,
+                    allow_tools=allow_tools,
+                    max_iterations=max_iterations,
+                )
+            except BaseException as exc:
+                trace.set_outcome("error", observability.short_error(exc))
+                self._observe(trace)
+                raise
+            self._observe(trace)
+            return reply
+
+    def _observe(self, trace: observability.RequestTrace) -> None:
+        """Loga o resumo da requisição e grava a métrica. Nunca levanta exceção."""
+        try:
+            trace.finish()
+            row = trace.as_row()
+            logger.info(
+                "requisição concluída: %s em %.2fs (%d iterações, %d ferramenta(s))",
+                row["outcome"],
+                row["latency_s"],
+                row["iterations"],
+                row["tool_calls"],
+                extra={
+                    "fields": {
+                        key: row[key]
+                        for key in (
+                            "source",
+                            "model",
+                            "mode",
+                            "outcome",
+                            "latency_s",
+                            "llm_calls",
+                            "prompt_tokens",
+                            "completion_tokens",
+                            "tokens_per_s",
+                            "iterations",
+                            "tool_calls",
+                            "error",
+                        )
+                    }
+                },
+            )
+        except Exception:  # noqa: BLE001 - medir nunca pode derrubar a resposta
+            logger.debug("Falha ao logar a requisição", exc_info=True)
+        if self.metrics is None:
+            return
+        try:
+            self.metrics.record(trace)
+        except Exception:  # noqa: BLE001
+            logger.warning("Falha ao gravar métricas da requisição", exc_info=True)
+
+    async def _respond(
+        self,
+        trace: observability.RequestTrace,
+        chat_id: int,
+        text: str,
+        remember: bool,
+        use_history: bool,
+        allow_tools: Optional[Iterable[str]],
+        max_iterations: Optional[int],
     ) -> str:
         history = (
             self.memory.history(chat_id, self.settings.history_limit)
@@ -107,7 +185,9 @@ class Agent:
         messages.append({"role": "user", "content": text})
 
         final = ""
+        rag_outputs: List[str] = []  # saídas do knowledge_search, para garantir a citação
         for _ in range(limit):
+            trace.iterations += 1
             try:
                 message = await self.llm.chat(
                     messages,
@@ -127,8 +207,12 @@ class Agent:
                 }
                 continue
             except OllamaUnavailable as exc:
+                trace.mode = "text" if text_mode else "native"
+                trace.set_outcome("error", observability.short_error(exc))
                 return str(exc)
             except OllamaError as exc:
+                trace.mode = "text" if text_mode else "native"
+                trace.set_outcome("error", observability.short_error(exc))
                 return "Erro no Ollama: {}".format(exc)
 
             tool_calls = message.get("tool_calls") or []
@@ -147,6 +231,8 @@ class Agent:
                     result = await self.tools.execute(
                         name, args, context={"chat_id": chat_id}
                     )
+                    if name == "knowledge_search":
+                        rag_outputs.append(result)
                     messages.append(
                         {"role": "tool", "content": result, "tool_name": name}
                     )
@@ -159,6 +245,8 @@ class Agent:
                     result = await self.tools.execute(
                         name, args, context={"chat_id": chat_id}
                     )
+                    if name == "knowledge_search":
+                        rag_outputs.append(result)
                     messages.append({"role": "assistant", "content": content})
                     messages.append(
                         {
@@ -172,9 +260,13 @@ class Agent:
                     )
                     continue
 
-            final = content
+            # Modelos pequenos nem sempre citam: se usou o RAG e não citou, o agente
+            # anexa as fontes consultadas (ver jarvis/tools/knowledge.py).
+            final = ensure_citation(content, rag_outputs) if rag_outputs else content
             break
 
+        trace.mode = "text" if text_mode else "native"
+        trace.set_outcome("ok" if final else "max_iterations")
         if not final:
             final = (
                 "Não consegui concluir em {} passos. "
@@ -186,38 +278,12 @@ class Agent:
             self.memory.add(chat_id, "assistant", final)
         return final
 
+    # Mantidos como métodos estáticos por compatibilidade; a lógica vive em
+    # jarvis/tool_parsing.py para ser reutilizada pelas avaliações.
     @staticmethod
     def _parse_tool_call(call: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
-        function = call.get("function") if isinstance(call, dict) else None
-        if not isinstance(function, dict):
-            function = call if isinstance(call, dict) else {}
-        name = function.get("name") or ""
-        args = function.get("arguments", {})
-        if isinstance(args, str):
-            try:
-                args = json.loads(args)
-            except (TypeError, ValueError):
-                args = {}
-        if not isinstance(args, dict):
-            args = {}
-        return str(name), args
+        return parse_tool_call(call)
 
     @staticmethod
     def _extract_text_tool(content: str) -> Optional[Tuple[str, Dict[str, Any]]]:
-        if not content:
-            return None
-        candidates: List[str] = []
-        candidates.extend(_JSON_BLOCK_RE.findall(content))
-        candidates.extend(_JSON_CANDIDATE_RE.findall(content))
-        for candidate in candidates:
-            try:
-                data = json.loads(candidate)
-            except (TypeError, ValueError):
-                continue
-            if not isinstance(data, dict):
-                continue
-            name = data.get("tool") or data.get("name")
-            args = data.get("args") or data.get("arguments") or {}
-            if isinstance(name, str) and isinstance(args, dict):
-                return name, args
-        return None
+        return extract_text_tool(content)
