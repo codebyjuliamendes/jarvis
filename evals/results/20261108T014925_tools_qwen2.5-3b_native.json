@@ -84,7 +84,7 @@
       "predicted": "run_shell",
       "args": {
         "command": "pytest",
-        "cwd": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\ProjetoX"
+        "cwd": "<HOME>\\Documents\\ProjetoX"
       },
       "error": null,
       "latency_s": 0.7857030000000003,
@@ -364,7 +364,7 @@
       "expected_tool": "replace_in_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\README.md"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\README.md"
       },
       "error": null,
       "latency_s": 0.8577960000000004,
@@ -396,7 +396,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Downloads"
+        "path": "<HOME>\\Downloads"
       },
       "error": null,
       "latency_s": 0.6623366999999991,
@@ -426,7 +426,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\src"
+        "path": "<HOME>\\src"
       },
       "error": null,
       "latency_s": 0.6143251999999997,
@@ -456,7 +456,7 @@
       "expected_tool": "search_files",
       "predicted": "search_files",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac",
         "pattern": "TODO"
       },
       "error": null,
@@ -518,7 +518,7 @@
       "predicted": "find_files",
       "args": {
         "name": "*.pdf",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents"
+        "path": "<HOME>\\Documents"
       },
       "error": null,
       "latency_s": 0.7359151999999991,
@@ -646,7 +646,7 @@
         "args": [
           "add ."
         ],
-        "cwd": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac"
+        "cwd": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac"
       },
       "error": null,
       "latency_s": 2.2773250999999988,
@@ -930,7 +930,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\vendas.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\vendas.xlsx",
         "sheet": "Vendas"
       },
       "error": null,
@@ -962,7 +962,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\orcamento.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\orcamento.xlsx",
         "sheet": "2027"
       },
       "error": null,
@@ -1184,7 +1184,7 @@
         "body": "O relatório solicitado está pronto para análise. Encaminho anexo.",
         "cc": "",
         "bcc": "",
-        "attachment": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\relatorio_pronto.pdf",
+        "attachment": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\relatorio_pronto.pdf",
         "action": "mail_send",
         "to": "ana@empresa.com"
       },
@@ -1462,7 +1462,7 @@
       "predicted": "send_file",
       "args": {
         "caption": "Relatório Mensal",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\relatorio_mensal.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\relatorio_mensal.pdf"
       },
       "error": null,
       "latency_s": 1.1013956999999976,
@@ -1493,7 +1493,7 @@
       "predicted": "send_file",
       "args": {
         "caption": "Backup do último backup.zip",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\backups\\backup.zip"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\backups\\backup.zip"
       },
       "error": null,
       "latency_s": 1.0778481000000042,
@@ -1523,7 +1523,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\contrato_aluguel.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\contrato_aluguel.pdf"
       },
       "error": null,
       "latency_s": 0.9272275000000008,
@@ -1553,7 +1553,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_docx",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpn85viqac\\apostila_calculo.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpn85viqac\\apostila_calculo.pdf"
       },
       "error": null,
       "latency_s": 0.9636757999999972,
@@ -1828,7 +1828,7 @@
       "expected_tool": "knowledge_index",
       "predicted": "knowledge_index",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\faculdade",
+        "path": "<HOME>\\Documents\\faculdade",
         "force": false
       },
       "error": null,

@@ -102,7 +102,7 @@ com cada caso estão em [`evals/results/`](evals/results/)):
 - **O fallback JSON é muito pior em todos os modelos** (47–51%). Ele existe para não quebrar
   com modelos sem function calling, mas na prática esses modelos não deveriam ser usados no
   Jarvis. No `llama3.2:3b`, 24 dos 78 casos (30,8%) vieram em JSON que o parser não aproveita:
-  8 por caminhos do Windows (`C:\Users\...`) sem escapar as barras e a maioria dos outros
+  8 por caminhos do Windows (`<HOME>\AppData\...`) sem escapar as barras e a maioria dos outros
   fora do protocolo (argumentos sem o nome da ferramenta, ou `args` como lista).
 - **O ponto fraco do `qwen2.5:3b` é a conversa sem ferramenta:** chamou ferramenta em 3 de 8
   casos (ex.: `knowledge_search` para "quanto é 15% de 240?"). É o próximo alvo para ajuste de

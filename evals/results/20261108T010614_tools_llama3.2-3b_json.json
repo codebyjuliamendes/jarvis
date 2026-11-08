@@ -231,7 +231,7 @@
       "expected_tool": "read_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\notas\\ideias.txt",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj\\notas\\ideias.txt",
         "start_line": "1",
         "end_line": "null"
       },
@@ -250,7 +250,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\notas\\\\ideias.txt\", \"start_line\": \"1\", \"end_line\": \"null\"}}",
+      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\notas\\\\ideias.txt\", \"start_line\": \"1\", \"end_line\": \"null\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -263,7 +263,7 @@
       "expected_tool": "read_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrão\\AppData\\Local\\Temp\\tmpr7t3wjvj\\jarvis/agent.py",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj\\jarvis/agent.py",
         "start_line": "10",
         "end_line": "30"
       },
@@ -282,7 +282,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\jarvis/agent.py\", \"start_line\": \"10\", \"end_line\": \"30\"}}",
+      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\jarvis/agent.py\", \"start_line\": \"10\", \"end_line\": \"30\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -310,7 +310,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"write_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\todo.md\", \"content\": \"- comprar \\u00e7\\u00e3\", \"create_dirs\": \"true\"}}",
+      "content": "{\"tool\": \"write_file\", \"args\": {\"path\": \"<HOME>\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\todo.md\", \"content\": \"- comprar \\u00e7\\u00e3\", \"create_dirs\": \"true\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -340,7 +340,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"write_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\lista_compras.txt\", \"content\": \"arroz, feij\\u00e3o e ovos\", \"create_dirs\": \"true\"}}",
+      "content": "{\"tool\": \"write_file\", \"args\": {\"path\": \"<HOME>\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\lista_compras.txt\", \"content\": \"arroz, feij\\u00e3o e ovos\", \"create_dirs\": \"true\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -356,7 +356,7 @@
       "predicted": "find_files",
       "args": {
         "name": "config.yaml",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmppr7t3wjvj",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmppr7t3wjvj",
         "max_results": "1"
       },
       "error": null,
@@ -374,7 +374,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"config.yaml\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\", \"max_results\": \"1\"}}",
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"config.yaml\", \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\", \"max_results\": \"1\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -404,7 +404,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_file\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\README.md\", \"start_line\": \"1\", \"end_line\": \"1\"}}",
+      "content": "{\"tool\": \"read_file\", \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\README.md\", \"start_line\": \"1\", \"end_line\": \"1\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -419,7 +419,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj"
       },
       "error": null,
       "latency_s": 0.936362200000076,
@@ -436,7 +436,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\"}}",
+      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -451,7 +451,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj"
       },
       "error": null,
       "latency_s": 0.9564600999999584,
@@ -468,7 +468,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\"}}",
+      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -498,7 +498,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"search_files\", \"pattern\": \"TODO\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Documents\\\\projeto\", \"glob\": \"\", \"max_results\": 5}",
+      "content": "{\"tool\": \"search_files\", \"pattern\": \"TODO\", \"path\": \"<HOME>\\\\Documents\\\\projeto\", \"glob\": \"\", \"max_results\": 5}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -544,7 +544,7 @@
       "predicted": "find_files",
       "args": {
         "name": "*.pdf",
-        "path": "C:\\Users\\JuliaCristinaSerrão\\Documents",
+        "path": "<HOME>\\Documents",
         "max_results": "100"
       },
       "error": null,
@@ -562,7 +562,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Documents\", \"max_results\": \"100\"}}",
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"<HOME>\\\\Documents\", \"max_results\": \"100\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -575,7 +575,7 @@
       "expected_tool": "find_files",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrão\\Desktop"
+        "path": "<HOME>\\Desktop"
       },
       "error": null,
       "latency_s": 0.7047264999999925,
@@ -592,7 +592,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Desktop\"}}",
+      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"<HOME>\\\\Desktop\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -622,7 +622,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"git\", \"args\": [\"status\"], \"cwd\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\"}",
+      "content": "{\"tool\": \"git\", \"args\": [\"status\"], \"cwd\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\"}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -698,7 +698,7 @@
       "predicted": "github",
       "args": {
         "action": "list_issues",
-        "repo": "juliacristinasserrao/jarvis",
+        "repo": "<USER>/jarvis",
         "state": "open",
         "limit": "100"
       },
@@ -717,7 +717,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"list_issues\", \"repo\": \"juliacristinasserrao/jarvis\", \"state\": \"open\", \"limit\": \"100\"}}",
+      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"list_issues\", \"repo\": \"<USER>/jarvis\", \"state\": \"open\", \"limit\": \"100\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -747,7 +747,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"github\", \"args\": [\"list_repos\", \"JuliaCristinaSerrãoM\", \"open\"], \"repo\": \"JuliaCristinaSerrãoM\", \"number\": null, \"title\": null, \"body\": null, \"state\": \"open\", \"limit\": 10}",
+      "content": "{\"tool\": \"github\", \"args\": [\"list_repos\", \"<USER>\", \"open\"], \"repo\": \"<USER>\", \"number\": null, \"title\": null, \"body\": null, \"state\": \"open\", \"limit\": 10}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -763,7 +763,7 @@
       "predicted": "github",
       "args": {
         "action": "create_issue",
-        "repo": "juliacristinasserrao",
+        "repo": "<USER>",
         "title": "Bot não responde áudio",
         "body": "Nção obteve resposta de áudio",
         "number": "1"
@@ -783,7 +783,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"create_issue\", \"repo\": \"juliacristinasserrao\", \"title\": \"Bot n\\u00e3o responde \\u00e1udio\", \"body\": \"N\\u00e7\\u00e3o obteve resposta de \\u00e1udio\", \"number\": \"1\"}}",
+      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"create_issue\", \"repo\": \"<USER>\", \"title\": \"Bot n\\u00e3o responde \\u00e1udio\", \"body\": \"N\\u00e7\\u00e3o obteve resposta de \\u00e1udio\", \"number\": \"1\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -811,7 +811,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"action\": \"search\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\", \"query\": \"medita\\u00e7\\u00e3o\", \"k\": 5}",
+      "content": "{\"action\": \"search\", \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\", \"query\": \"medita\\u00e7\\u00e3o\", \"k\": 5}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -841,7 +841,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"action\": \"append\", \"path\": \"C:/Users/JuliaCristinaSerrãoM/AppData/Local/Temp/tmpr7t3wjvj/diario.md\", \"content\": \"Hoje corri 5 km.\"}",
+      "content": "{\"action\": \"append\", \"path\": \"<HOME>/AppData/Local/Temp/tmpr7t3wjvj/diario.md\", \"content\": \"Hoje corri 5 km.\"}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -964,7 +964,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"spreadsheet\", \"action\": \"read\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Desktop\\\\vendas.xlsx\", \"sheet\": \"Vendas\", \"max_rows\": 1000}",
+      "content": "{\"tool\": \"spreadsheet\", \"action\": \"read\", \"path\": \"<HOME>\\\\Desktop\\\\vendas.xlsx\", \"sheet\": \"Vendas\", \"max_rows\": 1000}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -995,7 +995,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"spreadsheet\", \"action\": \"read\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Desktop\\\\orcamento.xlsx\", \"sheet\": \"2027\", \"max_rows\": \"1000\"}",
+      "content": "{\"tool\": \"spreadsheet\", \"action\": \"read\", \"path\": \"<HOME>\\\\Desktop\\\\orcamento.xlsx\", \"sheet\": \"2027\", \"max_rows\": \"1000\"}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -1103,7 +1103,7 @@
       "expected_tool": "microsoft",
       "predicted": "google",
       "args": {
-        "query": "from:JuliaCristinaSerrão is:unread",
+        "query": "from:<USER> is:unread",
         "message_id": "",
         "to": "",
         "subject": "",
@@ -1125,7 +1125,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"google\", \"action\": \"gmail_read\", \"args\": {\"query\": \"from:JuliaCristinaSerr\\u00e3o is:unread\", \"message_id\": \"\", \"to\": \"\", \"subject\": \"\", \"body\": \"\", \"limit\": \"100\"}}",
+      "content": "{\"tool\": \"google\", \"action\": \"gmail_read\", \"args\": {\"query\": \"from:<USER> is:unread\", \"message_id\": \"\", \"to\": \"\", \"subject\": \"\", \"body\": \"\", \"limit\": \"100\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -1505,7 +1505,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\relatorio_mensal.pdf\"}}",
+      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"<HOME>\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\relatorio_mensal.pdf\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -1520,7 +1520,7 @@
       "expected_tool": "send_file",
       "predicted": "send_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\backup.zip"
+        "path": "<HOME>\\AppData\\Local\\Temp\\backup.zip"
       },
       "error": null,
       "latency_s": 0.8649392999999463,
@@ -1537,7 +1537,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\backup.zip\"}}",
+      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\backup.zip\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1550,7 +1550,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\contrato_aluguel.pdf",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj\\contrato_aluguel.pdf",
         "max_pages": "1",
         "ocr": "false"
       },
@@ -1569,7 +1569,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\contrato_aluguel.pdf\", \"max_pages\": \"1\", \"ocr\": \"false\"}}",
+      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\contrato_aluguel.pdf\", \"max_pages\": \"1\", \"ocr\": \"false\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1582,7 +1582,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Apostila de Cálculo.pdf",
+        "path": "<HOME>\\Documents\\Apostila de Cálculo.pdf",
         "max_pages": "50",
         "ocr": "false"
       },
@@ -1601,7 +1601,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Documents\\\\Apostila de C\\u00e1lculo.pdf\", \"max_pages\": \"50\", \"ocr\": \"false\"}}",
+      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"<HOME>\\\\Documents\\\\Apostila de C\\u00e1lculo.pdf\", \"max_pages\": \"50\", \"ocr\": \"false\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -1616,7 +1616,7 @@
       "expected_tool": "read_docx",
       "predicted": "read_docx",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrão\\Proposta Comercial.docx"
+        "path": "<HOME>\\Proposta Comercial.docx"
       },
       "error": null,
       "latency_s": 0.7803546000000097,
@@ -1633,7 +1633,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_docx\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Proposta Comercial.docx\"}}",
+      "content": "{\"tool\": \"read_docx\", \"args\": {\"path\": \"<HOME>\\\\Proposta Comercial.docx\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -1663,7 +1663,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_docx\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmp7t3wjvj\\\\ata_reuniao.docx\"}",
+      "content": "{\"tool\": \"read_docx\", \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp7t3wjvj\\\\ata_reuniao.docx\"}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -1708,7 +1708,7 @@
       "expected_tool": "read_image",
       "predicted": "read_image",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\uploads\\quadro_aula.jpg"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj\\uploads\\quadro_aula.jpg"
       },
       "error": null,
       "latency_s": 1.055204099999969,
@@ -1725,7 +1725,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_image\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\uploads\\\\quadro_aula.jpg\"}}",
+      "content": "{\"tool\": \"read_image\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\uploads\\\\quadro_aula.jpg\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1829,7 +1829,7 @@
       "expected_tool": "knowledge_search",
       "predicted": "knowledge_index",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Condomínio\\Orçamento",
+        "path": "<HOME>\\Documents\\Condomínio\\Orçamento",
         "force": "false",
         "max_files": "400"
       },
@@ -1848,7 +1848,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Documents\\\\Condom\\u00ednio\\\\Or\\u00e7amento\", \"force\": \"false\", \"max_files\": \"400\"}}",
+      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"<HOME>\\\\Documents\\\\Condom\\u00ednio\\\\Or\\u00e7amento\", \"force\": \"false\", \"max_files\": \"400\"}}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": false,
@@ -1863,7 +1863,7 @@
       "expected_tool": "knowledge_index",
       "predicted": "knowledge_index",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrão\\AppData\\Local\\Temp\\tmpr7t3wjvj\\Documentos\\faculdade"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj\\Documentos\\faculdade"
       },
       "error": null,
       "latency_s": 1.021005700000046,
@@ -1880,7 +1880,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\Documentos\\\\faculdade\"}}",
+      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\Documentos\\\\faculdade\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -2170,7 +2170,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"google\", \"args\": [\"search\", \"train station\", \"JuliaCristinaSerrãoM\", \"Sao_Paulo\"]}",
+      "content": "{\"tool\": \"google\", \"args\": [\"search\", \"train station\", \"<USER>\", \"Sao_Paulo\"]}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": null,
@@ -2229,7 +2229,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"obsidian\", \"action\": \"write\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\haicai.txt\", \"content\": \"Caf\\u00e9 quente, \\u00e1gua \\u00e9tica, \\u00e1s dias \\u00e9 mais \\u00e1gvel.\"}",
+      "content": "{\"tool\": \"obsidian\", \"action\": \"write\", \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\haicai.txt\", \"content\": \"Caf\\u00e9 quente, \\u00e1gua \\u00e9tica, \\u00e1s dias \\u00e9 mais \\u00e1gvel.\"}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": null,
@@ -2361,7 +2361,7 @@
       "predicted": "find_files",
       "args": {
         "name": "*.pdf",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Trabalho\\Imposto de Renda",
+        "path": "<HOME>\\Documents\\Trabalho\\Imposto de Renda",
         "max_results": "10"
       },
       "error": null,
@@ -2379,7 +2379,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\Documents\\\\Trabalho\\\\Imposto de Renda\", \"max_results\": \"10\"}}",
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"<HOME>\\\\Documents\\\\Trabalho\\\\Imposto de Renda\", \"max_results\": \"10\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": null,
@@ -2392,7 +2392,7 @@
       "expected_tool": "spreadsheet",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\dados.csv",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpr7t3wjvj\\dados.csv",
         "start_line": "1",
         "end_line": "10000"
       },
@@ -2411,7 +2411,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\dados.csv\", \"start_line\": \"1\", \"end_line\": \"10000\"}}",
+      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\dados.csv\", \"start_line\": \"1\", \"end_line\": \"10000\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": null,
@@ -2470,7 +2470,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"tool\": \"gmail\", \"args\": [\"search\", \"is:unread\", \"from:bank\"], \"cwd\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\"}",
+      "content": "{\"tool\": \"gmail\", \"args\": [\"search\", \"is:unread\", \"from:bank\"], \"cwd\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\"}",
       "mode": "json",
       "tool_ok": false,
       "args_ok": null,
@@ -2498,7 +2498,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_file\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\\\ao\\\\README.md\", \"start_line\": \"1\", \"end_line\": \"0\"}",
+      "content": "{\"tool\": \"read_file\", \"path\": \"<HOME>\\\\ao\\\\README.md\", \"start_line\": \"1\", \"end_line\": \"0\"}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": null,

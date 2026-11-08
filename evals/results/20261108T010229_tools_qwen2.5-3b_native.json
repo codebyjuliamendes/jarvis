@@ -85,7 +85,7 @@
       "predicted": "run_shell",
       "args": {
         "command": "pytest",
-        "cwd": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Projeto\\src"
+        "cwd": "<HOME>\\Documents\\Projeto\\src"
       },
       "error": null,
       "latency_s": 0.8715656000000536,
@@ -364,7 +364,7 @@
       "expected_tool": "replace_in_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpyzn2t9_q\\README.md"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpyzn2t9_q\\README.md"
       },
       "error": null,
       "latency_s": 0.9793083999999226,
@@ -396,7 +396,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Downloads"
+        "path": "<HOME>\\Downloads"
       },
       "error": null,
       "latency_s": 0.7023624999999356,
@@ -456,7 +456,7 @@
       "expected_tool": "search_files",
       "predicted": "search_files",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Projeto\\src",
+        "path": "<HOME>\\Documents\\Projeto\\src",
         "pattern": "TODO"
       },
       "error": null,
@@ -518,7 +518,7 @@
       "predicted": "find_files",
       "args": {
         "name": "*.pdf",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents"
+        "path": "<HOME>\\Documents"
       },
       "error": null,
       "latency_s": 0.8001504000000068,
@@ -647,7 +647,7 @@
           "add .",
           "commit -m 'corrige bug do login'"
         ],
-        "cwd": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpyzn2t9_q"
+        "cwd": "<HOME>\\AppData\\Local\\Temp\\tmpyzn2t9_q"
       },
       "error": null,
       "latency_s": 1.1527520999999297,
@@ -932,7 +932,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpyzn2t9_q\\vendas.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpyzn2t9_q\\vendas.xlsx",
         "sheet": "Total"
       },
       "error": null,
@@ -963,7 +963,7 @@
       "expected_tool": "spreadsheet",
       "predicted": "spreadsheet",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\orcamento.xlsx",
+        "path": "<HOME>\\Documents\\orcamento.xlsx",
         "sheet": "2027",
         "action": "read"
       },
@@ -1464,7 +1464,7 @@
       "predicted": "send_file",
       "args": {
         "caption": "Relatório Mensal",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpyzn2t9_q\\relatorio_mensal.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpyzn2t9_q\\relatorio_mensal.pdf"
       },
       "error": null,
       "latency_s": 1.1190278000000262,
@@ -1495,7 +1495,7 @@
       "predicted": "send_file",
       "args": {
         "caption": "Backup do último backup.zip",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpyzn2t9_q\\backups\\backup.zip"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpyzn2t9_q\\backups\\backup.zip"
       },
       "error": null,
       "latency_s": 1.112646199999972,
@@ -1525,7 +1525,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpyzn2t9_q\\contrato_aluguel.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpyzn2t9_q\\contrato_aluguel.pdf"
       },
       "error": null,
       "latency_s": 1.2196615000000293,
@@ -1830,7 +1830,7 @@
       "expected_tool": "knowledge_index",
       "predicted": "knowledge_index",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\faculdade",
+        "path": "<HOME>\\Documents\\faculdade",
         "force": false
       },
       "error": null,

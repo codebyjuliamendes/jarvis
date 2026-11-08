@@ -274,7 +274,7 @@
       "expected_tool": "write_file",
       "predicted": "write_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\todo\\todo.txt",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\todo\\todo.txt",
         "content": "- comprar café",
         "create_dirs": true
       },
@@ -308,7 +308,7 @@
       "expected_tool": "write_file",
       "predicted": "write_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\lista_compras.txt",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\lista_compras.txt",
         "content": "arroz, feijão e ovos"
       },
       "error": null,
@@ -811,7 +811,7 @@
       "args": {
         "content": "hoje corri 5 km",
         "folder": "Notas",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Obsidian\\Vault\\notes\\daily.md",
+        "path": "<HOME>\\AppData\\Local\\Obsidian\\Vault\\notes\\daily.md",
         "mode": "append",
         "action": "write"
       },
@@ -943,7 +943,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\vendas.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\vendas.xlsx",
         "sheet": "Vendas"
       },
       "error": null,
@@ -1463,7 +1463,7 @@
       "expected_tool": "send_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\relatorio_mensal.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\relatorio_mensal.pdf"
       },
       "error": null,
       "latency_s": 0.5529312000000033,
@@ -1495,7 +1495,7 @@
       "expected_tool": "send_file",
       "predicted": "send_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\backups\\backup.zip"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\backups\\backup.zip"
       },
       "error": null,
       "latency_s": 0.516090399999996,
@@ -1576,7 +1576,7 @@
       "expected_tool": "read_docx",
       "predicted": "read_docx",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\proposta_comercial.docx"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\proposta_comercial.docx"
       },
       "error": null,
       "latency_s": 1.3098238999999694,
@@ -1606,7 +1606,7 @@
       "expected_tool": "read_docx",
       "predicted": "read_docx",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\ata_reuniao.docx"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\ata_reuniao.docx"
       },
       "error": null,
       "latency_s": 0.6143959999999993,
@@ -2333,7 +2333,7 @@
       "expected_tool": "spreadsheet",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3akkj7v8\\dados.csv"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3akkj7v8\\dados.csv"
       },
       "error": null,
       "latency_s": 0.5838902000000417,

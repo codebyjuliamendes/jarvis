@@ -42,7 +42,7 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
 
 4. **Caminhos do Windows quebram o JSON no modo texto.** Na rodada de 08/11, 8 das 24
    respostas inválidas do `llama3.2:3b` no modo JSON tinham caminhos como
-   `C:\Users\...` com barras sem escape (o system prompt mostra o workspace com barras
+   `<HOME>\AppData\Local\Temp\...` com barras sem escape (o system prompt mostra o workspace com barras
    invertidas e o modelo copia). Não acontece no modo nativo nem com caminhos POSIX. A taxa
    "JSON inválido" conta também JSON válido fora do protocolo (só os argumentos, sem o
    nome da ferramenta, ou `args` como lista), que é a maioria dos outros 16 casos.
@@ -263,3 +263,25 @@ antes/depois NÃO foram feitos.**
     igual ao registro atual ou se o system prompt dos exemplos não for o do `Agent` atual
     (fora data/hora e pasta). Nos dois casos, regere os dados (e treine de novo) antes de
     comparar números.
+
+
+## Acabamento (subprojeto 5b)
+
+A especificação está em `docs/superpowers/specs/2026-11-08-acabamento-design.md`.
+
+1. **[DECISÃO DA JÚLIA] Commits antigos da branch ainda têm caminhos com o usuário do
+   Windows.** Os JSON de `evals/results/` gravados antes do `evals/sanitize.py` traziam a
+   home da máquina (o caminho da pasta temporária, que o modelo copiava nas respostas, e
+   variações do nome inventadas por ele). No HEAD eles foram limpos e toda gravação nova
+   passa pelo sanitizador, mas **o histórico não foi reescrito**: os commits dos subprojetos
+   1 a 4 (a partir de `a122b5e`) ainda contêm esses caminhos, e o comentário do
+   `scripts/smoke_test.py` com o nome curto 8.3 também existe em commits antigos. Antes de
+   publicar o repositório, dá para fazer squash da branch `vitrine-ai` (ou `git filter-repo`
+   só nesses arquivos); isso fica para ela decidir. Nenhum segredo estava nesses arquivos —
+   só o nome da conta.
+2. **O sanitizador é por padrão, não por lista fechada.** Troca o nome do usuário pelo
+   prefixo (até 10 caracteres) seguido de qualquer continuação, a forma 8.3 e qualquer
+   `X:` + `\Users\<alguém>`. Um nome que o modelo invente sem o mesmo começo (ex.: só o
+   sobrenome) passaria. Os dados do fine-tuning (`finetune/data/`) usam homes fictícias
+   (`/home/julia` e o equivalente no Windows) e não passam pelo sanitizador, de propósito:
+   são texto de treino, e o teste do system prompt depende deles.

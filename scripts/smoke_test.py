@@ -117,7 +117,7 @@ async def run() -> int:
         print("ok - " + label)
 
     with tempfile.TemporaryDirectory() as tmp:
-        # resolve(): no Windows o TEMP pode vir em formato curto 8.3 (ex.: JULIAC~1)
+        # resolve(): no Windows o TEMP pode vir em formato curto 8.3 (ex.: ABCDEF~1)
         # e as ferramentas comparam caminhos já resolvidos, como o Settings.load faz.
         root = Path(tmp).resolve()
         settings = make_settings(root)

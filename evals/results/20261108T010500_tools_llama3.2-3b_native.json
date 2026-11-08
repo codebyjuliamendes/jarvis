@@ -90,7 +90,7 @@
       "predicted": "run_shell",
       "args": {
         "command": "pytest -v",
-        "cwd": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej"
+        "cwd": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 1.1548971000000847,
@@ -165,7 +165,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"name\": \"run_shell\", \"parameters\": {\"command\": \"df -h\", \"cwd\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\"}}",
+      "content": "{\"name\": \"run_shell\", \"parameters\": {\"command\": \"df -h\", \"cwd\": \"<HOME>\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\"}}",
       "mode": "native",
       "tool_ok": false,
       "args_ok": false,
@@ -180,7 +180,7 @@
       "expected_tool": "run_shell",
       "predicted": "run_shell",
       "args": {
-        "cwd": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej",
+        "cwd": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej",
         "command": "python --version"
       },
       "error": null,
@@ -211,7 +211,7 @@
       "expected_tool": "read_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\notas\\ideias.txt",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\notas\\ideias.txt",
         "start_line": "1",
         "end_line": "null"
       },
@@ -244,7 +244,7 @@
       "predicted": "read_file",
       "args": {
         "end_line": "30",
-        "path": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\jarvis\\\\agent.py",
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\jarvis\\\\agent.py",
         "start_line": "10"
       },
       "error": null,
@@ -276,7 +276,7 @@
       "predicted": "write_file",
       "args": {
         "content": "- comprar çã",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\todo.md",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\todo.md",
         "create_dirs": "false"
       },
       "error": null,
@@ -311,7 +311,7 @@
       "args": {
         "create_dirs": "false",
         "content": "arroz, feijão e ovos",
-        "path": "C:\\Users\\JuliaCristinaSerrão\\AppData\\Local\\Temp\\tmpfhebhdej\\lista_compras.txt"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\lista_compras.txt"
       },
       "error": null,
       "latency_s": 1.312690699999962,
@@ -341,7 +341,7 @@
       "expected_tool": "replace_in_file",
       "predicted": "write_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\config.yaml",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\config.yaml",
         "create_dirs": "false",
         "content": "debug: false"
       },
@@ -378,7 +378,7 @@
         "all": "false",
         "new": "receive",
         "old": "recieve",
-        "path": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\README.md"
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\README.md"
       },
       "error": null,
       "latency_s": 1.4484525000000303,
@@ -408,7 +408,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 0.9382438000000093,
@@ -440,7 +440,7 @@
       "expected_tool": "list_dir",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 1.0947874999999385,
@@ -507,7 +507,7 @@
       "args": {
         "force": "false",
         "max_files": "400",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 1.1843036999999867,
@@ -539,7 +539,7 @@
       "expected_tool": "find_files",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents"
+        "path": "<HOME>\\Documents"
       },
       "error": null,
       "latency_s": 0.701177400000006,
@@ -571,7 +571,7 @@
       "expected_tool": "find_files",
       "predicted": "list_dir",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Desktop"
+        "path": "<HOME>\\Desktop"
       },
       "error": null,
       "latency_s": 0.5812975000000051,
@@ -607,7 +607,7 @@
           "status",
           "--short"
         ],
-        "cwd": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej"
+        "cwd": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 0.8332771999999977,
@@ -638,7 +638,7 @@
       "predicted": "git",
       "args": {
         "args": "['status', '--short']",
-        "cwd": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej"
+        "cwd": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 1.0138586000000487,
@@ -736,7 +736,7 @@
         "body": "",
         "limit": "10",
         "number": "",
-        "repo": "JuliaCristinaSerrãoM",
+        "repo": "<USER>",
         "state": "open"
       },
       "error": null,
@@ -875,7 +875,7 @@
       "args": {
         "action": "list",
         "limit": 100,
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej"
       },
       "error": null,
       "latency_s": 0.8120156999999608,
@@ -969,7 +969,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\vendas.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\vendas.xlsx",
         "max_rows": "100"
       },
       "error": null,
@@ -1001,7 +1001,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\orcamento.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\orcamento.xlsx",
         "sheet": "2027"
       },
       "error": null,
@@ -1169,7 +1169,7 @@
       "args": {
         "action": "calendar_list",
         "days": "7",
-        "query": "JuliaCristinaSerrão:reunião"
+        "query": "<USER>:reunião"
       },
       "error": null,
       "latency_s": 0.8799666999999545,
@@ -1534,7 +1534,7 @@
       "leaked": false,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"name\": \"send_file\", \"parameters\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\relatorio_mensal.pdf\"}}",
+      "content": "{\"name\": \"send_file\", \"parameters\": {\"path\": \"<HOME>\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\relatorio_mensal.pdf\"}}",
       "mode": "native",
       "tool_ok": false,
       "args_ok": false,
@@ -1549,7 +1549,7 @@
       "expected_tool": "send_file",
       "predicted": "send_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\backups\\backup.zip"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\backups\\backup.zip"
       },
       "error": null,
       "latency_s": 0.9437274000000571,
@@ -1579,7 +1579,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\contrato_aluguel.pdf",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\contrato_aluguel.pdf",
         "max_pages": "50",
         "ocr": "false"
       },
@@ -1613,7 +1613,7 @@
       "args": {
         "max_pages": "50",
         "ocr": "false",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Apostilas\\apostila_calculo.pdf"
+        "path": "<HOME>\\Documents\\Apostilas\\apostila_calculo.pdf"
       },
       "error": null,
       "latency_s": 1.0895236000000068,
@@ -1643,7 +1643,7 @@
       "expected_tool": "read_docx",
       "predicted": "read_docx",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\proposta_comercial.docx"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\proposta_comercial.docx"
       },
       "error": null,
       "latency_s": 0.9953846000000794,
@@ -1673,7 +1673,7 @@
       "expected_tool": "read_docx",
       "predicted": "read_docx",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\ata_reuniao.docx"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\ata_reuniao.docx"
       },
       "error": null,
       "latency_s": 0.98571400000003,
@@ -1733,7 +1733,7 @@
       "expected_tool": "read_image",
       "predicted": "read_image",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpfhebhdej\\uploads\\quadadro_aula.jpg"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmpfhebhdej\\uploads\\quadadro_aula.jpg"
       },
       "error": null,
       "latency_s": 0.9544172000000799,
@@ -1889,7 +1889,7 @@
       "expected_tool": "knowledge_index",
       "predicted": "knowledge_index",
       "args": {
-        "path": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej",
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej",
         "force": "false",
         "max_files": "400"
       },
@@ -2528,7 +2528,7 @@
       "leaked": true,
       "n_calls": 0,
       "unknown_tool": false,
-      "content": "{\"name\": \"gmail_search\", \"parameters\": {\"action\": \"search\", \"query\": \"bank email\", \"limit\": \"10\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Desktop\\\\bank_email.txt\"}}",
+      "content": "{\"name\": \"gmail_search\", \"parameters\": {\"action\": \"search\", \"query\": \"bank email\", \"limit\": \"10\", \"path\": \"<HOME>\\\\Desktop\\\\bank_email.txt\"}}",
       "mode": "native",
       "tool_ok": false,
       "args_ok": null,
@@ -2541,7 +2541,7 @@
       "expected_tool": "read_file",
       "predicted": "read_file",
       "args": {
-        "path": "C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\README.md",
+        "path": "<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmpfhebhdej\\\\README.md",
         "end_line": "0",
         "start_line": "1"
       },

@@ -368,7 +368,7 @@
       "expected_tool": "replace_in_file",
       "predicted": "replace_in_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3upuv88d\\README.md",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3upuv88d\\README.md",
         "old": "recieve",
         "new": "receive"
       },
@@ -387,7 +387,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "Para corrigir o erro de digitação no README.md, podemos usar a ferramenta `replace_in_file`. Vouro código será assim:\n\n```json\n{\n  \"tool\": \"replace_in_file\",\n  \"args\": {\n    \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\README.md\",\n    \"old\": \"recieve\",\n    \"new\": \"receive\"\n  }\n}\n```\n\nApós executar esse comando, o erro de digitação será corrigido no README.md.",
+      "content": "Para corrigir o erro de digitação no README.md, podemos usar a ferramenta `replace_in_file`. Vouro código será assim:\n\n```json\n{\n  \"tool\": \"replace_in_file\",\n  \"args\": {\n    \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\README.md\",\n    \"old\": \"recieve\",\n    \"new\": \"receive\"\n  }\n}\n```\n\nApós executar esse comando, o erro de digitação será corrigido no README.md.",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -521,7 +521,7 @@
       "predicted": "find_files",
       "args": {
         "name": "*.pdf",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents",
+        "path": "<HOME>\\Documents",
         "max_results": 100
       },
       "error": null,
@@ -539,7 +539,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\Documents\", \"max_results\": 100}}",
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"<HOME>\\\\Documents\", \"max_results\": 100}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -651,7 +651,7 @@
           "add",
           "login_fix.py"
         ],
-        "cwd": "C:\\Users\\JuliaCristinaSerrãoM\\workspace"
+        "cwd": "<HOME>\\workspace"
       },
       "error": null,
       "latency_s": 0.7444664999999304,
@@ -668,7 +668,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"git\", \"args\": {\"args\": [\"add\", \"login_fix.py\"], \"cwd\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\workspace\"}}",
+      "content": "{\"tool\": \"git\", \"args\": {\"args\": [\"add\", \"login_fix.py\"], \"cwd\": \"<HOME>\\\\workspace\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": false,
@@ -745,7 +745,7 @@
       "predicted": "github",
       "args": {
         "action": "create_issue",
-        "repo": "JuliaCristinaSerraoM/JuliaCristinaSerraoM",
+        "repo": "<USER>/<USER>",
         "title": "Bot não responde áudio"
       },
       "error": null,
@@ -763,7 +763,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"create_issue\", \"repo\": \"JuliaCristinaSerraoM/JuliaCristinaSerraoM\", \"title\": \"Bot não responde áudio\"}}",
+      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"create_issue\", \"repo\": \"<USER>/<USER>\", \"title\": \"Bot não responde áudio\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -963,7 +963,7 @@
       "predicted": "spreadsheet",
       "args": {
         "action": "read",
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3upuv88d\\orcamento.xlsx",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3upuv88d\\orcamento.xlsx",
         "sheet": "2027"
       },
       "error": null,
@@ -981,7 +981,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"spreadsheet\", \"args\": {\"action\": \"read\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\orcamento.xlsx\", \"sheet\": \"2027\"}}",
+      "content": "{\"tool\": \"spreadsheet\", \"args\": {\"action\": \"read\", \"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\orcamento.xlsx\", \"sheet\": \"2027\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1480,7 +1480,7 @@
       "expected_tool": "send_file",
       "predicted": "send_file",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3upuv88d\\backups\\backup.zip",
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3upuv88d\\backups\\backup.zip",
         "caption": "Backup.zip"
       },
       "error": null,
@@ -1498,7 +1498,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\backups\\\\backup.zip\", \"caption\": \"Backup.zip\"}}",
+      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\backups\\\\backup.zip\", \"caption\": \"Backup.zip\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1511,7 +1511,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3upuv88d\\contrato_aluguel.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3upuv88d\\contrato_aluguel.pdf"
       },
       "error": null,
       "latency_s": 0.9463269999999966,
@@ -1528,7 +1528,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\contrato_aluguel.pdf\"}}",
+      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\contrato_aluguel.pdf\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1541,7 +1541,7 @@
       "expected_tool": "read_pdf",
       "predicted": "read_pdf",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3upuv88d\\apostila_calculo.pdf"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3upuv88d\\apostila_calculo.pdf"
       },
       "error": null,
       "latency_s": 0.9254286999999977,
@@ -1558,7 +1558,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\apostila_calculo.pdf\"}}",
+      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\apostila_calculo.pdf\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1631,7 +1631,7 @@
       "expected_tool": "read_image",
       "predicted": "read_image",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmp3upuv88d\\print_comprovante.png"
+        "path": "<HOME>\\AppData\\Local\\Temp\\tmp3upuv88d\\print_comprovante.png"
       },
       "error": null,
       "latency_s": 0.9150551999999834,
@@ -1648,7 +1648,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"read_image\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\print_comprovante.png\"}}",
+      "content": "{\"tool\": \"read_image\", \"args\": {\"path\": \"<HOME>\\\\AppData\\\\Local\\\\Temp\\\\tmp3upuv88d\\\\print_comprovante.png\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,
@@ -1812,7 +1812,7 @@
       "expected_tool": "knowledge_index",
       "predicted": "knowledge_index",
       "args": {
-        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\faculdade"
+        "path": "<HOME>\\Documents\\faculdade"
       },
       "error": null,
       "latency_s": 0.6577839999999924,
@@ -1829,7 +1829,7 @@
       "leaked": false,
       "n_calls": 1,
       "unknown_tool": false,
-      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\Documents\\\\faculdade\"}}",
+      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"<HOME>\\\\Documents\\\\faculdade\"}}",
       "mode": "json",
       "tool_ok": true,
       "args_ok": true,

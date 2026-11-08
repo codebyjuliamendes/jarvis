@@ -49,7 +49,8 @@ atual, com lint e CI, empacotado em Docker e com um README que conta a história
 - `pytest`: os 298 atuais continuam passando, os 3 `xfail` viram testes que passam, 0 `xfail`.
 - `scripts/smoke_test.py`: 62 ok + 1 pulada (Windows), sem regressão.
 - `ruff check .` limpo.
-- `git grep -i "JuliaCristina\|JULIAC~1\|C:\\Users"` sem resultados no HEAD.
+- `git grep` pelo nome da conta do Windows, pelo nome curto 8.3 e por `C:` + `\Users` sem
+  resultados no HEAD; `evals/sanitize.py --check evals/results` sem achados.
 - Nenhum número no README que não esteja num arquivo de `evals/results/`.
 
 ## Fora de escopo
