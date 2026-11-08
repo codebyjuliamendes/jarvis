@@ -8,7 +8,9 @@ import httpx
 from .agent import Agent
 from .briefing import BriefingService
 from .config import Settings
+from .logging_setup import setup_logging
 from .memory import Memory
+from .metrics_store import MetricsStore
 from .rag import RagIndex
 from .reminders import ReminderService
 from .telegram_bot import JarvisBot
@@ -45,15 +47,14 @@ def _preflight(agent: Agent) -> None:
 
 
 def main() -> int:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-    )
+    settings = Settings.load()
+    # Padrão "text" = o formato de sempre; JARVIS_LOG_FORMAT=json para uma linha
+    # JSON por evento, com o id da requisição.
+    setup_logging(settings.log_format, settings.log_level)
     # Não registra URLs do Telegram (contêm o token) nem detalhes de HTTP.
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-    settings = Settings.load()
     if not settings.telegram_token:
         print(
             "TELEGRAM_BOT_TOKEN não configurado.\n"
@@ -76,8 +77,15 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001 - RAG é opcional
             logger.warning("Memória/RAG desativada: %s", exc)
 
+    metrics = None
+    if settings.metrics_enabled:
+        try:
+            metrics = MetricsStore(settings.resolved_metrics_db_path())
+        except Exception as exc:  # noqa: BLE001 - métricas são opcionais
+            logger.warning("Métricas desativadas: %s", exc)
+
     registry = build_registry(settings, reminders, rag)
-    agent = Agent(settings, registry, memory)
+    agent = Agent(settings, registry, memory, metrics=metrics)
 
     logger.info("Ferramentas carregadas: %s", ", ".join(registry.names()))
     try:
@@ -95,6 +103,8 @@ def main() -> int:
     try:
         bot.run()
     finally:
+        if metrics is not None:
+            metrics.close()
         briefing.close()
         if rag is not None:
             rag.close()

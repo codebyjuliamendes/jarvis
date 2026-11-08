@@ -157,6 +157,7 @@ class BriefingService:
             use_history=False,
             allow_tools=BRIEFING_TOOLS,
             max_iterations=self.settings.briefing_max_iterations,
+            source="briefing",
         )
 
     def _run(self) -> None:

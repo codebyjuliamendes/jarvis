@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import time
 from typing import Any, Dict, List, Optional
 
 import httpx
+
+from . import observability
 
 
 class OllamaError(Exception):
@@ -70,6 +73,20 @@ class OllamaClient:
         if tools and self.tools_supported:
             payload["tools"] = tools
 
+        started = time.perf_counter()
+        try:
+            data = await self._post_chat(payload, tools)
+        except Exception as exc:
+            observability.record_llm_error(exc, time.perf_counter() - started)
+            raise
+        observability.record_llm_response(data, time.perf_counter() - started)
+        return data
+
+    async def _post_chat(
+        self,
+        payload: Dict[str, Any],
+        tools: Optional[List[Dict[str, Any]]],
+    ) -> Dict[str, Any]:
         try:
             async with httpx.AsyncClient(timeout=self._timeout()) as client:
                 response = await client.post(self.url + "/api/chat", json=payload)

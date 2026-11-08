@@ -117,6 +117,16 @@ class Settings:
     tts_voice: str = "pt-BR-FranciscaNeural"
     tts_rate: str = "+0%"
     tts_max_chars: int = 3000
+    metrics_enabled: bool = True
+    metrics_db_path: Optional[Path] = None
+    log_format: str = "text"
+    log_level: str = "INFO"
+
+    def resolved_metrics_db_path(self) -> Path:
+        """Banco das métricas: separado do histórico, ao lado dele por padrão."""
+        if self.metrics_db_path is not None:
+            return self.metrics_db_path
+        return Path(self.db_path).parent / "metrics.sqlite3"
 
     @classmethod
     def load(cls) -> "Settings":
@@ -221,4 +231,8 @@ class Settings:
             tts_voice=(os.getenv("JARVIS_TTS_VOICE") or "pt-BR-FranciscaNeural").strip(),
             tts_rate=(os.getenv("JARVIS_TTS_RATE") or "+0%").strip(),
             tts_max_chars=_as_int(os.getenv("JARVIS_TTS_MAX_CHARS"), 3000),
+            metrics_enabled=_as_bool(os.getenv("JARVIS_METRICS_ENABLED"), True),
+            metrics_db_path=_as_path(os.getenv("JARVIS_METRICS_DB_PATH")),
+            log_format=(os.getenv("JARVIS_LOG_FORMAT") or "text").strip().lower(),
+            log_level=(os.getenv("JARVIS_LOG_LEVEL") or "INFO").strip().upper(),
         )

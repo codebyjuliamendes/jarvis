@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 import threading
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
+from .. import observability
 from ..utils import run_blocking, truncate
 
 _SENSITIVE_KEYWORDS = (
@@ -142,6 +144,7 @@ class ToolRegistry:
     ) -> str:
         tool = self._tools.get(name)
         if tool is None:
+            observability.record_tool_call(name, 0.0, False, "ferramenta desconhecida")
             return "Erro: ferramenta desconhecida '{}'. Disponíveis: {}".format(
                 name, ", ".join(self.names())
             )
@@ -152,12 +155,24 @@ class ToolRegistry:
         if context:
             for key, value in context.items():
                 args.setdefault("_" + key, value)
+        started = time.perf_counter()
         try:
             result = await run_blocking(tool["handler"], args)
         except Exception as exc:  # noqa: BLE001 - erro volta para o modelo
             message = "Erro ao executar '{}': {}".format(name, exc)
+            observability.record_tool_call(
+                name, time.perf_counter() - started, False, observability.short_error(exc)
+            )
             self._audit(name, args, context, message, error=str(exc))
             return message
         final = truncate(result)
+        # As ferramentas costumam capturar o erro e devolver "Erro: ..." em texto.
+        failed = final.lstrip().startswith("Erro")
+        observability.record_tool_call(
+            name,
+            time.perf_counter() - started,
+            not failed,
+            final.strip()[:300] if failed else None,
+        )
         self._audit(name, args, context, final)
         return final
