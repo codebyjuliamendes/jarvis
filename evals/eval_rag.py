@@ -305,6 +305,28 @@ def render_grid(main: List[Dict[str, Any]], sensitivity: List[Dict[str, Any]], f
     return "\n".join(parts)
 
 
+GRID_RETRIES = 2
+
+
+def _run_with_retry(args: argparse.Namespace, config: Dict[str, Any]) -> Dict[str, Any]:
+    """Refaz a configuração inteira se o Ollama falhar no meio.
+
+    Medido em 08/11/2026: depois de ~7 rodadas seguidas o runner do Ollama 0.40.14 às
+    vezes recusa conexão por alguns segundos ("dial tcp 127.0.0.1:<porta>"). Refazer do
+    zero (e não só a chamada) mantém cada resultado limpo; a repetição é avisada.
+    """
+    for attempt in range(GRID_RETRIES + 1):
+        try:
+            return run_eval(args.embed_model, None, args.ollama_url, args.k, args.verbose, **config)
+        except RuntimeError as exc:
+            if attempt == GRID_RETRIES:
+                raise
+            print("AVISO: falha do Ollama ({}); refazendo esta configuração em 10 s.".format(
+                str(exc).splitlines()[-1][:160]))
+            time.sleep(10)
+    raise AssertionError("inalcançável")
+
+
 def run_grid(args: argparse.Namespace) -> int:
     from evals import tracking
 
@@ -327,7 +349,7 @@ def run_grid(args: argparse.Namespace) -> int:
     with parent as run:
         for target, bucket in ((configs, main_results), (sensitivity_configs, sensitivity)):
             for config in target:
-                result = run_eval(args.embed_model, None, args.ollama_url, args.k, args.verbose, **config)
+                result = _run_with_retry(args, config)
                 print_summary(result)
                 saved: List[Path] = []
                 if not args.no_save:
