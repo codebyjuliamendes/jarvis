@@ -29,6 +29,9 @@ distribuído, alertas, retenção/rotação automática, métricas do RAG/indexa
 - **Barato.** Durante a requisição só se acumula em memória (listas num objeto de
   contexto). No fim, **uma** transação SQLite: 1 `INSERT` na tabela `metrics` + 1
   `executemany` em `metric_tool_calls`. Nada é gravado dentro do laço.
+  O banco usa WAL + `synchronous=NORMAL`: medido no Windows, `record()` caiu de 13 ms
+  (p50, fsync a cada commit) para 0,2 ms; perder as últimas linhas numa queda de energia é
+  aceitável para telemetria (decisão tomada na implementação).
 - **Sem conteúdo.** Não se grava o texto do pedido, da resposta nem os argumentos das
   ferramentas — só números, nomes de ferramenta e a mensagem de erro (truncada em 300
   caracteres). O `audit.log` existente continua sendo o registro de argumentos (já
