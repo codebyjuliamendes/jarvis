@@ -287,3 +287,25 @@ A especificação está em `docs/superpowers/specs/2026-11-08-acabamento-design.
    sobrenome) passaria. Os dados do fine-tuning (`finetune/data/`) usam homes fictícias
    (`/home/julia` e o equivalente no Windows) e não passam pelo sanitizador, de propósito:
    são texto de treino, e o teste do system prompt depende deles.
+3. **[PENDENTE] O CI nunca rodou no GitHub.** Nada foi empurrado (pedido explícito), então o
+   badge do README mostra "sem status" até o primeiro push. Validado localmente: o YAML faz
+   parse; `ruff check .` limpo; `pytest` (373) e smoke test passam no `.venv` (3.8) e num venv
+   limpo com Python 3.12.13 **no Windows**, sem MLflow. O smoke test no Linux executa a
+   checagem "run_shell executa" (pulada no Windows), que não rodei aqui. Não usei `act`.
+4. **[PENDENTE] A imagem Docker nunca foi construída.** `docker compose config` valida os dois
+   arquivos (com e sem GPU) e as tags `python:3.11-slim-bookworm` e `ollama/ollama:0.40.14`
+   existem no Docker Hub (conferido pela API), mas nada foi baixado nem executado nesta
+   máquina. Pontos a conferir no primeiro `docker compose up`: permissão de `./data` e
+   `./workspace` (uid 1000) em Linux; o `healthcheck` com `ollama list`; o tamanho da imagem
+   (tesseract + PyMuPDF). Voz (faster-whisper) não está na imagem.
+5. **numpy diferente por versão do Python.** `numpy==1.24.4` (Python < 3.12, a do `.venv` e da
+   imagem) e `numpy==1.26.4` (3.12+, porque a 1.24.4 não tem wheel). O código só usa a API
+   básica e os testes passam nas duas, mas são duas versões em produção possíveis.
+6. **Achado do ruff: o `scripts/token_form.py` nunca mostrava o erro de validação** (o bloco
+   de erro era montado e descartado). Corrigido num commit próprio
+   (`fix(token_form): ...`), conferido chamando `_form()` com e sem erro; o fluxo completo no
+   navegador não foi testado.
+7. **Ruff com exceções.** `UP006`/`UP007`/`UP045` (manter `typing.List`/`Optional`) e `UP032`
+   (manter `str.format`) estão desligados, com o motivo no `pyproject.toml`; o notebook do
+   fine-tuning fica fora do lint. O `ruff format` não foi adotado (reformataria o projeto
+   inteiro).

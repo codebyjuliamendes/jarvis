@@ -1,9 +1,32 @@
 # Jarvis pessoal (Telegram + Ollama)
 
-Assistente pessoal que roda **na sua máquina** e é acessado pelo **Telegram**.
-Usa **Ollama** (modelo local, privado) e tem ferramentas para trabalhar com código,
-terminal, git/GitHub, Obsidian/Notion, Google Agenda/Gmail, Stripe e planilhas.
-Também lê PDFs/DOCX/imagens, mantém uma memória local indexada (RAG) e envia um
+[![CI](https://github.com/codebyjuliamendes/jarvis/actions/workflows/ci.yml/badge.svg)](https://github.com/codebyjuliamendes/jarvis/actions/workflows/ci.yml)
+[![Licença: MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://docs.astral.sh/ruff/)
+
+Assistente pessoal com **LLM local** (Ollama) que conversa pelo **Telegram** e age com **25
+ferramentas reais** — terminal, arquivos, git/GitHub, Google, Microsoft 365, Notion, RAG nas
+suas notas. Medido, não suposto: o `qwen2.5:3b` escolhe a ferramenta certa em **82,1%** de 78
+pedidos em pt-BR (0,58 s por decisão numa GPU de notebook), e trocar a busca vetorial pela
+busca por palavras (BM25) levou o recall@1 do RAG de **44,4% para 83,3%**. Observabilidade
+por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **373 testes** sem
+Ollama, CI e Docker.
+
+| Seção | Destaque |
+|---|---|
+| [Avaliação](#avaliação) | 78 casos de seleção de ferramentas e 36 de RAG, MLflow, JSON de cada caso versionado |
+| [Fine-tuning](#fine-tuning) | dataset sintético de 2.134 conversas, template idêntico ao do Ollama; treino no Colab **pendente** |
+| [RAG](#rag) | BM25 (FTS5), vetorial (sqlite-vec) e híbrido (RRF), com citação de fonte |
+| [Observabilidade](#observabilidade) | latência, tokens e ferramentas por requisição; logs JSON com `request_id` |
+| [Engenharia](#engenharia) | testes, ruff, GitHub Actions, Docker, segurança |
+
+<!-- GIF de demonstração: ver "Gravar o GIF de demonstração" em Engenharia. Quando existir:
+![Jarvis no Telegram](docs/demo.gif)
+-->
+
+O Jarvis roda **na sua máquina**: a inferência é local e o Telegram é só a interface. Além
+das ferramentas, lê PDFs/DOCX/imagens (com OCR), transcreve áudios, responde em voz e envia um
 briefing diário pela manhã.
 
 > Você escolheu rodar no seu computador. Isso significa: privacidade total e custo zero
@@ -39,22 +62,29 @@ em vez de inventar.
 
 ## Arquitetura
 
-```
-Telegram  <---long polling--->  Bot (Python)
-                                   |
-                                   v
-                            Agente (loop de ferramentas)
-                          /    |      |      |      |    \
-                    terminal arquivos git  GitHub Notion Google ...
-                                   |
-                                   v
-                            Ollama local (LLM)
+```mermaid
+flowchart LR
+    U([Você no Telegram]) <-->|long polling| B[Bot<br/>telegram_bot.py]
+    B -->|texto, áudio transcrito,<br/>PDF/DOCX/imagem| A[Agente<br/>loop de ferramentas]
+    A <-->|function calling nativo<br/>ou fallback JSON| O[(Ollama local<br/>qwen2.5:3b)]
+    A --> T[25 ferramentas<br/>terminal · arquivos · git/GitHub<br/>Google · Microsoft 365 · Notion<br/>Obsidian · Stripe · web · lembretes]
+    A --> K[knowledge_search<br/>RAG: BM25 · vetorial · híbrido]
+    K --> R[(rag.sqlite3<br/>FTS5 + sqlite-vec)]
+    K -.->|embeddings| O
+    T --> S{{security.py<br/>pastas permitidas<br/>comandos bloqueados}}
+    A --> M[(metrics.sqlite3<br/>latência · tokens · ferramentas)]
+    M --> B
+    E[evals/<br/>78 + 36 casos] -.->|mesmo parsing<br/>e system prompt| A
+    E -.-> F[(MLflow local)]
 ```
 
 - **Sem porta aberta / sem ngrok**: o bot só faz conexões de saída para o Telegram.
-- Histórico por conversa em SQLite (`data/jarvis.sqlite3`).
+- Histórico por conversa em SQLite (`data/jarvis.sqlite3`); métricas num SQLite separado
+  (`data/metrics.sqlite3`), resumidas pelo comando `/metrics`.
 - Suporta function calling nativo do Ollama; se o modelo não suportar, cai
   automaticamente para um modo de ferramentas via JSON.
+- As avaliações usam o mesmo system prompt, os mesmos schemas e o mesmo código de parsing do
+  agente: o número medido é o do bot, não o de uma cópia.
 
 ---
 
@@ -73,18 +103,19 @@ dados, as duas decisões das quais tudo depende:
 Cada execução também fica registrada no **MLflow** (params, métricas, JSON e tabela como
 artefatos) para comparar runs pela interface.
 
-Resultados medidos em 08/11/2026 num notebook com RTX 4050 Laptop (6 GB), Ollama 0.40.14, um
-modelo por vez, seed 42 ([tabela completa e por categoria](evals/results/RESULTS.md); os JSON
-com cada caso estão em [`evals/results/`](evals/results/)):
+Resultados medidos em 08/11/2026 (commit `0fa0ad2`) num notebook com RTX 4050 Laptop (6 GB),
+Ollama 0.40.14, um modelo por vez, seed 42 ([tabela completa, por categoria e comparação com a
+rodada anterior](evals/results/RESULTS.md); os JSON com cada caso estão em
+[`evals/results/`](evals/results/)):
 
 | Modelo | Modo | Acurácia ferramenta | Acurácia args | JSON inválido | Latência p50 (s) | Latência p95 (s) | tokens/s |
 |---|---|---|---|---|---|---|---|
-| `qwen2.5:1.5b` | nativo | 56,4% (44/78) | 42,6% (26/61) | 0,0% | 0,42 | 1,66 | 121,4 |
-| `qwen2.5:1.5b` | JSON | 47,4% (37/78) | 26,2% (16/61) | 7,7% | 0,41 | 1,09 | 114,9 |
-| **`qwen2.5:3b`** | **nativo** | **84,6% (66/78)** | **82,0% (50/61)** | 0,0% | 0,65 | 1,26 | 64,5 |
-| `qwen2.5:3b` | JSON | 51,3% (40/78) | 42,6% (26/61) | 6,4% | 0,64 | 2,02 | 65,5 |
-| `llama3.2:3b` | nativo | 74,4% (58/78) | 57,4% (35/61) | 0,0% | 0,72 | 1,32 | 64,0 |
-| `llama3.2:3b` | JSON | 48,7% (38/78) | 24,6% (15/61) | 30,8% | 0,87 | 1,56 | 60,3 |
+| `qwen2.5:1.5b` | nativo | 56,4% (44/78) | 44,3% (27/61) | 0,0% | 0,40 | 0,93 | 118,7 |
+| `qwen2.5:1.5b` | JSON | 47,4% (37/78) | 32,8% (20/61) | 9,0% | 0,40 | 1,04 | 115,4 |
+| **`qwen2.5:3b`** | **nativo** | **82,1% (64/78)** | **80,3% (49/61)** | 0,0% | 0,58 | 1,12 | 69,9 |
+| `qwen2.5:3b` | JSON | 47,4% (37/78) | 39,3% (24/61) | 5,1% | 0,69 | 1,81 | 66,9 |
+| `llama3.2:3b` | nativo | 74,4% (58/78) | 65,6% (40/61) | 0,0% | 0,77 | 1,29 | 65,2 |
+| `llama3.2:3b` | JSON | 53,8% (42/78) | 39,3% (24/61) | 20,5% | 0,81 | 1,56 | 61,3 |
 
 | RAG (`nomic-embed-text`, 13 docs / 25 trechos) | recall@1 | recall@5 | MRR |
 |---|---|---|---|
@@ -94,25 +125,28 @@ com cada caso estão em [`evals/results/`](evals/results/)):
 **Análise.**
 
 - **O padrão continua sendo `qwen2.5:3b` com function calling nativo.** Foi o melhor em
-  ferramenta (84,6%) e em argumentos (82,0%; 94,3% quando acerta a ferramenta), com latência
-  mediana de 0,65 s por decisão. O `llama3.2:3b`, de tamanho e latência parecidos, erra 10
-  pontos a mais em ferramenta e quase 25 em argumentos. O `qwen2.5:1.5b` gera tokens quase
-  duas vezes mais rápido, mas em 31 dos seus 34 erros nem chama ferramenta e responde em
-  texto: perde 28 pontos, uma troca que não compensa.
-- **O fallback JSON é muito pior em todos os modelos** (47–51%). Ele existe para não quebrar
+  ferramenta (82,1%) e em argumentos (80,3%; 94,2% quando acerta a ferramenta), com latência
+  mediana de 0,58 s por decisão. O `llama3.2:3b`, de tamanho e latência parecidos, fica quase
+  8 pontos atrás em ferramenta e quase 15 em argumentos, e chamou ferramenta em todas as 8 conversas
+  em que o certo era só responder. O `qwen2.5:1.5b` gera tokens 1,7 vez mais rápido, mas em
+  31 dos seus 34 erros nem chama ferramenta e responde em texto: perde quase 26 pontos, uma
+  troca que não compensa.
+- **O fallback JSON é muito pior em todos os modelos** (47–54%). Ele existe para não quebrar
   com modelos sem function calling, mas na prática esses modelos não deveriam ser usados no
-  Jarvis. No `llama3.2:3b`, 24 dos 78 casos (30,8%) vieram em JSON que o parser não aproveita:
-  8 por caminhos do Windows (`<HOME>\AppData\...`) sem escapar as barras e a maioria dos outros
-  fora do protocolo (argumentos sem o nome da ferramenta, ou `args` como lista).
+  Jarvis. No `llama3.2:3b`, 16 dos 78 casos (20,5%) vieram em JSON que o parser não aproveita:
+  3 por caminhos do Windows (`<HOME>\AppData\...`) sem escapar as barras e a maioria dos
+  outros fora do protocolo (argumentos sem o nome da ferramenta, ou `args` como lista).
 - **O ponto fraco do `qwen2.5:3b` é a conversa sem ferramenta:** chamou ferramenta em 3 de 8
-  casos (ex.: `knowledge_search` para "quanto é 15% de 240?"). É o próximo alvo para ajuste de
-  prompt, e a avaliação mede o efeito.
+  casos (ex.: `knowledge_search` para "quanto é 15% de 240?"). É o alvo do
+  [fine-tuning](#fine-tuning), e a avaliação mede o efeito.
 - **O RAG era o elo mais fraco** (recall@1 de 44,4%, fora do top-5 em 10 de 36). O
   subprojeto 4 mediu prefixos, BM25 e busca híbrida; o resultado e as ressalvas estão na
   seção [RAG](#rag).
-- **Ressalvas:** uma execução por configuração e 78 casos (1 caso = 1,3 ponto), então
-  diferenças de poucos pontos não são conclusivas. As latências valem para esta máquina. Ver
-  [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md).
+- **Quanto uma rodada varia:** com o mesmo prompt e o mesmo código, o `qwen2.5:3b` nativo deu
+  66/78 numa rodada e 64/78 na seguinte (temperatura 0,2 e seed fixo não garantem a mesma
+  saída na GPU). Com 78 casos, 1 caso = 1,3 ponto: diferenças de poucos pontos não são
+  conclusivas; a ordem entre os modelos no modo nativo foi a mesma nas duas rodadas. As latências valem para
+  esta máquina. Ver [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md).
 
 Para reproduzir:
 
@@ -152,8 +186,8 @@ O que está pronto e testado:
 
 | Modelo (modo nativo, 78 casos) | Acurácia ferramenta | Acurácia args | Sem ferramenta |
 |---|---|---|---|
-| `qwen2.5:1.5b` (linha de base, medida) | 56,4% (44/78) | 42,6% (26/61) | 100,0% (8/8) |
-| `qwen2.5:3b` (linha de base, medida) | 84,6% (66/78) | 82,0% (50/61) | 62,5% (5/8) |
+| `qwen2.5:1.5b` (linha de base, medida) | 56,4% (44/78) | 44,3% (27/61) | 100,0% (8/8) |
+| `qwen2.5:3b` (linha de base, medida) | 82,1% (64/78) | 80,3% (49/61) | 62,5% (5/8) |
 | `jarvis-qwen-lora` (1,5B + LoRA) | pendente (treino no Colab) | pendente | pendente |
 
 Os dois modelos erram em sentidos opostos: o 1,5B quase não chama ferramenta (31 dos 34
@@ -378,9 +412,62 @@ Com `JARVIS_LOG_LEVEL=DEBUG` sai também uma linha `ferramenta executada` por ch
 
 ---
 
+## Engenharia
+
+O que sustenta os números acima e deixa o projeto fácil de rodar e de auditar.
+
+- **Testes:** 373 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
+  `conftest` aponta o Ollama para uma porta descartável): parsing das chamadas de ferramenta,
+  segurança, RAG (BM25, vetorial, híbrido, queda para NumPy), métricas, avaliações, sanitizador,
+  dataset do fine-tuning e o template do `qwen2.5`. Mais o `scripts/smoke_test.py`, que exercita
+  as ferramentas reais (arquivos, terminal, git, PDF/DOCX, lembretes, briefing, laço do agente)
+  com um LLM roteirizado.
+- **Lint:** [ruff](https://docs.astral.sh/ruff/) com alvo Python 3.8 (`E`, `W`, `F`, `I`, `B`,
+  `UP`), configurado em [`pyproject.toml`](pyproject.toml) com cada exceção justificada.
+- **CI:** [GitHub Actions](.github/workflows/ci.yml) em todo push e PR — ruff, `pytest` e o
+  smoke test em Python 3.8 e 3.12 (`ubuntu-latest`). No Linux o smoke test executa o
+  `run_shell` de verdade.
+- **Docker:** [`Dockerfile`](Dockerfile) (Python 3.11 slim, usuário sem privilégios, sem
+  segredos na imagem) e [`docker-compose.yml`](docker-compose.yml) com o Jarvis e o Ollama
+  oficial; GPU opcional. Ver [Rodar com Docker](#rodar-com-docker).
+- **Segurança:** pastas permitidas e bloqueio de arquivos de credenciais, filtro de comandos
+  destrutivos (inclusive `rm` recursivo em `/`, `~`, `$HOME` escrito de qualquer forma), SSRF
+  básico no `web_fetch`, long polling sem porta aberta. Ver [Segurança](#segurança).
+- **Reprodutibilidade:** seeds fixos, hash do dataset e commit em cada resultado, JSON com cada
+  caso versionado, MLflow local. Os resultados passam por um sanitizador
+  ([`evals/sanitize.py`](evals/sanitize.py)) que tira a home e o usuário da máquina antes de
+  gravar.
+- **Limitações documentadas:** o que não funcionou, o que não foi medido e as decisões discutíveis estão em
+  [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md); cada subprojeto tem uma especificação em
+  [`docs/superpowers/specs/`](docs/superpowers/specs/).
+
+```bash
+.venv/bin/python -m pytest -q          # testes (Windows: .venv/Scripts/python.exe)
+.venv/bin/python scripts/smoke_test.py # ferramentas reais com LLM roteirizado
+.venv/bin/ruff check .                 # lint (pip install ruff==0.17.4)
+```
+
+### Gravar o GIF de demonstração
+
+O espaço do GIF no topo está comentado até existir uma gravação real (nada de mockup). Roteiro
+sugerido, ~20 s:
+
+1. No Telegram Desktop (ou no celular espelhado), mande: *"lista os arquivos da pasta notas"*,
+   depois *"procura nas minhas notas até quando dá para cancelar o hotel"* (mostra a citação
+   da fonte) e por fim `/metrics`.
+2. Grave só a janela do chat: no Windows, [ScreenToGif](https://www.screentogif.com/); no
+   macOS/Linux, [Kap](https://getkap.co/) ou [Peek](https://github.com/phw/peek). 10–12 fps e
+   ~720 px de largura bastam.
+3. Reduza o tamanho (alvo < 5 MB): `gifsicle -O3 --lossy=80 --colors 128 demo.gif -o docs/demo.gif`.
+4. Confira que não aparecem token do bot, ID do Telegram, nomes reais ou caminhos da sua
+   máquina (use os documentos fictícios de `evals/fixtures/` como notas).
+5. Tire o comentário em volta de `![Jarvis no Telegram](docs/demo.gif)` no topo deste README.
+
+---
+
 ## Requisitos
 
-- Linux ou macOS, Python **3.8+**.
+- Linux ou macOS, Python **3.8+** — ou só Docker (ver [Rodar com Docker](#rodar-com-docker)).
 - [Ollama](https://ollama.com) (o script instala sem `sudo` em `~/.local`).
 - Conta no Telegram.
 - 8 GB de RAM ou mais. **Sem GPU**, use modelos 3B; 7B funciona, mas é mais lento.
@@ -464,6 +551,43 @@ TELEGRAM_ALLOWED_USER_IDS=123456789
 
 Pronto. Mande `/status` para ver modelo, Ollama e integrações.
 E `/metrics` para latência, erros e ferramentas mais usadas (24 h e 7 dias).
+
+---
+
+## Rodar com Docker
+
+Alternativa ao `setup.sh`: o Jarvis e o Ollama oficial em dois contêineres
+([`docker-compose.yml`](docker-compose.yml)). A imagem do bot ([`Dockerfile`](Dockerfile)) é
+Python 3.11 slim com tesseract e git, roda como usuário sem privilégios e **não leva
+segredos**: o `.env` entra só em tempo de execução (`env_file`) e o `.dockerignore` deixa
+`.env`, `credentials.json` e `token.json` fora do contexto de build.
+
+```bash
+cp .env.example .env              # preencha TELEGRAM_BOT_TOKEN e TELEGRAM_ALLOWED_USER_IDS
+mkdir -p data workspace           # criadas por você, ficam graváveis pelo usuário do contêiner (uid 1000)
+docker compose up -d --build
+docker compose exec ollama ollama pull qwen2.5:3b
+docker compose exec ollama ollama pull nomic-embed-text
+docker compose logs -f jarvis
+```
+
+- **O que fica onde:** `./data` → `/app/data` (histórico, métricas, índice do RAG, uploads,
+  tokens do Google/Microsoft); `./workspace` (ou `JARVIS_HOST_WORKSPACE=/caminho`) →
+  `/home/jarvis/workspace`, a única pasta que o Jarvis lê, escreve e indexa; os modelos ficam
+  no volume `ollama-models`.
+- **O compose sobrescreve** `OLLAMA_URL` (`http://ollama:11434`), `JARVIS_WORKSPACE`,
+  `JARVIS_ALLOWED_ROOTS` e `JARVIS_DB_PATH`, então o mesmo `.env` serve para rodar fora do
+  Docker. Para o Google, aponte `GOOGLE_CREDENTIALS`/`GOOGLE_TOKEN` para `/app/data/...`.
+- **GPU NVIDIA (opcional)**, com o NVIDIA Container Toolkit instalado no host:
+  `docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d --build`. Sem GPU, o
+  Ollama roda na CPU; prefira `qwen2.5:3b`.
+- O Ollama não publica porta no host (só o bot fala com ele). Para usá-lo de fora, descomente
+  `ports` no compose (fica restrito a `127.0.0.1`).
+- O terminal do agente (`run_shell`) roda dentro do contêiner, como usuário sem privilégios:
+  uma camada a mais além do filtro de comandos. Voz (faster-whisper) não está na imagem.
+
+> O `Dockerfile` e o compose foram validados com `docker compose config`; a imagem não foi
+> construída nesta máquina (ver [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md)).
 
 ---
 
@@ -861,7 +985,8 @@ Ele valida arquivos, terminal, git, web, lembretes, bloqueios de segurança, mem
 RAG, PDF/DOCX, briefing, Microsoft/TTS e o loop do agente (63 verificações no Linux; no
 Windows a checagem "run_shell executa" é pulada, ver `evals/PENDENCIAS.md`).
 
-Testes unitários (pytest, sem Ollama): `.venv/bin/python -m pytest -q`.
+Testes unitários (pytest, sem Ollama): `.venv/bin/python -m pytest -q`. Ver
+[Engenharia](#engenharia).
 
 ---
 
@@ -902,7 +1027,7 @@ jarvis/
 │       ├── documents.py     # leitura de PDF/DOCX/imagem
 │       ├── voice_tools.py   # ferramenta speak (TTS)
 │       └── reminders.py     # ferramenta de lembretes
-├── evals/                   # avaliação de ferramentas e RAG (ver evals/README.md)
+├── evals/                   # avaliação de ferramentas e RAG, sanitizador (ver evals/README.md)
 ├── finetune/                # LoRA: dataset, vazamento, template, notebook, Modelfile
 ├── scripts/
 │   ├── install_ollama.sh
@@ -919,10 +1044,19 @@ jarvis/
 │   ├── jarvis-backup.timer
 │   ├── jarvis-reindex.service
 │   └── jarvis-reindex.timer
+├── tests/                   # pytest sem Ollama
+├── docs/superpowers/specs/  # especificação de cada subprojeto
+├── .github/workflows/ci.yml # ruff + pytest + smoke (Python 3.8 e 3.12)
+├── Dockerfile
+├── docker-compose.yml       # Jarvis + Ollama
+├── docker-compose.gpu.yml   # GPU NVIDIA (opcional)
+├── pyproject.toml           # configuração do ruff
 ├── setup.sh
 ├── run.sh
 ├── requirements.txt
 ├── requirements-voice.txt
+├── requirements-evals.txt
+├── LICENSE
 └── .env.example
 ```
 
@@ -935,3 +1069,9 @@ jarvis/
 - **Rodar o treino do LoRA no Colab** e medir o antes/depois (ver [Fine-tuning](#fine-tuning)).
 - **Migrar para VPS** para ficar 24h no ar (basta copiar `.env`, `data/` e instalar Ollama
   ou trocar o cliente por uma API).
+
+---
+
+## Licença
+
+[MIT](LICENSE) © 2026 Júlia Mendes.
