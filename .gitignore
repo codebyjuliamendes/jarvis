@@ -42,3 +42,7 @@ workspace/
 
 # venv do servidor MCP (Python 3.12; ver requirements-mcp.txt)
 .venv-mcp/
+
+# treino LoRA local (finetune/train_local.py): venv com torch CUDA e saídas pesadas
+.venv-train/
+finetune/out/
