@@ -71,10 +71,7 @@ def _validate(token: str) -> Dict[str, object]:
     return result
 
 
-def _page(title: str, body: str, error: str = "") -> bytes:
-    error_block = (
-        '<div class="error">{}</div>'.format(html.escape(error)) if error else ""
-    )
+def _page(title: str, body: str) -> bytes:
     document = """<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -121,7 +118,7 @@ def _page(title: str, body: str, error: str = "") -> bytes:
     {body}
   </main>
 </body>
-</html>""".format(title=html.escape(title), body=body, error=error_block)
+</html>""".format(title=html.escape(title), body=body)
     return document.encode("utf-8")
 
 
@@ -141,8 +138,8 @@ def _form(error: str = "") -> bytes:
     <p class="muted">O token é gravado apenas no arquivo <code>.env</code> desta
     máquina, com permissão 600. Nada é enviado para outros servidores além do
     próprio Telegram para validar o bot.</p>
-    """.format(error=("" if not error else ""))
-    return _page("Jarvis - Token do Telegram", body, error=error)
+    """.format(error=('<div class="error">{}</div>'.format(html.escape(error)) if error else ""))
+    return _page("Jarvis - Token do Telegram", body)
 
 
 def _success(username: str, name: str) -> bytes:
