@@ -249,3 +249,27 @@ def test_agente_para_no_limite_de_iteracoes(settings):
         memory.close()
     assert "3 passos" in reply
     assert len(executed) == 3
+
+
+# ------------------------------------- módulo reutilizável == métodos do agente
+
+
+def test_modulo_tool_parsing_e_o_mesmo_comportamento_do_agente():
+    from jarvis import tool_parsing
+
+    calls = [
+        {"function": {"name": "a", "arguments": '{"x": 1}'}},
+        {"function": {"name": "a", "arguments": "{x"}},
+        {"name": "b", "arguments": {"y": 2}},
+        {},
+    ]
+    for call in calls:
+        assert tool_parsing.parse_tool_call(call) == Agent._parse_tool_call(call)
+    contents = [
+        '{"tool": "a", "args": {"x": 1}}',
+        '```json\n{"name": "b", "arguments": {}}\n```',
+        "sem json",
+        '{"tool": "a", "args": [1]}',
+    ]
+    for content in contents:
+        assert tool_parsing.extract_text_tool(content) == Agent._extract_text_tool(content)

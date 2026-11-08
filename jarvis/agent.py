@@ -1,18 +1,13 @@
 from __future__ import annotations
 
-import json
-import re
 from datetime import datetime
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 from .config import Settings
 from .llm import OllamaClient, OllamaError, OllamaUnavailable, ToolsNotSupported
 from .memory import Memory
+from .tool_parsing import extract_text_tool, parse_tool_call
 from .tools.base import ToolRegistry
-
-
-_JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(\{.*?\})\s*```", re.DOTALL)
-_JSON_CANDIDATE_RE = re.compile(r"\{.*\}", re.DOTALL)
 
 
 class Agent:
@@ -186,38 +181,12 @@ class Agent:
             self.memory.add(chat_id, "assistant", final)
         return final
 
+    # Mantidos como métodos estáticos por compatibilidade; a lógica vive em
+    # jarvis/tool_parsing.py para ser reutilizada pelas avaliações.
     @staticmethod
     def _parse_tool_call(call: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
-        function = call.get("function") if isinstance(call, dict) else None
-        if not isinstance(function, dict):
-            function = call if isinstance(call, dict) else {}
-        name = function.get("name") or ""
-        args = function.get("arguments", {})
-        if isinstance(args, str):
-            try:
-                args = json.loads(args)
-            except (TypeError, ValueError):
-                args = {}
-        if not isinstance(args, dict):
-            args = {}
-        return str(name), args
+        return parse_tool_call(call)
 
     @staticmethod
     def _extract_text_tool(content: str) -> Optional[Tuple[str, Dict[str, Any]]]:
-        if not content:
-            return None
-        candidates: List[str] = []
-        candidates.extend(_JSON_BLOCK_RE.findall(content))
-        candidates.extend(_JSON_CANDIDATE_RE.findall(content))
-        for candidate in candidates:
-            try:
-                data = json.loads(candidate)
-            except (TypeError, ValueError):
-                continue
-            if not isinstance(data, dict):
-                continue
-            name = data.get("tool") or data.get("name")
-            args = data.get("args") or data.get("arguments") or {}
-            if isinstance(name, str) and isinstance(args, dict):
-                return name, args
-        return None
+        return extract_text_tool(content)
