@@ -114,16 +114,78 @@ def test_check_shell_command_bloqueia_destrutivos(command):
         security.check_shell_command(command)
 
 
-# Lacunas conhecidas do filtro (registradas em evals/PENDENCIAS.md). O teste
-# falha de propósito (xfail estrito): quando o filtro for corrigido, ele passa a
-# "XPASS" e o pytest avisa para promovê-lo a teste normal.
-@pytest.mark.xfail(strict=True, reason="filtro só reconhece -rf com r antes de f")
+# rm recursivo em alvo crítico, em qualquer forma de escrever as flags. Antes do
+# subprojeto 5b o filtro era um regex que só via "-rf" com o r antes do f; as três
+# primeiras linhas eram xfail estritos.
 @pytest.mark.parametrize(
-    "command", ["rm -fr /", "rm -r -f /", "rm --recursive --force /"]
+    "command",
+    [
+        "rm -fr /",
+        "rm -r -f /",
+        "rm --recursive --force /",
+        "rm -Rf /",
+        "rm -f -R /",
+        "rm -rfv /",
+        "rm --force --recursive /",
+        "rm --rec --forc /",
+        "rm -rf --no-preserve-root /",
+        "rm -rf -- /",
+        "rm -rf /*",
+        "rm -rf //",
+        "rm -rf /.",
+        "rm -rf ~/",
+        "rm -rf ~/*",
+        "rm -rf '~'",
+        "rm -rf ${HOME}",
+        "rm -rf $HOME/*",
+        "rm -rf ~root",
+        "rm -rf /etc",
+        "rm -rf /home/",
+        "rm -rf /usr/*",
+        "rm -r ~",
+        "rm -rf build /",
+        "/bin/rm -rf /",
+        "\\rm -rf /",
+        "RM -RF /",
+        "env LANG=C nice -n 10 rm -rf /",
+        "nohup rm -fr / &",
+        "cd /tmp && rm -fr /",
+        "ls; rm -r -f ~",
+        "echo $(rm -rf /)",
+        "sh -c 'rm -fr /'",
+        "bash -lc \"rm --recursive --force ~\"",
+        "rm -rf / # limpeza",
+    ],
 )
-def test_check_shell_command_lacunas_conhecidas(command):
-    with pytest.raises(SecurityError):
+def test_check_shell_command_bloqueia_rm_recursivo_em_alvo_critico(command):
+    with pytest.raises(SecurityError, match="bloqueado"):
         security.check_shell_command(command)
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "rm -rf build",
+        "rm -fr dist/",
+        "rm -r -f ./node_modules",
+        "rm --recursive --force .pytest_cache",
+        "rm -rf ~/projeto/build",
+        "rm -rf $HOME/tmp/cache",
+        "rm -rf /tmp/jarvis-teste",
+        "rm -rf /home/julia/projeto/build",
+        "rm -r pasta",
+        "rm -f /tmp/arquivo.txt",
+        "rm ~/notas.txt",
+        "rm -rf *.pyc",
+        "git rm -r --cached /",
+        "echo rm -rf",
+        "grep -r 'rm -rf' .",
+        "find . -name '*.log' -exec rm -f {} +",
+        "python -c \"print('rm')\"",
+    ],
+)
+def test_check_shell_command_permite_rm_legitimo(command):
+    security.check_shell_command(command)
 
 
 @pytest.mark.parametrize(

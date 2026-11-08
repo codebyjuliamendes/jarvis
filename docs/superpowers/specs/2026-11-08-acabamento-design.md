@@ -17,11 +17,12 @@ atual, com lint e CI, empacotado em Docker e com um README que conta a história
    pular prefixos (`env`, `nice`, `nohup`, `time`, `command`, `builtin`, `exec`, `busybox`,
    atribuições `VAR=x`), reconhecer `rm` também por caminho (`/bin/rm`) e juntar as flags em
    qualquer forma (`-rf`, `-fr`, `-r -f`, `-R`, `--recursive`, `--force`, `--no-preserve-root`)
-   até o `--`. Bloqueia quando é recursivo **e** forçado **e** algum alvo é perigoso: `/`,
+   até o `--`. Bloqueia quando é recursivo (com ou sem `-f`: `rm -r ~` apaga a home do mesmo jeito)
+   **e** algum alvo é perigoso: `/`,
    `/*`, `~`, `~/`, `~/*`, `$HOME`, `${HOME}`, `$HOME/*`, `.`/`..`/`*` sozinhos não entram
    (seriam falso positivo demais para um bot que roda `rm -rf build`). Diretórios de sistema
    de primeiro nível (`/etc`, `/usr`, `/home`, `/boot`, `/var`, `/bin`...) também contam.
-   `rm -rf build`, `rm -rf ./node_modules`, `rm -r pasta` (sem `-f`) continuam passando.
+   `rm -rf build`, `rm -rf ./node_modules`, `rm -r pasta`, `rm -f /tmp/x` continuam passando.
    Os três testes `xfail` viram testes normais.
 2. **Dados pessoais.** `evals/sanitize.py`: troca a home da máquina (qualquer separador e
    nível de escape), o nome do usuário (com e sem acento, `\u00e3`, truncado) e o nome curto

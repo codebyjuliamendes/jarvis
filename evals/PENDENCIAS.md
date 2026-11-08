@@ -14,11 +14,16 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
    Correção sugerida: no Windows, usar `shell=True` sem `executable` (cmd.exe) ou procurar
    o bash do Git com `shutil.which("bash")` e chamá-lo com `["bash", "-lc", comando]`.
 
-2. **O filtro de comandos destrutivos deixa passar variações de `rm -rf /`.**
-   `rm -fr /`, `rm -r -f /` e `rm --recursive --force /` não são bloqueados: o regex só
-   reconhece `-rf` com o `r` antes do `f`. Ficou como teste `xfail` estrito em
-   `tests/test_security.py` (vira "XPASS" e falha quando o filtro for corrigido, para lembrar
-   de promovê-lo). Não corrigi porque muda política de segurança e merece revisão própria.
+2. **[RESOLVIDO no subprojeto 5b, commit `fix(security): bloqueia variações de rm recursivo
+   forçado`]** O regex foi trocado por uma análise do comando (segmentos, `shlex`, flags
+   curtas/longas/abreviadas em qualquer ordem, prefixos como `env`/`nohup`, `sh -c`), e o
+   bloqueio vale para `rm` recursivo — com ou sem `-f` — em `/`, `/*`, `~`, `$HOME`, `~outro`
+   e diretórios de sistema de primeiro nível. Os três `xfail` viraram testes normais, com 35
+   casos que devem bloquear e 17 que devem passar (`rm -rf build`, `git rm -r --cached /`...).
+   Continua **não** sendo um sandbox: `find / -delete`, `python -c "import shutil..."`,
+   variáveis montadas em tempo de execução (`X=/; rm -rf $X`) e `rm -rf .` dentro da home
+   passam. Registro original: `rm -fr /`, `rm -r -f /` e `rm --recursive --force /` não
+   eram bloqueados (o regex só reconhecia `-rf` com o `r` antes do `f`).
 
 3. **[RESOLVIDO no subprojeto 3, commit `fix(config): usa 127.0.0.1 como host padrão do
    Ollama`]** O padrão do `OLLAMA_URL` (em `jarvis/config.py`, `.env.example` e na tabela

@@ -781,9 +781,11 @@ OCR requer `tesseract` instalado. O resto funciona sem ele.
 - **Arquivos** são restritos a `JARVIS_ALLOWED_ROOTS`. Pastas/arquivos de credenciais
   (`.ssh`, `.config`, `.git`, `.env`, `credentials.json`, `token.json`, chaves etc.)
   são bloqueados.
-- **Terminal**: comandos perigosos (`sudo`, `mkfs`, `dd`, `shutdown`, `rm -rf /`,
-  fork bomb, `curl | sh` etc.) são bloqueados, e `git push --force`, `git clean -f`
-  e `git config --global` também. Isso **não é um sandbox completo**: o terminal é
+- **Terminal**: comandos perigosos (`sudo`, `mkfs`, `dd`, `shutdown`, fork bomb,
+  `curl | sh` etc.) são bloqueados, e `git push --force`, `git clean -f` e
+  `git config --global` também. O `rm` recursivo em alvo crítico (`/`, `/*`, `~`, `$HOME`,
+  `/etc`, `/usr`...) é barrado em qualquer forma de escrever as flags (`-rf`, `-fr`,
+  `-r -f`, `--recursive --force`, `/bin/rm`, dentro de `sh -c` ou depois de `&&`). Isso **não é um sandbox completo**: o terminal é
   poderoso. Se quiser desligar, use `JARVIS_SHELL_ENABLED=false`.
 - `.env`, `credentials.json`, `token.json` e o banco SQLite estão no `.gitignore`.
 - O bot usa **long polling**: não abre porta na sua rede.
