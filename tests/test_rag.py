@@ -175,10 +175,10 @@ def test_hibrido_sem_ollama_responde_com_bm25(settings, tmp_path, caplog):
         rag.close()
 
 
-def test_modo_invalido_vira_vector(settings, tmp_path):
+def test_modo_invalido_vira_o_padrao(settings, tmp_path):
     rag = make_rag(settings, tmp_path, rag_mode="semantico")
     try:
-        assert rag.mode == "vector"
+        assert rag.mode == rag_module.DEFAULT_MODE == "bm25"
     finally:
         rag.close()
 

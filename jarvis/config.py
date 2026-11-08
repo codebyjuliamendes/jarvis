@@ -108,9 +108,9 @@ class Settings:
     rag_model: str = "nomic-embed-text"
     rag_roots: List[Path] = field(default_factory=list)
     rag_extensions: str = ".md,.txt,.pdf,.docx,.csv,.xlsx"
-    rag_mode: str = "vector"
+    rag_mode: str = "bm25"
     rag_rrf_k: int = 60
-    rag_prefixes: str = "false"
+    rag_prefixes: str = "auto"
     rag_vector_backend: str = "auto"
     ms_graph_client_id: Optional[str] = None
     ms_graph_tenant: str = "organizations"
@@ -222,9 +222,9 @@ class Settings:
                 os.getenv("JARVIS_RAG_EXTENSIONS")
                 or ".md,.txt,.pdf,.docx,.csv,.xlsx"
             ).strip(),
-            rag_mode=(os.getenv("JARVIS_RAG_MODE") or "vector").strip().lower(),
+            rag_mode=(os.getenv("JARVIS_RAG_MODE") or "bm25").strip().lower(),
             rag_rrf_k=_as_int(os.getenv("JARVIS_RAG_RRF_K"), 60),
-            rag_prefixes=(os.getenv("JARVIS_RAG_PREFIXES") or "false").strip().lower(),
+            rag_prefixes=(os.getenv("JARVIS_RAG_PREFIXES") or "auto").strip().lower(),
             rag_vector_backend=(
                 os.getenv("JARVIS_RAG_VECTOR_BACKEND") or "auto"
             ).strip().lower(),

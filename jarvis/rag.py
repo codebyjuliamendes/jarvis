@@ -60,6 +60,8 @@ MAX_FILE_BYTES = 12 * 1024 * 1024
 EMBED_BATCH_SIZE = 16
 
 RAG_MODES = ("vector", "bm25", "hybrid")
+# Padrão escolhido pela medição (evals/results/RAG.md): maior MRR na metade dev.
+DEFAULT_MODE = "bm25"
 VECTOR_BACKENDS = ("auto", "sqlite-vec", "numpy")
 # Quantos candidatos cada perna entrega ao RRF no modo híbrido. Fixado antes de
 # medir (ver docs/superpowers/specs/2026-11-08-rag-hibrido-design.md).
@@ -161,15 +163,13 @@ def _vec_blob(vector: Sequence[float]) -> bytes:
 class RagIndex:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
-        mode = (getattr(settings, "rag_mode", "vector") or "vector").strip().lower()
+        mode = (settings.rag_mode or DEFAULT_MODE).strip().lower()
         if mode not in RAG_MODES:
-            logger.warning("JARVIS_RAG_MODE inválido (%r); usando 'vector'.", mode)
-            mode = "vector"
+            logger.warning("JARVIS_RAG_MODE inválido (%r); usando %r.", mode, DEFAULT_MODE)
+            mode = DEFAULT_MODE
         self.mode = mode
-        self.rrf_k = max(1, int(getattr(settings, "rag_rrf_k", DEFAULT_RRF_K) or DEFAULT_RRF_K))
-        self.prefixes = use_prefixes(
-            getattr(settings, "rag_prefixes", "false"), settings.rag_model
-        )
+        self.rrf_k = max(1, int(settings.rag_rrf_k or DEFAULT_RRF_K))
+        self.prefixes = use_prefixes(settings.rag_prefixes, settings.rag_model)
         self.db_path = Path(settings.db_path).parent / "rag.sqlite3"
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._db = sqlite3.connect(str(self.db_path), check_same_thread=False)
@@ -185,7 +185,7 @@ class RagIndex:
     # ------------------------------------------------------------------ setup
 
     def _load_vector_backend(self) -> str:
-        wanted = (getattr(self.settings, "rag_vector_backend", "auto") or "auto").lower()
+        wanted = (self.settings.rag_vector_backend or "auto").lower()
         if wanted not in VECTOR_BACKENDS:
             logger.warning("JARVIS_RAG_VECTOR_BACKEND inválido (%r); usando 'auto'.", wanted)
             wanted = "auto"
