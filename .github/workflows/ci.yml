@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # mesma versão do .venv local; a configuração está no pyproject.toml
+      - run: pip install ruff==0.17.4
+      - run: ruff check --output-format=github .
+
+  test:
+    name: pytest + smoke (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
+      # Os testes não usam o Ollama (LLM e embeddings são falsos; o conftest aponta o
+      # Ollama para uma porta descartável). O MLflow é opcional: sem ele, os testes de
+      # tracking cobrem o caminho "MLflow ausente".
+      - name: pytest
+        run: python -m pytest -q
+      # O smoke test também não usa o Ollama (LLM roteirizado e RAG com embeddings
+      # determinísticos) e no Linux executa o run_shell de verdade com /bin/bash.
+      - name: smoke test
+        run: python scripts/smoke_test.py
