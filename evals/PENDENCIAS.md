@@ -306,8 +306,8 @@ A especificação está em `docs/superpowers/specs/2026-11-08-acabamento-design.
    sobrenome) passaria. Os dados do fine-tuning (`finetune/data/`) usam homes fictícias
    (`/home/julia` e o equivalente no Windows) e não passam pelo sanitizador, de propósito:
    são texto de treino, e o teste do system prompt depende deles.
-3. **[PENDENTE] O CI nunca rodou no GitHub.** Nada foi empurrado (pedido explícito), então o
-   badge do README mostra "sem status" até o primeiro push. Validado localmente: o YAML faz
+3. **[RESOLVIDO em 08/11] O CI rodou no GitHub e passou** (4 jobs: ruff, pytest + smoke em
+   3.8 e 3.12, servidor MCP), no push da branch e de novo na `main` depois do merge. Validado localmente: o YAML faz
    parse; `ruff check .` limpo; `pytest` (373) e smoke test passam no `.venv` (3.8) e num venv
    limpo com Python 3.12.13 **no Windows**, sem MLflow. O smoke test no Linux executa a
    checagem "run_shell executa" (pulada no Windows), que não rodei aqui. Não usei `act`.

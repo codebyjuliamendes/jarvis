@@ -28,10 +28,6 @@ Ollama, CI e Docker.
 | [Servidor MCP](#servidor-mcp) | ferramentas do Jarvis no Claude Desktop/Code por stdio; só leitura por padrão, mesmas checagens do `security.py` |
 | [Engenharia](#engenharia) | testes, ruff, GitHub Actions, Docker, segurança |
 
-<!-- GIF de demonstração: ver "Gravar o GIF de demonstração" em Engenharia. Quando existir:
-![Jarvis no Telegram](docs/demo.gif)
--->
-
 O Jarvis roda **na sua máquina**: a inferência é local e o Telegram é só a interface. Além
 das ferramentas, lê PDFs/DOCX/imagens (com OCR), transcreve áudios, responde em voz e envia um
 briefing diário pela manhã.
@@ -537,10 +533,11 @@ O que sustenta os números acima e deixa o projeto fácil de rodar e de auditar.
 .venv/bin/ruff check .                 # lint (pip install ruff==0.17.4)
 ```
 
-### Gravar o GIF de demonstração
+### Gravar um GIF do Telegram (opcional)
 
-O espaço do GIF no topo está comentado até existir uma gravação real (nada de mockup). Roteiro
-sugerido, ~20 s:
+O GIF do topo (`docs/demo.gif`) mostra o terminal: quadros montados a partir da saída real
+dos comandos, sem mockup. Falta uma gravação do bot no Telegram, que precisa de um bot de
+verdade e não foi feita. Roteiro sugerido, ~20 s:
 
 1. No Telegram Desktop (ou no celular espelhado), mande: *"lista os arquivos da pasta notas"*,
    depois *"procura nas minhas notas até quando dá para cancelar o hotel"* (mostra a citação
@@ -551,7 +548,7 @@ sugerido, ~20 s:
 3. Reduza o tamanho (alvo < 5 MB): `gifsicle -O3 --lossy=80 --colors 128 demo.gif -o docs/demo.gif`.
 4. Confira que não aparecem token do bot, ID do Telegram, nomes reais ou caminhos da sua
    máquina (use os documentos fictícios de `evals/fixtures/` como notas).
-5. Tire o comentário em volta de `![Jarvis no Telegram](docs/demo.gif)` no topo deste README.
+5. Salve como `docs/demo-telegram.gif` e ponha a imagem no topo deste README.
 
 ---
 
