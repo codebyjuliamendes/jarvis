@@ -214,7 +214,9 @@ def generate(
 
     def new_context() -> Tuple[templates.Context, str]:
         now = start + timedelta(days=rng.randint(0, 729), minutes=rng.randint(0, 16 * 60))
-        workspace = templates.pick(rng, WORKSPACES).format(rand="".join(rng.choice("abcdefghij0123456789") for _ in range(8)))
+        template = templates.pick(rng, WORKSPACES)  # antes do rand: mesma ordem do rng
+        rand = "".join(rng.choice("abcdefghij0123456789") for _ in range(8))
+        workspace = template.format(rand=rand)
         return templates.Context(now=now), system_prompt(sys_template, now, workspace)
 
     n_no_tool = int(round(total * no_tool_frac))
@@ -291,11 +293,11 @@ def generate(
         }
 
     # com ferramenta: mesmo número por ferramenta, dividido entre as intenções pelo peso
-    by_tool: "OrderedDict[str, List[templates.Intent]]" = OrderedDict()
+    by_tool: OrderedDict[str, List[templates.Intent]] = OrderedDict()
     for intent in templates.TOOL_INTENTS:
         by_tool.setdefault(intent.tool, []).append(intent)
     per_tool = _allocate(n_tool, [templates.Intent(t, t, [""], lambda r, c: ({}, None)) for t in by_tool])
-    for (tool, intents), count in zip(by_tool.items(), per_tool):
+    for (_tool, intents), count in zip(by_tool.items(), per_tool):
         for intent, n in zip(intents, _allocate(count, intents)):
             produce(intent, n, build_tool)
     for intent, n in zip(templates.NO_TOOL_INTENTS, _allocate(n_no_tool, templates.NO_TOOL_INTENTS)):
@@ -360,7 +362,11 @@ def paraphrase(
                 continue
             text = (data.get("response") or "").strip().strip("\"'").splitlines()[0:1]
             text = text[0].strip() if text else ""
-            if not text or leakage.normalize(text) == leakage.normalize(original) or len(text) > 3 * len(original) + 40:
+            if (
+                not text
+                or leakage.normalize(text) == leakage.normalize(original)
+                or len(text) > 3 * len(original) + 40
+            ):
                 stats["iguais_ou_vazias"] += 1
                 continue
             if any(ord(ch) > 0x2FFF for ch in text):
@@ -488,7 +494,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         json.dump(stats, handle, ensure_ascii=False, indent=1)
         handle.write("\n")
 
-    print("pedidos: {} · gerados (únicos): {} · intenções esgotadas: {} · vazados removidos: {} (limiar {:.2f})".format(
+    print(("pedidos: {} · gerados (únicos): {} · intenções esgotadas: {} · "
+           "vazados removidos: {} (limiar {:.2f})").format(
         args.total, len(examples), len(shortfall), report["removed"], args.threshold))
     print("  por motivo: {}".format(report["removed_by_reason"]))
     print("  similaridade máxima dos mantidos: p50 {:.3f} · p95 {:.3f} · máx {:.3f}".format(
@@ -498,8 +505,10 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("paráfrase: {}".format(paraphrase_stats))
     for name, part in (("treino", train), ("val", val)):
         comp = composition(part)
-        print("{}: {} exemplos · {} · sem ferramenta {}%".format(name, comp["n"], comp["por_tipo"], comp["sem_ferramenta_pct"]))
-    print("texto renderizado (caracteres): p50 {} · máx {}".format(stats["chars_renderizados"]["p50"], lengths[-1]))
+        print("{}: {} exemplos · {} · sem ferramenta {}%".format(
+            name, comp["n"], comp["por_tipo"], comp["sem_ferramenta_pct"]))
+    print("texto renderizado (caracteres): p50 {} · máx {}".format(
+        stats["chars_renderizados"]["p50"], lengths[-1]))
     print("arquivos em {}".format(out))
     return 0
 

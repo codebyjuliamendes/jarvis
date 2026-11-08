@@ -25,7 +25,7 @@ class Agent:
         tools: ToolRegistry,
         memory: Memory,
         llm: Optional[OllamaClient] = None,
-        metrics: Optional["MetricsStore"] = None,
+        metrics: Optional[MetricsStore] = None,
     ) -> None:
         self.settings = settings
         self.tools = tools

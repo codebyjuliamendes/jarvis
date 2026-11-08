@@ -133,7 +133,7 @@ class Settings:
         return Path(self.db_path).parent / "metrics.sqlite3"
 
     @classmethod
-    def load(cls) -> "Settings":
+    def load(cls) -> Settings:
         _load_env()
 
         home = Path.home()

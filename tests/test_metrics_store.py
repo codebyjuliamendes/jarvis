@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import sqlite3
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import pytest
 

@@ -194,7 +194,9 @@ def test_rag_divisao_dev_teste_fixa():
 
 def test_rag_rotulo_e_nome_do_arquivo_por_configuracao():
     base = {"embed_model": "nomic-embed-text", "meta": {"timestamp": "2026-11-08T02:00:00-03:00"}}
-    hybrid = dict(base, config={"mode": "hybrid", "prefixes": True, "rrf_k": 60, "vector_backend": "sqlite-vec"})
+    hybrid = dict(
+        base, config={"mode": "hybrid", "prefixes": True, "rrf_k": 60, "vector_backend": "sqlite-vec"}
+    )
     vector = dict(base, config={"mode": "vector", "prefixes": False, "rrf_k": 60, "vector_backend": "numpy"})
     bm25 = dict(base, config={"mode": "bm25", "prefixes": True, "rrf_k": 60, "vector_backend": "sqlite-vec"})
     assert eval_rag.config_label(hybrid) == "hybrid + prefixos (RRF k=60)"

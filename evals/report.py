@@ -119,7 +119,9 @@ def render_markdown(summary: Dict[str, Any]) -> str:
         parts.append("Não executado.")
     if summary["failures"]:
         parts += ["", "## Falhas", ""]
-        parts.extend("- `{}`: {}".format(f["target"], f["error"].splitlines()[-1]) for f in summary["failures"])
+        parts.extend(
+            "- `{}`: {}".format(f["target"], f["error"].splitlines()[-1]) for f in summary["failures"]
+        )
     parts += ["", "Arquivos brutos (com cada caso): " + ", ".join(
         "`{}`".format(name) for name in summary["files"]), ""]
     return "\n".join(parts)

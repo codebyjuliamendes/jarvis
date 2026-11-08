@@ -23,7 +23,9 @@ from jarvis.tools.base import ToolRegistry
 from jarvis.utils import run_blocking
 
 
-def _ollama(message: Dict[str, Any], prompt: int = 200, completion: int = 30, eval_ns: float = 1e9) -> Dict[str, Any]:
+def _ollama(
+    message: Dict[str, Any], prompt: int = 200, completion: int = 30, eval_ns: float = 1e9
+) -> Dict[str, Any]:
     return {
         "model": "fake:latest",
         "message": dict({"role": "assistant", "content": ""}, **message),
@@ -108,7 +110,9 @@ def store(tmp_path):
 def test_agente_grava_tokens_iteracoes_e_ferramentas(settings, store):
     script = [
         _ollama({"tool_calls": [_call("eco"), _call("falha_texto")]}, prompt=300, completion=20, eval_ns=1e9),
-        _ollama({"tool_calls": [_call("explode"), _call("nao_existe")]}, prompt=400, completion=10, eval_ns=0.5e9),
+        _ollama(
+            {"tool_calls": [_call("explode"), _call("nao_existe")]}, prompt=400, completion=10, eval_ns=0.5e9
+        ),
         _ollama({"content": "Pronto."}, prompt=500, completion=30, eval_ns=1.5e9),
     ]
     reply, _ = _run(settings, script, metrics=store, chat_id=42)

@@ -111,7 +111,7 @@ class EvalIndex:
     entities: Dict[str, List[str]]  # entidade -> ids dos casos que a contêm
 
     @classmethod
-    def from_cases(cls, cases: Sequence[Dict[str, Any]]) -> "EvalIndex":
+    def from_cases(cls, cases: Sequence[Dict[str, Any]]) -> EvalIndex:
         ids = [str(c.get("id")) for c in cases]
         prompts = [str(c["prompt"]) for c in cases]
         entities: Dict[str, List[str]] = {}
@@ -127,7 +127,7 @@ class EvalIndex:
         )
 
     @classmethod
-    def from_jsonl(cls, path: Path) -> "EvalIndex":
+    def from_jsonl(cls, path: Path) -> EvalIndex:
         cases = []
         with open(str(path), encoding="utf-8") as handle:
             for line in handle:
@@ -281,7 +281,11 @@ def eval_self_similarity(index: EvalIndex) -> Dict[str, Any]:
         "max_per_case_p95": _percentile(best_per_case, 0.95),
         "max": max(best_per_case) if best_per_case else None,
         "top_pairs": [
-            {"similarity": round(s, 3), "a": index.prompts[index.ids.index(a)], "b": index.prompts[index.ids.index(b)]}
+            {
+                "similarity": round(s, 3),
+                "a": index.prompts[index.ids.index(a)],
+                "b": index.prompts[index.ids.index(b)],
+            }
             for s, a, b in pairs[:5]
         ],
     }

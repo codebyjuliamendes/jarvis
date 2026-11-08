@@ -27,7 +27,7 @@ ERROR_MAX_CHARS = 300
 _request_id: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
     "jarvis_request_id", default=None
 )
-_trace: contextvars.ContextVar[Optional["RequestTrace"]] = contextvars.ContextVar(
+_trace: contextvars.ContextVar[Optional[RequestTrace]] = contextvars.ContextVar(
     "jarvis_request_trace", default=None
 )
 
@@ -41,7 +41,7 @@ def current_request_id() -> Optional[str]:
     return _request_id.get()
 
 
-def current_trace() -> Optional["RequestTrace"]:
+def current_trace() -> Optional[RequestTrace]:
     return _trace.get()
 
 

@@ -178,7 +178,7 @@ def summarize(
         tok_total += float(tokens)
         eval_total += float(seconds)
 
-    per_tool: "OrderedDict[str, Dict[str, Any]]" = OrderedDict()
+    per_tool: OrderedDict[str, Dict[str, Any]] = OrderedDict()
     for call in tool_calls:
         name = str(call.get("tool"))
         stats = per_tool.setdefault(name, {"tool": name, "calls": 0, "failures": 0, "durations": []})

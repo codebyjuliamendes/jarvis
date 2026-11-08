@@ -20,7 +20,7 @@ eval da linha de base também. Reproduzimos o formato byte a byte em vez de
 "corrigir", para não criar diferença entre treino e serviço.
 
 Só usa a biblioteca padrão: roda no Python 3.8 do projeto e no Colab.
-"""
+"""  # noqa: E501 - o exemplo do Go fica numa linha só
 from __future__ import annotations
 
 import json

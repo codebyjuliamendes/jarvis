@@ -300,10 +300,12 @@ def print_summary(result: Dict[str, Any]) -> None:
     print("\n== Seleção de ferramentas: {} ({}) ==".format(result["model"], result["effective_mode"]))
     print("casos: {}".format(m["n"]))
     print("acurácia de ferramenta: {}".format(common.fmt_pct(m["tool_accuracy"], m["tool_hits"], m["n"])))
-    print("acurácia de args:       {}".format(common.fmt_pct(m["args_accuracy"], m["args_hits"], m["args_n"])))
+    print("acurácia de args:       {}".format(
+        common.fmt_pct(m["args_accuracy"], m["args_hits"], m["args_n"])))
     print("  (dado ferramenta certa: {})".format(
         common.fmt_pct(m["args_accuracy_given_tool"], m["args_hits_given_tool"], m["args_n_given_tool"])))
-    print("JSON inválido:          {}".format(common.fmt_pct(m["invalid_json_rate"], m["invalid_json"], m["n"])))
+    print("JSON inválido:          {}".format(
+        common.fmt_pct(m["invalid_json_rate"], m["invalid_json"], m["n"])))
     print("chamadas vazadas no texto: {} · ferramenta inexistente: {} · erros: {}".format(
         m["leaked_calls"], m["unknown_tool_calls"], m["errors"]))
     print("latência média/p50/p95: {} / {} / {} s".format(

@@ -337,7 +337,10 @@ async def run() -> int:
             fake_text = ScriptedLLM(
                 [
                     {
-                        "content": '{"tool": "write_file", "args": {"path": "agente_texto.txt", "content": "abc"}}'
+                        "content": (
+                            '{"tool": "write_file", "args": '
+                            '{"path": "agente_texto.txt", "content": "abc"}}'
+                        )
                     },
                     {"content": "Feito no modo texto."},
                 ]
@@ -435,6 +438,6 @@ if __name__ == "__main__":
         raise SystemExit(asyncio.run(run()))
     except AssertionError as exc:
         print("\n" + str(exc), file=sys.stderr)
-        raise SystemExit(1)
+        raise SystemExit(1) from None
     except KeyboardInterrupt:
-        raise SystemExit(130)
+        raise SystemExit(130) from None

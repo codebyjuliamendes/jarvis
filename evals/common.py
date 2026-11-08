@@ -93,7 +93,7 @@ def load_jsonl(path: Path) -> List[Dict[str, Any]]:
             try:
                 row = json.loads(line)
             except ValueError as exc:
-                raise ValueError("{}:{}: JSON inválido: {}".format(path, number, exc))
+                raise ValueError("{}:{}: JSON inválido: {}".format(path, number, exc)) from exc
             if not isinstance(row, dict):
                 raise ValueError("{}:{}: cada linha deve ser um objeto".format(path, number))
             rows.append(row)

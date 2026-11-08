@@ -67,7 +67,11 @@ def test_prompt_com_ferramentas_igual_ao_template():
 
 def test_prompt_sem_ferramentas():
     prompt = cf.render_prompt([{"role": "system", "content": "S"}, {"role": "user", "content": "oi"}])
-    assert prompt == "<|im_start|>system\nS<|im_end|>\n<|im_start|>user\noi<|im_end|>\n<|im_start|>assistant\n"
+    assert prompt == (
+        "<|im_start|>system\nS<|im_end|>\n"
+        "<|im_start|>user\noi<|im_end|>\n"
+        "<|im_start|>assistant\n"
+    )
 
 
 def test_sem_system_usa_o_padrao_do_modelfile():
@@ -113,7 +117,9 @@ def test_render_example_separa_prompt_e_resposta():
     prompt, completion = cf.render_example(example, [TOOL])
     assert prompt.endswith("<|im_start|>assistant\n")
     # resposta: estilo do Qwen (json.dumps com espaços, ordem do schema) + token de parada
-    assert completion == '<tool_call>\n{"name": "t", "arguments": {"x": "1", "a": ["b"]}}\n</tool_call><|im_end|>'
+    assert completion == (
+        '<tool_call>\n{"name": "t", "arguments": {"x": "1", "a": ["b"]}}\n</tool_call><|im_end|>'
+    )
 
 
 def test_render_example_texto():

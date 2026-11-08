@@ -13,7 +13,7 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 from urllib.parse import parse_qs
 
 BASE_DIR = Path(__file__).resolve().parent.parent
