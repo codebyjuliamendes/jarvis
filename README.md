@@ -213,6 +213,12 @@ valem para quando houver número: os modelos de frase foram escritos por quem ti
 eval (os filtros pegam cópia e paráfrase, não a política), e 1 caso = 1,3 ponto. Lista
 completa em [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#fine-tuning-subprojeto-2).
 
+**Experimento sem treino (resultado nulo).** O Ollama 0.40.14 mostra as ferramentas ao
+`qwen2.5` como struct do Go, não JSON. Um Modelfile com `{{ json .Function }}` (conferido: o
+prompt passa a ter exatamente o JSON esperado) deu 85,9% contra 85,5% do template oficial em 3
+rodadas, McNemar p = 1,0: não mudou nada mensurável e não foi adotado. Ver
+[`finetune/experimentos/`](finetune/experimentos/README.md).
+
 Para reproduzir:
 
 ```bash

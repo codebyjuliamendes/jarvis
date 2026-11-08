@@ -258,7 +258,10 @@ antes/depois NÃO foram feitos.**
    reproduz o formato (conferido por `finetune/check_template.py`: mesmos tokens e mesma
    saída em 6 conversas). Dois desdobramentos: (a) se uma atualização do Ollama mudar isso, o
    modelo ajustado passa a ver outro prompt — rodar o `check_template.py` depois de cada
-   atualização; (b) **experimento barato e não feito:** um Modelfile com as ferramentas em
+   atualização; (b) **[FEITO nos extras: resultado nulo, ver `finetune/experimentos/README.md`]
+   `{{ json .Function }}` existe e entrega o JSON esperado (conferido por tokens), mas 3 rodadas
+   deram 85,9% contra 85,5% do template oficial (McNemar p = 1,0; IC da diferença ±6 pontos);
+   não adotado.** Registro original: **experimento barato e não feito:** um Modelfile com as ferramentas em
    JSON (`{{ json .Function }}` ou equivalente) para a base, medido com o mesmo eval — pode
    render pontos sem treino nenhum. Não testei se a função `json` existe nos templates desta
    versão.

@@ -1,0 +1,73 @@
+# Experimento (extras, 08/11/2026): ferramentas em JSON no template, sem treino.
+#
+# O template oficial do qwen2.5 no Ollama 0.40.14 imprime cada ferramenta com
+# `{{ .Function }}`, que sai como struct do Go (`{nome descrição {object <nil> ...}}`),
+# não como o JSON que o Qwen viu no treino. Este Modelfile muda UMA coisa: a linha da
+# ferramenta passa a usar `{{ json .Function }}` (função `json` do pacote de templates do
+# Ollama, que chama json.Marshal). Todo o resto é cópia literal do template oficial do
+# qwen2.5:3b (`ollama show qwen2.5:3b --template`, igual ao do finetune/Modelfile).
+#
+#   ollama create jarvis-qwen-json-tools -f finetune/experimentos/Modelfile.json-tools
+#   .venv/Scripts/python.exe evals/compare_models.py qwen2.5:3b jarvis-qwen-json-tools #       --repeats 3 --skip-rag --markdown evals/results/JSON_TOOLS.md
+#   ollama rm jarvis-qwen-json-tools
+#
+# Resultado em finetune/experimentos/README.md. Os pesos são os do qwen2.5:3b (mesmo blob;
+# licença Qwen Research, uso não comercial).
+
+FROM qwen2.5:3b
+
+TEMPLATE """{{- if .Messages }}
+{{- if or .System .Tools }}<|im_start|>system
+{{- if .System }}
+{{ .System }}
+{{- end }}
+{{- if .Tools }}
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools> XML tags:
+<tools>
+{{- range .Tools }}
+{"type": "function", "function": {{ json .Function }}}
+{{- end }}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call>
+{{- end }}<|im_end|>
+{{ end }}
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 -}}
+{{- if eq .Role "user" }}<|im_start|>user
+{{ .Content }}<|im_end|>
+{{ else if eq .Role "assistant" }}<|im_start|>assistant
+{{ if .Content }}{{ .Content }}
+{{- else if .ToolCalls }}<tool_call>
+{{ range .ToolCalls }}{"name": "{{ .Function.Name }}", "arguments": {{ .Function.Arguments }}}
+{{ end }}</tool_call>
+{{- end }}{{ if not $last }}<|im_end|>
+{{ end }}
+{{- else if eq .Role "tool" }}<|im_start|>user
+<tool_response>
+{{ .Content }}
+</tool_response><|im_end|>
+{{ end }}
+{{- if and (ne .Role "assistant") $last }}<|im_start|>assistant
+{{ end }}
+{{- end }}
+{{- else }}
+{{- if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ end }}{{ .Response }}{{ if .Response }}<|im_end|>{{ end }}"""
+
+SYSTEM You are Qwen, created by Alibaba Cloud. You are a helpful assistant.
+
+# Sem PARAMETER: o qwen2.5:3b oficial não define nenhum (`ollama show qwen2.5:3b --parameters`
+# sai vazio), e o eval manda temperature 0,2, seed 42 e num_ctx 8192 em cada chamada.
