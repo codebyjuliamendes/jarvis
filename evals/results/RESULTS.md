@@ -35,4 +35,11 @@ Dataset `evals/data/rag_retrieval.jsonl` (36 perguntas, sha256 `63a1ac64abdb`). 
 |---|---|---|---|---|---|
 | `nomic-embed-text` | 13 docs / 25 trechos | 44,4% (16/36) | 72,2% (26/36) | 0,544 | 0,083 |
 
+> **Nota (subprojeto 4, 08/11/2026):** esta linha é a busca **vetorial sem prefixos**, a única
+> que existia quando a tabela foi gerada. O padrão do bot agora é `bm25` (recall@1 83,3%,
+> recall@5 100,0%, MRR 0,912 no mesmo dataset). A comparação de todos os modos está em
+> [`RAG.md`](RAG.md). O eval de ferramentas do `qwen2.5:3b` nativo foi refeito depois da linha
+> de citação no system prompt (`20261108T014925_tools_qwen2.5-3b_native.json`): 84,6% / 82,0%,
+> igual ao desta tabela.
+
 Arquivos brutos (com cada caso): `20261108T005533_tools_qwen2.5-1.5b_native.json`, `20261108T010114_tools_qwen2.5-1.5b_json.json`, `20261108T010229_tools_qwen2.5-3b_native.json`, `20261108T010336_tools_qwen2.5-3b_json.json`, `20261108T010500_tools_llama3.2-3b_native.json`, `20261108T010614_tools_llama3.2-3b_json.json`, `20261108T010625_rag_nomic-embed-text.json`

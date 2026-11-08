@@ -117,6 +117,36 @@ acentos, porque o PDF quebra linhas).
 O corpus é pequeno (25 trechos), então recall@5 é otimista: 5 resultados são 20% do índice.
 recall@1 e MRR dizem mais.
 
+### Modos de busca e grade (subprojeto 4)
+
+O `eval_rag.py` mede qualquer configuração do `RagIndex`; sem flags, mede os **padrões do
+bot** (lidos de `jarvis/config.py`, hoje `bm25` com prefixos `auto`):
+
+```bash
+.venv/Scripts/python.exe evals/eval_rag.py --mode vector --prefixes off --vector-backend numpy  # linha de base
+.venv/Scripts/python.exe evals/eval_rag.py --mode hybrid --prefixes on --rrf-k 60
+.venv/Scripts/python.exe evals/eval_rag.py --grid    # 6 configurações + sensibilidade do k -> results/RAG.md
+```
+
+| Opção | Valores |
+|---|---|
+| `--mode` | `vector`, `bm25`, `hybrid` |
+| `--prefixes` | `on`/`off` (`search_document:`/`search_query:` do `nomic-embed-text`) |
+| `--rrf-k` | k do Reciprocal Rank Fusion (padrão 60) |
+| `--vector-backend` | `auto`, `sqlite-vec`, `numpy` |
+| `--grid` | roda a grade inteira; `--no-sensitivity` pula a variação do k |
+
+Além do total, as métricas saem por **metade fixa** do dataset — ids ímpares = `dev`, pares =
+`test`, decidido antes de medir. O padrão do bot foi escolhido pelo MRR no dev, e o teste só
+confirma; a regra está na
+[spec do subprojeto 4](../docs/superpowers/specs/2026-11-08-rag-hibrido-design.md). A
+latência agora traz também a média. Se o Ollama cair no meio da grade, a configuração é
+refeita do zero (até 2 vezes, com aviso).
+
+`bench_vector_backend.py` mede só a perna vetorial (sqlite-vec × NumPy) num índice sintético
+de 768 dimensões, para N trechos — no corpus do eval os dois empatam porque o tempo é do
+Ollama.
+
 ## 3. Comparação de modelos — `compare_models.py`
 
 Roda a seleção de ferramentas para cada modelo e modo e o RAG para cada modelo de
@@ -140,7 +170,9 @@ embeddings):
   `num_ctx`, versão do Ollama, GPU;
 - **métricas:** `tool_accuracy`, `args_accuracy`, `args_accuracy_given_tool`,
   `invalid_json_rate`, `latency_p50_s`, `latency_p95_s`, `tokens_per_s`, acurácia por
-  categoria; `recall_at_1`, `recall_at_5`, `mrr`, latência da busca;
+  categoria; `recall_at_1`, `recall_at_5`, `mrr` (também `_dev`/`_test`), latência da
+  busca (média, p50, p95); no RAG, os params incluem `rag_mode`, `prefixes`, `rrf_k` e
+  `vector_backend` (a `--grid` é um run pai com um filho por configuração);
 - **artefatos:** o JSON de resultados e a tabela Markdown.
 
 O MLflow é **opcional**: sem ele instalado (ou com `JARVIS_MLFLOW_ENABLED=false`, ou com
@@ -181,7 +213,8 @@ O banco e os artefatos do MLflow ficam fora do git (são locais e pesados); os J
 evals/
   common.py          settings fictícias, matchers de args, hashes, metadados
   eval_tools.py      seleção de ferramentas
-  eval_rag.py        recuperação
+  eval_rag.py        recuperação (modos vector/bm25/hybrid, --grid -> results/RAG.md)
+  bench_vector_backend.py  microbenchmark sqlite-vec x NumPy
   compare_models.py  comparação + RESULTS.md
   report.py          tabelas Markdown
   tracking.py        MLflow opcional

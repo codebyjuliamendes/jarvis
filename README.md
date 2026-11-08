@@ -25,7 +25,8 @@ briefing diário pela manhã.
 - Consulta saldo, receita, clientes, faturas e payment links do Stripe.
 - Lê planilhas CSV/TSV/XLSX.
 - Lê PDFs (com OCR em páginas escaneadas), DOCX e imagens.
-- Mantém uma memória local (RAG) com busca semântica nas suas notas e documentos.
+- Mantém uma memória local (RAG) nas suas notas e documentos: busca por palavras (BM25),
+  semântica ou híbrida, citando arquivo e trecho.
 - Envia um briefing diário às 6h (agenda, e-mails, lembretes e prioridades).
 - Busca e lê páginas na web (DuckDuckGo + extração de texto).
 - Envia arquivos da máquina para o Telegram.
@@ -85,9 +86,10 @@ com cada caso estão em [`evals/results/`](evals/results/)):
 | `llama3.2:3b` | nativo | 74,4% (58/78) | 57,4% (35/61) | 0,0% | 0,72 | 1,32 | 64,0 |
 | `llama3.2:3b` | JSON | 48,7% (38/78) | 24,6% (15/61) | 30,8% | 0,87 | 1,56 | 60,3 |
 
-| Embeddings | Corpus | recall@1 | recall@5 | MRR |
-|---|---|---|---|---|
-| `nomic-embed-text` | 13 docs / 25 trechos | 44,4% (16/36) | 72,2% (26/36) | 0,544 |
+| RAG (`nomic-embed-text`, 13 docs / 25 trechos) | recall@1 | recall@5 | MRR |
+|---|---|---|---|
+| Antes: só vetorial, sem prefixos | 44,4% (16/36) | 72,2% (26/36) | 0,544 |
+| **Depois (padrão): BM25** — ver [RAG](#rag) | **83,3% (30/36)** | **100,0% (36/36)** | **0,912** |
 
 **Análise.**
 
@@ -105,10 +107,9 @@ com cada caso estão em [`evals/results/`](evals/results/)):
 - **O ponto fraco do `qwen2.5:3b` é a conversa sem ferramenta:** chamou ferramenta em 3 de 8
   casos (ex.: `knowledge_search` para "quanto é 15% de 240?"). É o próximo alvo para ajuste de
   prompt, e a avaliação mede o efeito.
-- **O RAG é o elo mais fraco:** o trecho certo vem em 1º lugar em menos da metade das
-  perguntas (recall@1 de 44,4%) e fica fora do top-5 em 10 de 36. Próximos experimentos: os
-  prefixos `search_query:`/`search_document:` do `nomic-embed-text`, outro tamanho de trecho e
-  busca híbrida com palavras-chave.
+- **O RAG era o elo mais fraco** (recall@1 de 44,4%, fora do top-5 em 10 de 36). O
+  subprojeto 4 mediu prefixos, BM25 e busca híbrida; o resultado e as ressalvas estão na
+  seção [RAG](#rag).
 - **Ressalvas:** uma execução por configuração e 78 casos (1 caso = 1,3 ponto), então
   diferenças de poucos pontos não são conclusivas. As latências valem para esta máquina. Ver
   [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md).
@@ -119,6 +120,115 @@ Para reproduzir:
 uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt   # MLflow (opcional) + pytest
 .venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b qwen2.5:3b llama3.2:3b --modes native,json
 .venv/Scripts/python.exe -m pytest -q    # testes unitários, sem Ollama
+```
+
+---
+
+## RAG
+
+A memória local (`knowledge_search`) tem três modos de busca, escolhidos por
+`JARVIS_RAG_MODE`, todos dentro do mesmo SQLite (`data/rag.sqlite3`):
+
+- **`bm25`** (padrão): busca por palavras com FTS5, sem acento e sem stopwords. Não chama o
+  Ollama na consulta.
+- **`vector`**: cosseno entre embeddings do `nomic-embed-text`, com os prefixos
+  `search_document:`/`search_query:` com que o modelo foi treinado. Usa a extensão
+  [sqlite-vec](https://github.com/asg017/sqlite-vec) quando ela carrega; se não carregar,
+  cai sozinha para NumPy e avisa no log.
+- **`hybrid`**: as duas, combinadas por Reciprocal Rank Fusion (top-20 de cada,
+  `JARVIS_RAG_RRF_K`, padrão 60). Se o Ollama cair, responde só com o BM25.
+
+As respostas citam a fonte: a ferramenta devolve arquivo e trecho de cada resultado e pede
+`(fonte: arquivo, trecho N)`. Especificação:
+[`docs/superpowers/specs/2026-11-08-rag-hibrido-design.md`](docs/superpowers/specs/2026-11-08-rag-hibrido-design.md).
+
+### Antes e depois (medido)
+
+Mesmo eval do subprojeto 1 (36 perguntas, 13 documentos fictícios com distratores, 25
+trechos), uma rodada por configuração em 08/11/2026, RTX 4050 Laptop, Ollama 0.40.14. Cada
+linha muda uma coisa em relação a uma anterior. Tabela completa, sensibilidade do k do RRF e
+links para os JSON (com o ranking de cada pergunta) em
+[`evals/results/RAG.md`](evals/results/RAG.md); cada rodada também está no MLflow.
+
+| Configuração | recall@1 | recall@5 | MRR | MRR dev (18) | MRR teste (18) | Latência média |
+|---|---|---|---|---|---|---|
+| vetorial NumPy, sem prefixos (**antes**) | 44,4% (16/36) | 72,2% (26/36) | 0,544 | 0,537 | 0,551 | 98 ms |
+| vetorial sqlite-vec, sem prefixos | 44,4% (16/36) | 72,2% (26/36) | 0,544 | 0,537 | 0,551 | 102 ms |
+| vetorial sqlite-vec + prefixos | 52,8% (19/36) | 80,6% (29/36) | 0,614 | 0,594 | 0,634 | 146 ms |
+| **BM25 (padrão, depois)** | **83,3% (30/36)** | **100,0% (36/36)** | **0,912** | **0,907** | **0,917** | **1,2 ms** |
+| híbrido (RRF k=60), sem prefixos | 63,9% (23/36) | 94,4% (34/36) | 0,773 | 0,759 | 0,787 | 114 ms |
+| híbrido (RRF k=60) + prefixos | 72,2% (26/36) | 100,0% (36/36) | 0,845 | 0,838 | 0,852 | 98 ms |
+
+Latência = `RagIndex.search` inteiro; nos modos com vetor, ~95 ms são o embedding da pergunta
+no Ollama. A variação entre as linhas vetoriais (98–146 ms) é ruído entre rodadas, não efeito
+dos prefixos.
+
+**Análise.**
+
+- **O BM25 sozinho ganhou de tudo, inclusive do híbrido.** Os dados explicam: em média 65%
+  das palavras de conteúdo da pergunta aparecem no trecho certo (só 1 das 36 não tem nenhuma),
+  e as perguntas falam de coisas com nome — "Falcon", "Alfama", "L'Hôpital", "Luminária
+  Origami". É o terreno da busca lexical. O vetorial deixa 7 perguntas fora do top-5; o BM25,
+  nenhuma.
+- **O híbrido ficou no meio.** O RRF dá peso igual a uma perna forte (BM25, MRR 0,91) e a
+  uma fraca (vetorial, 0,61): em relação ao BM25 ele melhorou 1 pergunta (rag-034) e piorou
+  7. Um RRF com pesos ou um reranker poderiam ajudar, mas escolher pesos nestas 36 perguntas
+  seria sobreajuste.
+- **Os prefixos do `nomic-embed-text` valem a pena:** +3 perguntas em recall@1 no vetorial
+  (16 → 19) e no híbrido (23 → 26). Ficam ligados (`JARVIS_RAG_PREFIXES=auto`).
+- **sqlite-vec não muda o ranking** (cosseno exato nos dois caminhos; os rankings são
+  idênticos) **nem a latência neste corpus**, que é dominada pelo Ollama. O ganho aparece com
+  mais trechos: no microbenchmark só da busca (`evals/bench_vector_backend.py`, 768 dimensões,
+  média de 30 consultas) foram 9,0 → 4,7 ms com 25 trechos, 385 → 10,7 ms com 1.000 e
+  1.773 → 19,7 ms com 4.000 (o limite de uma rodada de indexação do bot).
+- **Por que `bm25` é o padrão:** a regra foi fixada na spec antes de medir — maior MRR na
+  metade dev (ids ímpares). BM25 teve 0,907 contra 0,838 do híbrido com prefixos; a metade de
+  teste confirmou a ordem (0,917 contra 0,852). De quebra, a consulta fica ~80x mais rápida e
+  não depende do Ollama. **Quando trocar para `hybrid`:** se as perguntas tiverem pouca palavra
+  em comum com os arquivos (sinônimos, paráfrases, outra língua) — exatamente o que este
+  dataset quase não tem.
+- **Cuidado com sobreajuste.** As 36 perguntas foram escritas por uma pessoa que conhecia os
+  documentos, o que favorece a sobreposição de palavras. Nada foi ajustado olhando pergunta por
+  pergunta: chunking igual ao de antes; stopwords, top-20 do híbrido e k=60 escolhidos antes de
+  medir; a sensibilidade do k (10/30/60/100) é só informativa — com prefixos não muda nada, sem
+  prefixos k=10 seria melhor (0,815 contra 0,773), e não foi adotado. 1 pergunta = 2,8 pontos
+  no total e 5,6 em cada metade: a diferença entre BM25 e híbrido com prefixos (4 perguntas em
+  recall@1) é real neste corpus, mas não prova que o BM25 ganha nas notas reais de alguém.
+
+### Citação das fontes (exemplo real)
+
+`scripts/demo_rag.py` indexa os mesmos documentos fictícios e roda o agente real
+(`qwen2.5:3b`, só com `knowledge_search`). Resposta real de 08/11/2026:
+
+> **Procura nas minhas notas: até quando dá para cancelar o hotel em Alfama sem pagar nada?**
+>
+> (fonte: viagem_lisboa.md, trecho 2) O cancelamento do hotel Miradouro Azul, na Rua das
+> Gaivotas, no bairro de Alfama, pode ser feito sem custo até 20 de fevereiro.
+
+O fato e o arquivo estão certos; o trecho não (a data está no trecho 1 — o modelo copiou o
+exemplo da instrução, que usa o 1º resultado). Na mesma demo, o `qwen2.5:3b` **não chamou a
+ferramenta** nas outras duas perguntas e respondeu de cabeça; isso é a seleção de ferramentas,
+não o RAG (ver [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md)). Quando o modelo usa a busca e não
+cita, o agente anexa `Fontes consultadas: arquivo (trechos ...)` com os 3 primeiros
+resultados — "consultadas", porque o agente não sabe quais o modelo aproveitou.
+
+### Índices existentes
+
+Não precisa reindexar para atualizar: a tabela `chunks` (texto + embedding em JSON) continua
+sendo a fonte da verdade, e os índices FTS5 e sqlite-vec são reconstruídos a partir dela ao
+abrir. Como os prefixos mudam os embeddings, cada documento guarda a assinatura
+`modelo|prefixo`; o próximo `/reindex` re-embeda só o que estiver com assinatura antiga (o
+modo `bm25` já funciona antes disso). Sem FTS5 no SQLite, `bm25` vira `vector` com aviso; o
+SQLite 3.46 do Python 3.8 do `.venv` tem FTS5.
+
+Para reproduzir:
+
+```bash
+uv pip install --python .venv/Scripts/python.exe -r requirements.txt   # inclui sqlite-vec
+.venv/Scripts/python.exe evals/eval_rag.py --grid                     # todas as configurações
+.venv/Scripts/python.exe evals/eval_rag.py --mode hybrid --prefixes on -v
+.venv/Scripts/python.exe evals/bench_vector_backend.py --sizes 25,1000,4000
+.venv/Scripts/python.exe scripts/demo_rag.py --show-tool              # citação com o agente real
 ```
 
 ---
@@ -369,6 +479,10 @@ Exemplos de pedidos:
 | `JARVIS_RAG_MODEL` | não | Modelo de embeddings (padrão `nomic-embed-text`) |
 | `JARVIS_RAG_ROOTS` | não | Pastas indexadas, separadas por vírgula |
 | `JARVIS_RAG_EXTENSIONS` | não | Extensões indexadas (padrão `.md,.txt,.pdf,.docx,.csv,.xlsx`) |
+| `JARVIS_RAG_MODE` | não | `bm25` (padrão), `vector` ou `hybrid` (ver [RAG](#rag)) |
+| `JARVIS_RAG_RRF_K` | não | k do Reciprocal Rank Fusion no modo `hybrid` (padrão `60`) |
+| `JARVIS_RAG_PREFIXES` | não | Prefixos do `nomic-embed-text`: `auto` (padrão), `true`, `false` |
+| `JARVIS_RAG_VECTOR_BACKEND` | não | `auto` (padrão: sqlite-vec se carregar, senão NumPy), `sqlite-vec`, `numpy` |
 | `OBSIDIAN_VAULT` | não | Caminho do vault |
 | `NOTION_TOKEN` | não | Token da integração do Notion |
 | `NOTION_DEFAULT_PAGE` | não | Página pai padrão |
@@ -562,8 +676,9 @@ o agendador tenta executar quando o serviço voltar (margem de 1 hora).
 
 ### Memória local (RAG)
 
-O Jarvis indexa suas notas e documentos e consulta por significado, não só por palavra
-exata. Os embeddings são gerados **localmente** pelo Ollama (`nomic-embed-text`).
+O Jarvis indexa suas notas e documentos e consulta por palavras (BM25, padrão), por
+significado ou pelas duas juntas (ver a seção [RAG](#rag), com a medição de cada modo). Os
+embeddings são gerados **localmente** pelo Ollama (`nomic-embed-text`).
 
 - Pastas padrão: vault do Obsidian (se configurado), `~/Documentos`, `~/Downloads` e o
   próprio projeto. Ajuste com `JARVIS_RAG_ROOTS=/caminho/a,/caminho/b`.
@@ -709,7 +824,7 @@ jarvis/
 │   ├── memory.py            # histórico SQLite
 │   ├── reminders.py         # lembretes persistentes + APScheduler
 │   ├── briefing.py          # briefing diário às 6h
-│   ├── rag.py               # memória local + embeddings (Ollama)
+│   ├── rag.py               # memória local: BM25 (FTS5), vetorial (sqlite-vec/NumPy), híbrida
 │   ├── documents.py         # extração de PDF/DOCX/XLSX/OCR
 │   ├── voice.py             # transcrição local (faster-whisper)
 │   ├── tts.py               # voz de saída (edge-tts)
@@ -731,7 +846,7 @@ jarvis/
 │       ├── business.py      # Stripe
 │       ├── web.py           # busca e leitura de páginas
 │       ├── telegram_tools.py# envio de arquivos
-│       ├── knowledge.py     # busca/indexação da memória local
+│       ├── knowledge.py     # busca/indexação da memória local + citação
 │       ├── documents.py     # leitura de PDF/DOCX/imagem
 │       ├── voice_tools.py   # ferramenta speak (TTS)
 │       └── reminders.py     # ferramenta de lembretes
@@ -744,6 +859,7 @@ jarvis/
 │   ├── reindex.py
 │   ├── smoke_test.py
 │   ├── demo_metrics.py      # agente real + /metrics num banco temporário
+│   ├── demo_rag.py          # agente real + citação de fontes do RAG
 │   ├── jarvis.service
 │   ├── jarvis-backup.service
 │   ├── jarvis-backup.timer

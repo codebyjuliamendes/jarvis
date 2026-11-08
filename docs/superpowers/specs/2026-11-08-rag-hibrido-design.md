@@ -59,10 +59,10 @@ embeddings, ANN (o sqlite-vec 0.1.x faz busca exata, o que basta para milhares d
 ## Citação de fontes
 
 `search()` passa a devolver também `name` (nome do arquivo), `chunks_total` e `mode`.
-`knowledge_search` formata cada resultado como
-`[n] arquivo.md — trecho i de N (caminho completo)` seguido do texto, e termina com uma
-instrução curta: citar no formato `(fonte: arquivo.md, trecho i)`. O system prompt ganha
-uma linha com a mesma regra. Teste de formato no pytest; exemplo real com `qwen2.5:3b`.
+`knowledge_search` formata cada resultado como `[n] arquivo.md, trecho i de N`, uma linha
+`caminho: ...` e o texto, e termina com a instrução de citar no formato
+`(fonte: arquivo.md, trecho i)`. O system prompt ganha uma linha com a mesma regra. Teste de
+formato no pytest; exemplo real com `qwen2.5:3b`.
 
 ## Avaliação e cuidado com overfitting
 
@@ -81,3 +81,18 @@ O dataset tem só 36 perguntas escritas por uma pessoa. Regras fixadas **antes**
   escolher.
 - Com 18 perguntas por metade, 1 pergunta = 5,6 pontos: diferenças pequenas não são
   conclusivas, e a análise diz isso.
+
+## Decisões tomadas na implementação (com a medida)
+
+- **Padrão `JARVIS_RAG_MODE=bm25`, `JARVIS_RAG_PREFIXES=auto`.** Pela regra acima: MRR dev
+  bm25 0,907 > hybrid+prefixos 0,838 > hybrid 0,759 > vector+prefixos 0,594 > vector 0,537;
+  o teste confirmou a ordem. Tabela em `evals/results/RAG.md`.
+- **Instrução de citar no fim da saída da ferramenta**, com o 1º resultado como exemplo. No
+  começo, o `qwen2.5:3b` não citou na demo; no fim, citou (o arquivo certo; o trecho copiado
+  do exemplo).
+- **Fontes anexadas pelo agente** (`Fontes consultadas: ...`, 3 primeiros resultados) quando
+  o modelo usa o `knowledge_search` e não cita.
+- **A grade refaz a configuração** se o Ollama cair no meio (até 2 vezes): o runner recusou
+  conexão duas vezes depois de ~7 rodadas seguidas.
+- **`evals/bench_vector_backend.py`**: no corpus do eval a busca é dominada pelo embedding no
+  Ollama, então o ganho do sqlite-vec foi medido à parte (índice sintético, 768 dimensões).

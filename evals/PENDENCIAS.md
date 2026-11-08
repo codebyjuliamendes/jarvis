@@ -51,7 +51,8 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
    (`test_extract_text_tool_parameters_nao_e_reconhecido`) e mantido sem mudança. Na rodada
    de 08/11 nenhuma resposta usou `parameters`, então não afetou os números.
 
-6. **Embeddings sem os prefixos recomendados.** O `nomic-embed-text` foi treinado com os
+6. **[RESOLVIDO no subprojeto 4: prefixos medidos e ligados por padrão, +3 perguntas em
+   recall@1 no vetorial; ver a seção RAG abaixo]** **Embeddings sem os prefixos recomendados.** O `nomic-embed-text` foi treinado com os
    prefixos `search_query:` e `search_document:`; o `RagIndex` não os usa. Pode haver ganho
    de recall, mas não foi medido — é um bom próximo experimento (a avaliação já está pronta
    para comparar).
@@ -67,7 +68,8 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
   uma ferramenta; outra pessoa poderia discordar de algum gabarito.
 - **Só a primeira decisão.** Não avaliamos conversas de vários turnos, a execução das
   ferramentas, nem a qualidade da resposta final em texto.
-- **Corpus de RAG pequeno** (13 documentos, 25 trechos): recall@5 é otimista.
+- **Corpus de RAG pequeno** (13 documentos, 25 trechos): recall@5 é otimista (no subprojeto 4
+  o BM25 chegou a 100%, o que diz mais sobre o tamanho do corpus do que sobre o BM25).
 - **Data relativa nos lembretes**: o system prompt real inclui a data/hora atual, então
   pedidos como "amanhã às 9h" aceitam tanto `amanhã 09:00` quanto uma data ISO com 09:00.
 
@@ -137,3 +139,62 @@ especificação está em `docs/superpowers/specs/2026-11-08-observabilidade-desi
     conferida.
 12. **Quem já tem `.env` com `OLLAMA_URL=http://localhost:11434`** continua pagando os ~2 s
     por conexão no Windows: a troca do padrão não reescreve `.env` existente.
+
+## RAG (subprojeto 4)
+
+A especificação está em `docs/superpowers/specs/2026-11-08-rag-hibrido-design.md`; a tabela,
+em `evals/results/RAG.md`.
+
+1. **O dataset favorece a busca por palavras.** Em média 65% das palavras de conteúdo de cada
+   pergunta (tokens do `fts_query`, sem stopwords) aparecem no trecho certo, e só 1 das 36
+   perguntas não tem nenhuma em comum (conta feita à parte, sobre os mesmos fixtures). As
+   perguntas foram escritas por quem conhecia os documentos. O BM25 ganhou com folga aqui, mas
+   isso **não** prova que ganha nas notas reais; para saber, faltam perguntas escritas por outra
+   pessoa ou tiradas do uso real (com paráfrases e sinônimos) — de preferência antes de olhar os
+   resultados de novo.
+2. **Escolha do padrão em 18 perguntas.** A regra (maior MRR na metade dev) foi fixada antes de
+   medir e a metade de teste confirmou, mas com 18 perguntas por metade 1 pergunta = 5,6 pontos.
+   A diferença BM25 × híbrido com prefixos é de 4 perguntas em recall@1 no total.
+3. **Decisões que não foram ajustadas, de propósito:** lista de stopwords (escrita antes de
+   medir, mas pela mesma pessoa que leu os resultados), top-20 candidatos no híbrido, k=60 do
+   RRF, tamanho dos trechos. RRF com pesos e reranker não foram testados: com 36 perguntas,
+   qualquer peso escolhido aqui seria sobreajuste. A sensibilidade do k mostra que, sem
+   prefixos, k=10 daria MRR 0,815 contra 0,773 — não adotado.
+4. **FTS5 sem stemming em português.** O tokenizador `unicode61` tira acento e caixa, mas
+   "reserva" não casa com "reservas". O FTS5 só traz stemmer de inglês (porter); não testei
+   alternativas.
+5. **A citação depende do modelo, e o `qwen2.5:3b` é fraco nisso.** Na demo
+   (`scripts/demo_rag.py`, 3 perguntas, uma rodada): com a pergunta neutra ("Qual o valor
+   mensal que eu pago de aluguel?") ele não chamou o `knowledge_search` em nenhuma das 3; com
+   "nos meus documentos"/"procura nas minhas notas" chamou em 1 de 3. Quando chamou, citou o
+   arquivo certo, mas o trecho errado: copiou o exemplo da instrução, que usa o 1º resultado
+   (trecho 2; a resposta estava no trecho 1). Com a instrução no começo da saída, em vez do
+   fim, ele não citou nada. n = 3 é demonstração, não medida: falta um eval de citação (com
+   gabarito de arquivo+trecho por resposta, ou um juiz) e um eval de "decidir buscar" com
+   perguntas neutras.
+6. **"Fontes consultadas" não são "fontes usadas".** Quando o modelo usa o RAG e não cita, o
+   agente anexa os 3 primeiros resultados da busca. Pode listar um trecho que o modelo ignorou.
+   A detecção de "já citou" é o texto `fonte:` em qualquer lugar da resposta.
+7. **O system prompt mudou (uma linha pedindo citação).** Só refiz o eval de ferramentas do
+   `qwen2.5:3b` nativo: 84,6% / 82,0%, igual ao de antes, com 7 casos trocando de previsão
+   (ganhos e perdas se anulam; não dá para separar efeito do prompt de não determinismo da
+   GPU). Os outros modelos/modos do `RESULTS.md` não foram refeitos.
+8. **Embeddings continuam sendo gerados na indexação, mesmo no modo `bm25`.** Assim trocar de
+   modo é instantâneo, mas a indexação continua dependendo do Ollama. Não há opção para pular.
+9. **O runner do Ollama falhou no meio da grade** duas vezes em três tentativas
+   ("dial tcp 127.0.0.1:<porta>", depois de ~7 rodadas seguidas). O eval refaz a configuração;
+   o `RagIndex` do bot **não** tem retry, então um `/reindex` pode terminar em "Erro na
+   indexação" e precisar ser repetido. As grades interrompidas ficaram no MLflow (runs pais
+   incompletos); a que vale é a do commit `8954b5f`, cujos JSON estão em `results/`.
+10. **Latência é de uma rodada.** As linhas vetoriais variaram de 98 a 146 ms entre rodadas
+    iguais; diferenças de dezenas de ms entre elas são ruído. O que é robusto: BM25 ~1 ms
+    contra ~100 ms de qualquer modo que embede a pergunta.
+11. **sqlite-vec só foi testado no Windows.** A versão 0.1.9 faz busca exata (sem ANN), o que
+    basta para dezenas de milhares de trechos. A queda para NumPy foi testada simulando a falta
+    do pacote (pytest), não numa plataforma real sem `enable_load_extension` (ex.: o Python do
+    sistema no macOS).
+12. **Janela de transição ao trocar modelo/prefixo.** Até o próximo `/reindex`, as consultas
+    vetoriais usam o prefixo novo contra embeddings antigos (qualidade pior). Se a dimensão do
+    embedding mudar, a tabela `chunks_vec` é recriada e os documentos antigos saem da busca
+    vetorial até serem reindexados (a busca em NumPy já se comportava assim).
+
