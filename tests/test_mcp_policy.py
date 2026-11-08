@@ -8,6 +8,8 @@ from pathlib import Path
 import pytest
 
 from jarvis.mcp_server import (
+    DEFAULT_TOOLS,
+    OPEN_WORLD_TOOLS,
     READ_ONLY_TOOLS,
     TELEGRAM_ONLY_TOOLS,
     resolve_exposed_tools,
@@ -30,9 +32,27 @@ def test_conjunto_de_leitura_e_subconjunto_das_ferramentas():
 
 def test_padrao_expoe_so_leitura():
     policy = resolve_exposed_tools(EXPECTED_TOOLS)
-    assert set(policy.tools) == READ_ONLY_TOOLS
+    assert set(policy.tools) == DEFAULT_TOOLS
     assert policy.refused == {}
     assert list(policy.tools) == sorted(policy.tools)
+
+
+def test_padrao_nao_sai_para_a_internet():
+    # read_file + web_fetch juntos permitiriam exfiltrar arquivo por URL (prompt injection)
+    assert OPEN_WORLD_TOOLS == {"web_search", "web_fetch"}
+    assert DEFAULT_TOOLS == READ_ONLY_TOOLS - OPEN_WORLD_TOOLS
+    policy = resolve_exposed_tools(EXPECTED_TOOLS)
+    for name in OPEN_WORLD_TOOLS:
+        assert name not in policy.tools
+    assert "read_file" in policy.tools
+
+
+def test_web_liberavel_pela_lista_sem_allow_unsafe():
+    policy = resolve_exposed_tools(EXPECTED_TOOLS, ["leitura", "web_search", "web_fetch"])
+    assert set(policy.tools) == READ_ONLY_TOOLS
+    assert policy.refused == {}
+    assert policy.allow_unsafe is False
+    assert "SAI PARA A INTERNET" in policy.describe()
 
 
 def test_padrao_ignora_leitura_ausente_sem_reclamar():
@@ -49,7 +69,7 @@ def test_lista_explicita_restringe():
 
 def test_atalho_leitura_mais_repetida():
     policy = resolve_exposed_tools(EXPECTED_TOOLS, ["LEITURA", "read_file"])
-    assert set(policy.tools) == READ_ONLY_TOOLS
+    assert set(policy.tools) == DEFAULT_TOOLS
 
 
 @pytest.mark.parametrize("name", UNSAFE)
@@ -109,11 +129,31 @@ def bridge(settings):
 
 def test_specs_vem_do_registro(bridge):
     specs = {spec["name"]: spec for spec in bridge.tool_specs()}
-    assert set(specs) == READ_ONLY_TOOLS
+    assert set(specs) == DEFAULT_TOOLS
     read_file = specs["read_file"]
     assert read_file["input_schema"]["required"] == ["path"]
     assert read_file["read_only"] is True and read_file["open_world"] is False
+
+
+@pytest.fixture
+def web_bridge(settings):
+    bridge, rag, metrics = build_bridge(settings, ["leitura", "web_search", "web_fetch"])
+    yield bridge
+    rag.close()
+    metrics.close()
+
+
+def test_specs_web_marcadas_open_world(web_bridge):
+    specs = {spec["name"]: spec for spec in web_bridge.tool_specs()}
+    assert set(specs) == READ_ONLY_TOOLS
     assert specs["web_fetch"]["open_world"] is True
+    assert specs["web_search"]["open_world"] is True
+    assert specs["web_fetch"]["read_only"] is True
+
+
+def test_web_fetch_fora_do_padrao_nao_executa(bridge):
+    text, is_error = asyncio.run(bridge.call("web_fetch", {"url": "https://example.com/?q=segredo"}))
+    assert is_error and "não está exposta" in text
 
 
 def test_chamada_de_leitura(bridge):
@@ -161,8 +201,8 @@ def test_credencial_dentro_da_raiz_recusada(bridge, settings):
     assert is_error and "credenciais" in text and "123" not in text
 
 
-def test_ssrf_recusado(bridge):
-    text, is_error = asyncio.run(bridge.call("web_fetch", {"url": "http://127.0.0.1:11434/api/tags"}))
+def test_ssrf_recusado(web_bridge):
+    text, is_error = asyncio.run(web_bridge.call("web_fetch", {"url": "http://127.0.0.1:11434/api/tags"}))
     assert is_error and text.startswith("Bloqueado")
 
 

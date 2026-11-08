@@ -18,7 +18,7 @@ mcp = pytest.importorskip("mcp")
 from mcp import Client  # noqa: E402
 from mcp.client.stdio import StdioServerParameters  # noqa: E402
 
-from jarvis.mcp_server import READ_ONLY_TOOLS, build_server  # noqa: E402
+from jarvis.mcp_server import DEFAULT_TOOLS, READ_ONLY_TOOLS, build_server  # noqa: E402
 from tests.mcp_support import build_bridge, make_workspace  # noqa: E402
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,15 +49,35 @@ def test_lista_so_as_ferramentas_de_leitura(server_bridge):
 
     listed = run(scenario())
     tools = {tool.name: tool for tool in listed.tools}
-    assert set(tools) == READ_ONLY_TOOLS
-    for blocked in ("run_shell", "write_file", "google", "send_file", "knowledge_index"):
+    assert set(tools) == DEFAULT_TOOLS
+    for blocked in ("run_shell", "write_file", "google", "send_file", "knowledge_index",
+                    "web_search", "web_fetch"):
         assert blocked not in tools
     read_file = tools["read_file"]
     assert read_file.input_schema["required"] == ["path"]  # mesmo JSON Schema do registro
     assert "path" in read_file.input_schema["properties"]
     assert read_file.annotations.read_only_hint is True
     assert read_file.annotations.destructive_hint is False
-    assert tools["web_fetch"].annotations.open_world_hint is True
+    assert read_file.annotations.open_world_hint is False
+
+
+def test_web_liberada_pela_lista_vem_com_open_world(settings):
+    bridge, rag, metrics = build_bridge(settings, ["leitura", "web_search", "web_fetch"])
+    try:
+        server = build_server(bridge)
+
+        async def scenario():
+            async with Client(server) as client:
+                return await client.list_tools()
+
+        tools = {tool.name: tool for tool in run(scenario()).tools}
+    finally:
+        rag.close()
+        metrics.close()
+    assert set(tools) == READ_ONLY_TOOLS
+    for name in ("web_search", "web_fetch"):
+        assert tools[name].annotations.open_world_hint is True
+        assert tools[name].annotations.read_only_hint is True
 
 
 def test_chama_read_file_e_knowledge_search(server_bridge):
@@ -164,7 +184,7 @@ def test_integracao_stdio(tmp_path):
             return names, read, blocked
 
     names, read, blocked = run(scenario())
-    assert names == sorted(READ_ONLY_TOOLS)
+    assert names == sorted(DEFAULT_TOOLS)
     assert read.is_error is False and "linha um" in _text(read)
     assert blocked.is_error is True
     # a chamada virou métrica com source="mcp" no banco configurado pelo ambiente

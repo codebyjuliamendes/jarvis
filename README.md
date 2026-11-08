@@ -11,7 +11,7 @@ suas notas. Medido, não suposto: o `qwen2.5:3b` escolhe a ferramenta certa em *
 pedidos em pt-BR (0,58 s por decisão numa GPU de notebook), e trocar a busca vetorial pela
 busca por palavras (BM25) levou o recall@1 do RAG de **44,4% para 83,3%**. Observabilidade
 por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **servidor MCP** que
-leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **422 testes** sem
+leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **427 testes** sem
 Ollama, CI e Docker.
 
 | Seção | Destaque |
@@ -426,8 +426,11 @@ completo, com a configuração dos clientes: [`docs/mcp.md`](docs/mcp.md).
   agente — logo pelas mesmas checagens do `security.py` (pastas permitidas, arquivos de
   credenciais, comandos destrutivos, SSRF), pelo `audit.log` e pelas métricas
   (`source="mcp"`, aparecem no `/metrics`).
-- **Só leitura por padrão:** `read_file`, `list_dir`, `search_files`, `find_files`,
-  `read_pdf`, `read_docx`, `read_image`, `knowledge_search` (RAG), `web_search` e `web_fetch`.
+- **Só leitura local por padrão:** `read_file`, `list_dir`, `search_files`, `find_files`,
+  `read_pdf`, `read_docx`, `read_image` e `knowledge_search` (RAG). `web_search` e `web_fetch`
+  ficam **fora** do padrão: junto com `read_file`, um cliente vítima de prompt injection
+  poderia mandar um arquivo local numa URL. Religar: `JARVIS_MCP_TOOLS=leitura,web_search,web_fetch`
+  (são leitura, não precisam da segunda chave).
   O que escreve, executa, envia ou mexe em dinheiro exige **duas chaves**: o nome em
   `JARVIS_MCP_TOOLS` **e** `JARVIS_MCP_ALLOW_UNSAFE=true`. Ferramenta fora da allowlist não
   aparece e, se chamada, é recusada antes do registro.
@@ -456,10 +459,10 @@ neste servidor MCP". Pendências: [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#mc
 
 O que sustenta os números acima e deixa o projeto fácil de rodar e de auditar.
 
-- **Testes:** 422 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
+- **Testes:** 427 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
   `conftest` aponta o Ollama para uma porta descartável): parsing das chamadas de ferramenta,
   segurança, RAG (BM25, vetorial, híbrido, queda para NumPy), métricas, avaliações, sanitizador,
-  dataset do fine-tuning, o template do `qwen2.5` e o servidor MCP (416 em Python 3.8; os 6
+  dataset do fine-tuning, o template do `qwen2.5` e o servidor MCP (420 em Python 3.8; os 7
   do protocolo MCP pedem o SDK, Python 3.10+). Mais o `scripts/smoke_test.py`, que exercita
   as ferramentas reais (arquivos, terminal, git, PDF/DOCX, lembretes, briefing, laço do agente)
   com um LLM roteirizado.
@@ -956,7 +959,7 @@ OCR requer `tesseract` instalado. O resto funciona sem ele.
 - `.env`, `credentials.json`, `token.json` e o banco SQLite estão no `.gitignore`.
 - O bot usa **long polling**: não abre porta na sua rede.
 - O **servidor MCP** (opcional) fala por stdio, sem porta, e expõe só ferramentas de leitura
-  por padrão; as que escrevem/executam/enviam exigem `JARVIS_MCP_TOOLS` **e**
+  local por padrão (a web fica de fora, para não abrir caminho de exfiltração); as que escrevem/executam/enviam exigem `JARVIS_MCP_TOOLS` **e**
   `JARVIS_MCP_ALLOW_UNSAFE=true`, e passam pelas mesmas travas acima. Ver
   [`docs/mcp.md`](docs/mcp.md).
 - O Jarvis pede confirmação antes de ações irreversíveis (o modelo é instruído a isso,

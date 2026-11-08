@@ -35,7 +35,7 @@ logger = logging.getLogger("jarvis.mcp_server")
 SERVER_NAME = "jarvis"
 
 # Só leem (arquivos dentro de JARVIS_ALLOWED_ROOTS, a memória local, a web pública).
-# É o conjunto exposto quando JARVIS_MCP_TOOLS está vazio.
+# Nenhuma delas precisa de JARVIS_MCP_ALLOW_UNSAFE; o padrão (DEFAULT_TOOLS) é um subconjunto.
 READ_ONLY_TOOLS: FrozenSet[str] = frozenset(
     {
         "read_file",
@@ -52,9 +52,14 @@ READ_ONLY_TOOLS: FrozenSet[str] = frozenset(
 )
 # Saem da máquina para a internet: o cliente MCP pode mostrar isso ao usuário.
 OPEN_WORLD_TOOLS: FrozenSet[str] = frozenset({"web_search", "web_fetch"})
+# Exposto quando JARVIS_MCP_TOOLS está vazio: leitura local, sem saída para a internet.
+# Motivo: com read_file e web_fetch juntos, um cliente enganado por prompt injection poderia
+# mandar o conteúdo de um arquivo numa URL ou consulta (exfiltração). As duas da web
+# continuam liberáveis só pela lista: JARVIS_MCP_TOOLS=leitura,web_search,web_fetch.
+DEFAULT_TOOLS: FrozenSet[str] = READ_ONLY_TOOLS - OPEN_WORLD_TOOLS
 # Precisam de um chat do Telegram (enviam arquivo/áudio para ele): nunca expostas.
 TELEGRAM_ONLY_TOOLS: FrozenSet[str] = frozenset({"send_file", "speak"})
-# Atalho aceito em JARVIS_MCP_TOOLS para o conjunto de leitura inteiro.
+# Atalho aceito em JARVIS_MCP_TOOLS para o conjunto padrão (leitura local, sem web).
 READ_ONLY_ALIAS = "leitura"
 
 UNSAFE_HINT = "JARVIS_MCP_ALLOW_UNSAFE=true"
@@ -74,7 +79,12 @@ class ExposurePolicy:
     def describe(self) -> str:
         lines = ["Ferramentas expostas pelo servidor MCP ({}):".format(len(self.tools))]
         for name in self.tools:
-            kind = "leitura" if self.is_read_only(name) else "ESCREVE/EXECUTA/ENVIA"
+            if name in OPEN_WORLD_TOOLS:
+                kind = "leitura, SAI PARA A INTERNET"
+            elif self.is_read_only(name):
+                kind = "leitura"
+            else:
+                kind = "ESCREVE/EXECUTA/ENVIA"
             lines.append("  - {} ({})".format(name, kind))
         if not self.tools:
             lines.append("  (nenhuma)")
@@ -92,10 +102,11 @@ def resolve_exposed_tools(
 ) -> ExposurePolicy:
     """Aplica a allowlist.
 
-    - ``requested`` vazio/None: o conjunto de leitura (``READ_ONLY_TOOLS``) que estiver
-      carregado no registro.
+    - ``requested`` vazio/None: o conjunto padrão (``DEFAULT_TOOLS``: leitura local, sem
+      as ferramentas da web) que estiver carregado no registro.
     - ``requested`` com nomes: exatamente esses (serve para restringir), mais o atalho
-      ``leitura``. Uma ferramenta fora do conjunto de leitura só entra com
+      ``leitura`` (= ``DEFAULT_TOOLS``). ``web_search``/``web_fetch`` entram só pelo nome,
+      sem precisar de ``allow_unsafe``. Uma ferramenta fora do conjunto de leitura só entra com
       ``allow_unsafe=True`` — duas chaves: o nome na lista **e** a variável ligada.
     - ``send_file``/``speak`` nunca entram; nomes desconhecidos são ignorados.
     """
@@ -106,11 +117,11 @@ def resolve_exposed_tools(
         if not item:
             continue
         if item.lower() == READ_ONLY_ALIAS:
-            names.extend(sorted(READ_ONLY_TOOLS))
+            names.extend(sorted(DEFAULT_TOOLS))
         else:
             names.append(item)
     if not names:
-        names = sorted(READ_ONLY_TOOLS)
+        names = sorted(DEFAULT_TOOLS)
         implicit = True
     else:
         implicit = False
