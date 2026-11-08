@@ -10,7 +10,8 @@ ferramentas reais** — terminal, arquivos, git/GitHub, Google, Microsoft 365, N
 suas notas. Medido, não suposto: o `qwen2.5:3b` escolhe a ferramenta certa em **82,1%** de 78
 pedidos em pt-BR (0,58 s por decisão numa GPU de notebook), e trocar a busca vetorial pela
 busca por palavras (BM25) levou o recall@1 do RAG de **44,4% para 83,3%**. Observabilidade
-por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **373 testes** sem
+por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **servidor MCP** que
+leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **422 testes** sem
 Ollama, CI e Docker.
 
 | Seção | Destaque |
@@ -19,6 +20,7 @@ Ollama, CI e Docker.
 | [Fine-tuning](#fine-tuning) | dataset sintético de 2.134 conversas, template idêntico ao do Ollama; treino no Colab **pendente** |
 | [RAG](#rag) | BM25 (FTS5), vetorial (sqlite-vec) e híbrido (RRF), com citação de fonte |
 | [Observabilidade](#observabilidade) | latência, tokens e ferramentas por requisição; logs JSON com `request_id` |
+| [Servidor MCP](#servidor-mcp) | ferramentas do Jarvis no Claude Desktop/Code por stdio; só leitura por padrão, mesmas checagens do `security.py` |
 | [Engenharia](#engenharia) | testes, ruff, GitHub Actions, Docker, segurança |
 
 <!-- GIF de demonstração: ver "Gravar o GIF de demonstração" em Engenharia. Quando existir:
@@ -412,21 +414,61 @@ Com `JARVIS_LOG_LEVEL=DEBUG` sai também uma linha `ferramenta executada` por ch
 
 ---
 
+## Servidor MCP
+
+O Jarvis também é um servidor [MCP](https://modelcontextprotocol.io): o módulo opcional
+[`jarvis/mcp_server.py`](jarvis/mcp_server.py) expõe as ferramentas do bot por **stdio** para
+Claude Desktop, Claude Code ou qualquer cliente MCP, com o SDK oficial em Python. Guia
+completo, com a configuração dos clientes: [`docs/mcp.md`](docs/mcp.md).
+
+- **Sem duplicar nada:** cada ferramenta vira um `Tool` MCP com o mesmo nome, descrição e
+  JSON Schema do `ToolRegistry`, e `tools/call` vai pelo mesmo `ToolRegistry.execute` do
+  agente — logo pelas mesmas checagens do `security.py` (pastas permitidas, arquivos de
+  credenciais, comandos destrutivos, SSRF), pelo `audit.log` e pelas métricas
+  (`source="mcp"`, aparecem no `/metrics`).
+- **Só leitura por padrão:** `read_file`, `list_dir`, `search_files`, `find_files`,
+  `read_pdf`, `read_docx`, `read_image`, `knowledge_search` (RAG), `web_search` e `web_fetch`.
+  O que escreve, executa, envia ou mexe em dinheiro exige **duas chaves**: o nome em
+  `JARVIS_MCP_TOOLS` **e** `JARVIS_MCP_ALLOW_UNSAFE=true`. Ferramenta fora da allowlist não
+  aparece e, se chamada, é recusada antes do registro.
+- **Python:** o SDK `mcp` exige 3.10+, o bot segue em 3.8. O servidor tem dependência
+  própria ([`requirements-mcp.txt`](requirements-mcp.txt)) e só importa o SDK quando sobe;
+  a allowlist é testada em 3.8 e o protocolo (inclusive por stdio, com o cliente do SDK)
+  num job de CI em 3.12.
+
+```bash
+uv venv --python 3.12 .venv-mcp
+uv pip install --python .venv-mcp -r requirements.txt -r requirements-mcp.txt
+.venv-mcp/bin/python -m jarvis.mcp_server --check     # o que fica exposto e por quê
+
+# Claude Code (Claude Desktop: ver docs/mcp.md)
+claude mcp add jarvis --env PYTHONPATH="$PWD" -- "$PWD/.venv-mcp/bin/python" -m jarvis.mcp_server
+```
+
+Exemplo real (cliente do SDK por stdio, `.env` padrão): `knowledge_search` devolve os trechos
+com a fonte; `read_file` em `C:\Windows\win.ini` volta com `isError` e a mensagem do
+`security.py` ("caminho fora das pastas permitidas"); `run_shell` volta "não está exposta
+neste servidor MCP". Pendências: [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#mcp-subprojeto-6).
+
+---
+
 ## Engenharia
 
 O que sustenta os números acima e deixa o projeto fácil de rodar e de auditar.
 
-- **Testes:** 373 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
+- **Testes:** 422 testes `pytest` que rodam **sem Ollama** (LLM e embeddings falsos; o
   `conftest` aponta o Ollama para uma porta descartável): parsing das chamadas de ferramenta,
   segurança, RAG (BM25, vetorial, híbrido, queda para NumPy), métricas, avaliações, sanitizador,
-  dataset do fine-tuning e o template do `qwen2.5`. Mais o `scripts/smoke_test.py`, que exercita
+  dataset do fine-tuning, o template do `qwen2.5` e o servidor MCP (416 em Python 3.8; os 6
+  do protocolo MCP pedem o SDK, Python 3.10+). Mais o `scripts/smoke_test.py`, que exercita
   as ferramentas reais (arquivos, terminal, git, PDF/DOCX, lembretes, briefing, laço do agente)
   com um LLM roteirizado.
 - **Lint:** [ruff](https://docs.astral.sh/ruff/) com alvo Python 3.8 (`E`, `W`, `F`, `I`, `B`,
   `UP`), configurado em [`pyproject.toml`](pyproject.toml) com cada exceção justificada.
 - **CI:** [GitHub Actions](.github/workflows/ci.yml) em todo push e PR — ruff, `pytest` e o
   smoke test em Python 3.8 e 3.12 (`ubuntu-latest`). No Linux o smoke test executa o
-  `run_shell` de verdade.
+  `run_shell` de verdade. Um job à parte em 3.12 instala o SDK do MCP e roda os testes do
+  servidor, inclusive a integração por stdio.
 - **Docker:** [`Dockerfile`](Dockerfile) (Python 3.11 slim, usuário sem privilégios, sem
   segredos na imagem) e [`docker-compose.yml`](docker-compose.yml) com o Jarvis e o Ollama
   oficial; GPU opcional. Ver [Rodar com Docker](#rodar-com-docker).
@@ -913,6 +955,10 @@ OCR requer `tesseract` instalado. O resto funciona sem ele.
   poderoso. Se quiser desligar, use `JARVIS_SHELL_ENABLED=false`.
 - `.env`, `credentials.json`, `token.json` e o banco SQLite estão no `.gitignore`.
 - O bot usa **long polling**: não abre porta na sua rede.
+- O **servidor MCP** (opcional) fala por stdio, sem porta, e expõe só ferramentas de leitura
+  por padrão; as que escrevem/executam/enviam exigem `JARVIS_MCP_TOOLS` **e**
+  `JARVIS_MCP_ALLOW_UNSAFE=true`, e passam pelas mesmas travas acima. Ver
+  [`docs/mcp.md`](docs/mcp.md).
 - O Jarvis pede confirmação antes de ações irreversíveis (o modelo é instruído a isso,
   mas os bloqueios acima são a rede de segurança).
 
@@ -1014,6 +1060,7 @@ jarvis/
 │   ├── metrics_utils.py     # percentis e tokens/s (avaliações e métricas)
 │   ├── logging_setup.py     # logs em texto ou JSON
 │   ├── telegram_bot.py      # bot, autorização, comandos, voz, documentos
+│   ├── mcp_server.py        # servidor MCP (stdio, opcional, Python 3.10+)
 │   └── tools/
 │       ├── system.py        # terminal e arquivos
 │       ├── dev.py           # git e GitHub
@@ -1045,8 +1092,9 @@ jarvis/
 │   ├── jarvis-reindex.service
 │   └── jarvis-reindex.timer
 ├── tests/                   # pytest sem Ollama
+├── docs/mcp.md              # servidor MCP: clientes, allowlist, segurança
 ├── docs/superpowers/specs/  # especificação de cada subprojeto
-├── .github/workflows/ci.yml # ruff + pytest + smoke (Python 3.8 e 3.12)
+├── .github/workflows/ci.yml # ruff + pytest + smoke (3.8 e 3.12) + MCP (3.12)
 ├── Dockerfile
 ├── docker-compose.yml       # Jarvis + Ollama
 ├── docker-compose.gpu.yml   # GPU NVIDIA (opcional)
@@ -1056,6 +1104,7 @@ jarvis/
 ├── requirements.txt
 ├── requirements-voice.txt
 ├── requirements-evals.txt
+├── requirements-mcp.txt     # SDK do MCP (Python 3.10+)
 ├── LICENSE
 └── .env.example
 ```
