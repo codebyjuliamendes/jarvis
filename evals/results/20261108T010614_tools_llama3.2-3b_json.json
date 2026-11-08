@@ -1,0 +1,2508 @@
+{
+  "kind": "tool_selection",
+  "model": "llama3.2:3b",
+  "mode": "json",
+  "effective_mode": "json",
+  "dataset": "evals/data/tool_selection.jsonl",
+  "dataset_sha256": "a0afd6d2936e",
+  "n_tools": 25,
+  "seed": 42,
+  "num_ctx": 8192,
+  "warmup_s": 2.135250600000063,
+  "meta": {
+    "timestamp": "2026-11-08T01:06:14-03:00",
+    "git_commit": "f66b0f7",
+    "python": "3.8.20",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+    "ollama": {
+      "url": "http://127.0.0.1:11434",
+      "version": "0.40.14"
+    }
+  },
+  "metrics": {
+    "n": 78,
+    "tool_accuracy": 0.48717948717948717,
+    "tool_hits": 38,
+    "args_accuracy": 0.2459016393442623,
+    "args_hits": 15,
+    "args_n": 61,
+    "args_accuracy_given_tool": 0.5555555555555556,
+    "args_hits_given_tool": 15,
+    "args_n_given_tool": 27,
+    "invalid_json_rate": 0.3076923076923077,
+    "invalid_json": 24,
+    "leaked_calls": 0,
+    "unknown_tool_calls": 5,
+    "errors": 0,
+    "latency_s": {
+      "n": 78,
+      "mean": 0.9165472256410272,
+      "p50": 0.8654645500000129,
+      "p95": 1.5602657549999792,
+      "min": 0.3039929999999913,
+      "max": 2.8314274000000523
+    },
+    "tokens_per_s": 60.34670867281706,
+    "mean_prompt_tokens": 5477.384615384615,
+    "by_category": {
+      "ambiguo": {
+        "n": 8,
+        "hits": 5,
+        "accuracy": 0.625
+      },
+      "direto": {
+        "n": 62,
+        "hits": 28,
+        "accuracy": 0.45161290322580644
+      },
+      "sem_ferramenta": {
+        "n": 8,
+        "hits": 5,
+        "accuracy": 0.625
+      }
+    },
+    "errors_by_pair": {
+      "google -> None": 4,
+      "reminder -> None": 4,
+      "git -> None": 3,
+      "microsoft -> google": 3,
+      "write_file -> None": 2,
+      "obsidian -> None": 2,
+      "notion -> None": 2,
+      "knowledge_search -> None": 2,
+      "run_shell -> pytest": 1,
+      "run_shell -> pip": 1,
+      "run_shell -> find_files": 1,
+      "run_shell -> python": 1,
+      "replace_in_file -> find_files": 1,
+      "replace_in_file -> None": 1,
+      "search_files -> None": 1,
+      "find_files -> list_dir": 1,
+      "github -> None": 1,
+      "microsoft -> teams": 1,
+      "web_search -> web_fetch": 1,
+      "web_fetch -> None": 1,
+      "send_file -> None": 1,
+      "speak -> None": 1,
+      "knowledge_search -> knowledge_index": 1,
+      "None -> google": 1,
+      "None -> obsidian": 1,
+      "None -> python": 1
+    }
+  },
+  "records": [
+    {
+      "id": "ts-001",
+      "category": "direto",
+      "prompt": "roda os testes do projeto com pytest",
+      "expected_tool": "run_shell",
+      "predicted": "pytest",
+      "args": {
+        "cov": "80",
+        "cov_report": "term-missing",
+        "cov_file": "test_results.xml"
+      },
+      "error": null,
+      "latency_s": 0.7400900999999749,
+      "timings": {
+        "total_s": 0.7119895,
+        "load_s": 0.0293233,
+        "prompt_eval_count": 5473.0,
+        "prompt_eval_s": 0.025895,
+        "eval_count": 35.0,
+        "eval_s": 0.601329,
+        "tokens_per_s": 58.20441056393422
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": true,
+      "content": "{\"tool\": \"pytest\", \"args\": {\"cov\": \"80\", \"cov_report\": \"term-missing\", \"cov_file\": \"test_results.xml\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-002",
+      "category": "direto",
+      "prompt": "instala a biblioteca requests no ambiente com pip",
+      "expected_tool": "run_shell",
+      "predicted": "pip",
+      "args": {
+        "install": "requests"
+      },
+      "error": null,
+      "latency_s": 0.36964530000000195,
+      "timings": {
+        "total_s": 0.3348671,
+        "load_s": 0.0202081,
+        "prompt_eval_count": 5474.0,
+        "prompt_eval_s": 0.022281,
+        "eval_count": 16.0,
+        "eval_s": 0.25193,
+        "tokens_per_s": 63.50970507680705
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": true,
+      "content": "{\"tool\": \"pip\", \"args\": {\"install\": \"requests\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-003",
+      "category": "direto",
+      "prompt": "quanto espaço livre tem no disco? usa o df -h",
+      "expected_tool": "run_shell",
+      "predicted": "find_files",
+      "args": {
+        "name": "df -h",
+        "path": "/",
+        "max_results": 1
+      },
+      "error": null,
+      "latency_s": 0.6336665000000039,
+      "timings": {
+        "total_s": 0.589934,
+        "load_s": 0.0296349,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.023295,
+        "eval_count": 30.0,
+        "eval_s": 0.489325,
+        "tokens_per_s": 61.30894599703673
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"df -h\", \"path\": \"/\", \"max_results\": 1}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-004",
+      "category": "direto",
+      "prompt": "qual é a versão do Python instalada nesta máquina? roda o comando pra ver",
+      "expected_tool": "run_shell",
+      "predicted": "python",
+      "args": {
+        "-V": ""
+      },
+      "error": null,
+      "latency_s": 0.38906730000007883,
+      "timings": {
+        "total_s": 0.3535225,
+        "load_s": 0.0261099,
+        "prompt_eval_count": 5483.0,
+        "prompt_eval_s": 0.02487,
+        "eval_count": 16.0,
+        "eval_s": 0.249848,
+        "tokens_per_s": 64.03893567288912
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": true,
+      "content": "{\"tool\": \"python\", \"args\": {\"-V\": \"\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-005",
+      "category": "direto",
+      "prompt": "abre o arquivo notas/ideias.txt e me mostra o conteúdo",
+      "expected_tool": "read_file",
+      "predicted": "read_file",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\notas\\ideias.txt",
+        "start_line": "1",
+        "end_line": "null"
+      },
+      "error": null,
+      "latency_s": 1.246023500000092,
+      "timings": {
+        "total_s": 1.2264608,
+        "load_s": 0.0168887,
+        "prompt_eval_count": 5479.0,
+        "prompt_eval_s": 0.023733,
+        "eval_count": 69.0,
+        "eval_s": 1.144048,
+        "tokens_per_s": 60.312154734766374
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\notas\\\\ideias.txt\", \"start_line\": \"1\", \"end_line\": \"null\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-006",
+      "category": "direto",
+      "prompt": "lê as linhas 10 a 30 do jarvis/agent.py",
+      "expected_tool": "read_file",
+      "predicted": "read_file",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrão\\AppData\\Local\\Temp\\tmpr7t3wjvj\\jarvis/agent.py",
+        "start_line": "10",
+        "end_line": "30"
+      },
+      "error": null,
+      "latency_s": 1.220727399999987,
+      "timings": {
+        "total_s": 1.1965465,
+        "load_s": 0.0153545,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 0.023436,
+        "eval_count": 67.0,
+        "eval_s": 1.113811,
+        "tokens_per_s": 60.15383220312961
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\jarvis/agent.py\", \"start_line\": \"10\", \"end_line\": \"30\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-007",
+      "category": "direto",
+      "prompt": "cria um arquivo todo.md com o texto '- comprar café'",
+      "expected_tool": "write_file",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.3648139000000583,
+      "timings": {
+        "total_s": 1.3095086,
+        "load_s": 0.0203095,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.023288,
+        "eval_count": 71.0,
+        "eval_s": 1.180182,
+        "tokens_per_s": 60.16021257738213
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"write_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\todo.md\", \"content\": \"- comprar \\u00e7\\u00e3\", \"create_dirs\": \"true\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-008",
+      "category": "direto",
+      "prompt": "salva num arquivo chamado lista_compras.txt: arroz, feijão e ovos",
+      "expected_tool": "write_file",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.3783277999999655,
+      "timings": {
+        "total_s": 1.3564927,
+        "load_s": 0.0233156,
+        "prompt_eval_count": 5484.0,
+        "prompt_eval_s": 0.024293,
+        "eval_count": 76.0,
+        "eval_s": 1.267309,
+        "tokens_per_s": 59.96958910573507
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"write_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\lista_compras.txt\", \"content\": \"arroz, feij\\u00e3o e ovos\", \"create_dirs\": \"true\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-009",
+      "category": "direto",
+      "prompt": "no arquivo config.yaml troca 'debug: true' por 'debug: false'",
+      "expected_tool": "replace_in_file",
+      "predicted": "find_files",
+      "args": {
+        "name": "config.yaml",
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmppr7t3wjvj",
+        "max_results": "1"
+      },
+      "error": null,
+      "latency_s": 1.2127326999999468,
+      "timings": {
+        "total_s": 1.1631237,
+        "load_s": 0.0599768,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.024582,
+        "eval_count": 62.0,
+        "eval_s": 1.020355,
+        "tokens_per_s": 60.763165760936154
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"config.yaml\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\", \"max_results\": \"1\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-010",
+      "category": "direto",
+      "prompt": "corrige o erro de digitação 'recieve' para 'receive' no README.md",
+      "expected_tool": "replace_in_file",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.2458314000000428,
+      "timings": {
+        "total_s": 1.1900278,
+        "load_s": 0.0465928,
+        "prompt_eval_count": 5483.0,
+        "prompt_eval_s": 0.027104,
+        "eval_count": 62.0,
+        "eval_s": 1.030982,
+        "tokens_per_s": 60.13684041040484
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_file\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\README.md\", \"start_line\": \"1\", \"end_line\": \"1\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-011",
+      "category": "direto",
+      "prompt": "o que tem dentro da pasta Downloads?",
+      "expected_tool": "list_dir",
+      "predicted": "list_dir",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj"
+      },
+      "error": null,
+      "latency_s": 0.936362200000076,
+      "timings": {
+        "total_s": 0.8954947,
+        "load_s": 0.0316612,
+        "prompt_eval_count": 5472.0,
+        "prompt_eval_s": 0.023569,
+        "eval_count": 48.0,
+        "eval_s": 0.789411,
+        "tokens_per_s": 60.80482790333553
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-012",
+      "category": "direto",
+      "prompt": "lista os arquivos da pasta src",
+      "expected_tool": "list_dir",
+      "predicted": "list_dir",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj"
+      },
+      "error": null,
+      "latency_s": 0.9564600999999584,
+      "timings": {
+        "total_s": 0.9132966,
+        "load_s": 0.0326234,
+        "prompt_eval_count": 5471.0,
+        "prompt_eval_s": 0.023507,
+        "eval_count": 48.0,
+        "eval_s": 0.793435,
+        "tokens_per_s": 60.49644898447888
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-013",
+      "category": "direto",
+      "prompt": "procura onde aparece 'TODO' no código do projeto",
+      "expected_tool": "search_files",
+      "predicted": "search_files",
+      "args": {},
+      "error": null,
+      "latency_s": 1.0202472000000853,
+      "timings": {
+        "total_s": 0.9478288,
+        "load_s": 0.0169812,
+        "prompt_eval_count": 5476.0,
+        "prompt_eval_s": 0.023314,
+        "eval_count": 52.0,
+        "eval_s": 0.858305,
+        "tokens_per_s": 60.58452414934085
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"search_files\", \"pattern\": \"TODO\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Documents\\\\projeto\", \"glob\": \"\", \"max_results\": 5}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "pattern"
+      ]
+    },
+    {
+      "id": "ts-014",
+      "category": "direto",
+      "prompt": "em quais arquivos eu uso a função parse_when?",
+      "expected_tool": "search_files",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.0918626999999788,
+      "timings": {
+        "total_s": 1.0556427,
+        "load_s": 0.0162692,
+        "prompt_eval_count": 5476.0,
+        "prompt_eval_s": 0.024619,
+        "eval_count": 58.0,
+        "eval_s": 0.959088,
+        "tokens_per_s": 60.47411707789066
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "A função `parse_when` é usada em arquivos de texto, como planilhas CSV, planilhas XLSX, planilhas TSV, documentos Word, documentos PDF, e outros arquivos de texto que contenham informações em formato de data e hora.",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-015",
+      "category": "direto",
+      "prompt": "acha todos os arquivos PDF na minha pasta Documentos",
+      "expected_tool": "find_files",
+      "predicted": "find_files",
+      "args": {
+        "name": "*.pdf",
+        "path": "C:\\Users\\JuliaCristinaSerrão\\Documents",
+        "max_results": "100"
+      },
+      "error": null,
+      "latency_s": 0.9320857999999816,
+      "timings": {
+        "total_s": 0.8973774,
+        "load_s": 0.0300471,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.024363,
+        "eval_count": 47.0,
+        "eval_s": 0.779649,
+        "tokens_per_s": 60.28353784844205
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Documents\", \"max_results\": \"100\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-016",
+      "category": "direto",
+      "prompt": "onde está o arquivo chamado orcamento_2026.xlsx?",
+      "expected_tool": "find_files",
+      "predicted": "list_dir",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrão\\Desktop"
+      },
+      "error": null,
+      "latency_s": 0.7047264999999925,
+      "timings": {
+        "total_s": 0.674462,
+        "load_s": 0.0358289,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.02383,
+        "eval_count": 34.0,
+        "eval_s": 0.556027,
+        "tokens_per_s": 61.14810971409661
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"list_dir\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Desktop\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-017",
+      "category": "direto",
+      "prompt": "qual o status do git nesse repositório?",
+      "expected_tool": "git",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.8659898000000794,
+      "timings": {
+        "total_s": 0.8361539,
+        "load_s": 0.0184177,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.023788,
+        "eval_count": 46.0,
+        "eval_s": 0.755792,
+        "tokens_per_s": 60.86330630649702
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"git\", \"args\": [\"status\"], \"cwd\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-018",
+      "category": "direto",
+      "prompt": "mostra os últimos 5 commits do repositório local",
+      "expected_tool": "git",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.537943700000028,
+      "timings": {
+        "total_s": 0.4923223,
+        "load_s": 0.0332023,
+        "prompt_eval_count": 5476.0,
+        "prompt_eval_s": 0.024227,
+        "eval_count": 23.0,
+        "eval_s": 0.375225,
+        "tokens_per_s": 61.29655540009328
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"git\", \"args\": [\"status\", \"--short\", \"HEAD~5..HEAD\"]}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-019",
+      "category": "direto",
+      "prompt": "faz commit das mudanças com a mensagem 'corrige bug do login'",
+      "expected_tool": "git",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5436187000000245,
+      "timings": {
+        "total_s": 0.5097797,
+        "load_s": 0.0277572,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.026566,
+        "eval_count": 23.0,
+        "eval_s": 0.373038,
+        "tokens_per_s": 61.65591709155636
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"git\", \"args\": [\"commit\", \"-m\", \"corrige bug do login\"]}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-020",
+      "category": "direto",
+      "prompt": "lista as issues abertas do repositório julia/jarvis no GitHub",
+      "expected_tool": "github",
+      "predicted": "github",
+      "args": {
+        "action": "list_issues",
+        "repo": "juliacristinasserrao/jarvis",
+        "state": "open",
+        "limit": "100"
+      },
+      "error": null,
+      "latency_s": 0.8828738999999359,
+      "timings": {
+        "total_s": 0.8539657,
+        "load_s": 0.0375492,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 0.023683,
+        "eval_count": 45.0,
+        "eval_s": 0.733881,
+        "tokens_per_s": 61.31784308355169
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"list_issues\", \"repo\": \"juliacristinasserrao/jarvis\", \"state\": \"open\", \"limit\": \"100\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "repo"
+      ]
+    },
+    {
+      "id": "ts-021",
+      "category": "direto",
+      "prompt": "quais pull requests estão abertos no meu repositório do GitHub?",
+      "expected_tool": "github",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.2695095999999921,
+      "timings": {
+        "total_s": 1.2442825,
+        "load_s": 0.0250615,
+        "prompt_eval_count": 5479.0,
+        "prompt_eval_s": 0.024824,
+        "eval_count": 70.0,
+        "eval_s": 1.148677,
+        "tokens_per_s": 60.93967233608752
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"github\", \"args\": [\"list_repos\", \"JuliaCristinaSerrãoM\", \"open\"], \"repo\": \"JuliaCristinaSerrãoM\", \"number\": null, \"title\": null, \"body\": null, \"state\": \"open\", \"limit\": 10}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-022",
+      "category": "direto",
+      "prompt": "abre uma issue no GitHub com o título 'Bot não responde áudio'",
+      "expected_tool": "github",
+      "predicted": "github",
+      "args": {
+        "action": "create_issue",
+        "repo": "juliacristinasserrao",
+        "title": "Bot não responde áudio",
+        "body": "Nção obteve resposta de áudio",
+        "number": "1"
+      },
+      "error": null,
+      "latency_s": 1.517024699999979,
+      "timings": {
+        "total_s": 1.4762469,
+        "load_s": 0.0253183,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.026209,
+        "eval_count": 82.0,
+        "eval_s": 1.359914,
+        "tokens_per_s": 60.29793060443528
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"github\", \"args\": {\"action\": \"create_issue\", \"repo\": \"juliacristinasserrao\", \"title\": \"Bot n\\u00e3o responde \\u00e1udio\", \"body\": \"N\\u00e7\\u00e3o obteve resposta de \\u00e1udio\", \"number\": \"1\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-023",
+      "category": "direto",
+      "prompt": "busca no meu Obsidian as notas sobre meditação",
+      "expected_tool": "obsidian",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.200421600000027,
+      "timings": {
+        "total_s": 1.1634768,
+        "load_s": 0.0341556,
+        "prompt_eval_count": 5476.0,
+        "prompt_eval_s": 0.030754,
+        "eval_count": 62.0,
+        "eval_s": 1.028814,
+        "tokens_per_s": 60.26356562021902
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"search\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\", \"query\": \"medita\\u00e7\\u00e3o\", \"k\": 5}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-024",
+      "category": "direto",
+      "prompt": "acrescenta na nota diario.md do Obsidian: hoje corri 5 km",
+      "expected_tool": "obsidian",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.0494261000000051,
+      "timings": {
+        "total_s": 1.0147018,
+        "load_s": 0.028352,
+        "prompt_eval_count": 5483.0,
+        "prompt_eval_s": 0.025519,
+        "eval_count": 55.0,
+        "eval_s": 0.905208,
+        "tokens_per_s": 60.75951604493111
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"append\", \"path\": \"C:/Users/JuliaCristinaSerrãoM/AppData/Local/Temp/tmpr7t3wjvj/diario.md\", \"content\": \"Hoje corri 5 km.\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-025",
+      "category": "direto",
+      "prompt": "lista as notas da pasta Projetos no Obsidian",
+      "expected_tool": "obsidian",
+      "predicted": "obsidian",
+      "args": {
+        "action": "list",
+        "path": "Projetos"
+      },
+      "error": null,
+      "latency_s": 0.5492214000000786,
+      "timings": {
+        "total_s": 0.521196,
+        "load_s": 0.0257684,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.025119,
+        "eval_count": 25.0,
+        "eval_s": 0.406682,
+        "tokens_per_s": 61.47309199817056
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"obsidian\", \"args\": {\"action\": \"list\", \"path\": \"Projetos\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "folder"
+      ]
+    },
+    {
+      "id": "ts-026",
+      "category": "direto",
+      "prompt": "procura no Notion a página do planejamento de 2027",
+      "expected_tool": "notion",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5481871000000638,
+      "timings": {
+        "total_s": 0.5192824,
+        "load_s": 0.031022,
+        "prompt_eval_count": 5479.0,
+        "prompt_eval_s": 0.025495,
+        "eval_count": 25.0,
+        "eval_s": 0.397394,
+        "tokens_per_s": 62.90985772306577
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"notion\", \"query\": \"planejamento 2027\", \"limit\": 10}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-027",
+      "category": "direto",
+      "prompt": "cria uma página no Notion chamada 'Ideias de viagem'",
+      "expected_tool": "notion",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.8536338000000114,
+      "timings": {
+        "total_s": 0.8249472,
+        "load_s": 0.0166417,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 0.026634,
+        "eval_count": 44.0,
+        "eval_s": 0.724389,
+        "tokens_per_s": 60.74084504320193
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"create_page\", \"query\": \"Ideias de viagem\", \"parent_page_id\": \"\", \"title\": \"Ideias de viagem\", \"content\": \"\", \"limit\": 0}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-028",
+      "category": "direto",
+      "prompt": "lê a planilha vendas.xlsx e me diz o total do mês",
+      "expected_tool": "spreadsheet",
+      "predicted": "spreadsheet",
+      "args": {},
+      "error": null,
+      "latency_s": 1.122891299999992,
+      "timings": {
+        "total_s": 1.0958953,
+        "load_s": 0.0221773,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 0.03667,
+        "eval_count": 56.0,
+        "eval_s": 0.92933,
+        "tokens_per_s": 60.25846577641957
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"spreadsheet\", \"action\": \"read\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Desktop\\\\vendas.xlsx\", \"sheet\": \"Vendas\", \"max_rows\": 1000}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "action",
+        "path"
+      ]
+    },
+    {
+      "id": "ts-029",
+      "category": "direto",
+      "prompt": "abre a aba 2027 da planilha orcamento.xlsx",
+      "expected_tool": "spreadsheet",
+      "predicted": "spreadsheet",
+      "args": {},
+      "error": null,
+      "latency_s": 1.0735892999999805,
+      "timings": {
+        "total_s": 1.0303103,
+        "load_s": 0.0280428,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.025286,
+        "eval_count": 56.0,
+        "eval_s": 0.922693,
+        "tokens_per_s": 60.69190944333597
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"spreadsheet\", \"action\": \"read\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Desktop\\\\orcamento.xlsx\", \"sheet\": \"2027\", \"max_rows\": \"1000\"}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path",
+        "sheet"
+      ]
+    },
+    {
+      "id": "ts-030",
+      "category": "direto",
+      "prompt": "o que tenho na minha agenda do Google nos próximos 3 dias?",
+      "expected_tool": "google",
+      "predicted": "google",
+      "args": {
+        "action": "calendar_list",
+        "days": "3",
+        "limit": "10"
+      },
+      "error": null,
+      "latency_s": 0.6479104000000007,
+      "timings": {
+        "total_s": 0.595803,
+        "load_s": 0.0332807,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.025043,
+        "eval_count": 29.0,
+        "eval_s": 0.473553,
+        "tokens_per_s": 61.23918547659924
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"google\", \"args\": {\"action\": \"calendar_list\", \"days\": \"3\", \"limit\": \"10\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-031",
+      "category": "direto",
+      "prompt": "procura no Gmail os e-mails da Receita Federal",
+      "expected_tool": "google",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5477115999999569,
+      "timings": {
+        "total_s": 0.5233396,
+        "load_s": 0.0218216,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.023798,
+        "eval_count": 26.0,
+        "eval_s": 0.416469,
+        "tokens_per_s": 62.429616610119844
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"gmail_search\", \"query\": \"re\\u00e7a federal\", \"limit\": 10}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-032",
+      "category": "direto",
+      "prompt": "marca no Google Agenda uma reunião com o Pedro amanhã às 15h",
+      "expected_tool": "google",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 2.5741815999999744,
+      "timings": {
+        "total_s": 2.5520216,
+        "load_s": 0.017803,
+        "prompt_eval_count": 5482.0,
+        "prompt_eval_s": 0.023978,
+        "eval_count": 138.0,
+        "eval_s": 2.470571,
+        "tokens_per_s": 55.857532529929316
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"calendar_create\", \"summary\": \"Reuni\\u00e3o com Pedro\", \"start\": \"2026-11-20 15:00:00\", \"end\": \"2026-11-20 15:30:00\", \"attendees\": \"\", \"unread\": false, \"caption\": \"Reuni\\u00e3o com Pedro amanh\\u00e7\\u00e3o \\u00e0s 15h\", \"to\": \"\", \"subject\": \"Reuni\\u00e3o com Pedro\", \"body\": \"\", \"team_id\": \"\", \"channel_id\": \"\", \"chat_id\": \"\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-033",
+      "category": "direto",
+      "prompt": "tenho e-mails não lidos no Outlook?",
+      "expected_tool": "microsoft",
+      "predicted": "google",
+      "args": {
+        "query": "from:JuliaCristinaSerrão is:unread",
+        "message_id": "",
+        "to": "",
+        "subject": "",
+        "body": "",
+        "limit": "100"
+      },
+      "error": null,
+      "latency_s": 1.1697987000000012,
+      "timings": {
+        "total_s": 1.1319612,
+        "load_s": 0.0168739,
+        "prompt_eval_count": 5474.0,
+        "prompt_eval_s": 0.023254,
+        "eval_count": 62.0,
+        "eval_s": 1.045277,
+        "tokens_per_s": 59.31442096209904
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"google\", \"action\": \"gmail_read\", \"args\": {\"query\": \"from:JuliaCristinaSerr\\u00e3o is:unread\", \"message_id\": \"\", \"to\": \"\", \"subject\": \"\", \"body\": \"\", \"limit\": \"100\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-034",
+      "category": "direto",
+      "prompt": "quais são minhas reuniões no calendário do Outlook esta semana?",
+      "expected_tool": "microsoft",
+      "predicted": "google",
+      "args": {
+        "action": "calendar_list",
+        "days": "7",
+        "limit": "10",
+        "summary": "Reuniões do calendário do Outlook"
+      },
+      "error": null,
+      "latency_s": 0.8390051000000085,
+      "timings": {
+        "total_s": 0.7689953,
+        "load_s": 0.0177074,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 0.023765,
+        "eval_count": 42.0,
+        "eval_s": 0.685411,
+        "tokens_per_s": 61.27710235172765
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"google\", \"args\": {\"action\": \"calendar_list\", \"days\": \"7\", \"limit\": \"10\", \"summary\": \"Reuniões do calendário do Outlook\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-035",
+      "category": "direto",
+      "prompt": "mostra as conversas recentes dos meus chats do Teams",
+      "expected_tool": "microsoft",
+      "predicted": "teams",
+      "args": {
+        "action": "list_chats",
+        "limit": "10"
+      },
+      "error": null,
+      "latency_s": 0.6126272999999856,
+      "timings": {
+        "total_s": 0.5703126,
+        "load_s": 0.0282048,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.040333,
+        "eval_count": 24.0,
+        "eval_s": 0.415731,
+        "tokens_per_s": 57.72963767436154
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": true,
+      "content": "{\"tool\": \"teams\", \"args\": {\"action\": \"list_chats\", \"limit\": \"10\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-036",
+      "category": "direto",
+      "prompt": "manda um e-mail pelo Outlook para ana@empresa.com dizendo que o relatório está pronto",
+      "expected_tool": "microsoft",
+      "predicted": "google",
+      "args": {
+        "to": "ana@empresa.com",
+        "subject": "",
+        "body": "O relatório ç á pronto"
+      },
+      "error": null,
+      "latency_s": 1.1484296999999515,
+      "timings": {
+        "total_s": 1.0727268,
+        "load_s": 0.0280655,
+        "prompt_eval_count": 5483.0,
+        "prompt_eval_s": 0.024013,
+        "eval_count": 58.0,
+        "eval_s": 0.974001,
+        "tokens_per_s": 59.54819348234756
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"google\", \"action\": \"gmail_send\", \"args\": {\"to\": \"ana@empresa.com\", \"subject\": \"\", \"body\": \"O relatório \\u00e7 \\u00e1 pronto\", \"to\": \"ana@empresa.com\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-037",
+      "category": "direto",
+      "prompt": "quanto eu faturei no Stripe nos últimos 30 dias?",
+      "expected_tool": "stripe",
+      "predicted": "stripe",
+      "args": {
+        "action": "overview",
+        "days": "30"
+      },
+      "error": null,
+      "latency_s": 0.5000972999999931,
+      "timings": {
+        "total_s": 0.4703442,
+        "load_s": 0.0306376,
+        "prompt_eval_count": 5478.0,
+        "prompt_eval_s": 0.02752,
+        "eval_count": 22.0,
+        "eval_s": 0.366365,
+        "tokens_per_s": 60.04940428261433
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"stripe\", \"args\": {\"action\": \"overview\", \"days\": \"30\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "action"
+      ]
+    },
+    {
+      "id": "ts-038",
+      "category": "direto",
+      "prompt": "qual o saldo da minha conta no Stripe?",
+      "expected_tool": "stripe",
+      "predicted": "stripe",
+      "args": {
+        "action": "overview"
+      },
+      "error": null,
+      "latency_s": 0.364410399999997,
+      "timings": {
+        "total_s": 0.3410645,
+        "load_s": 0.0167615,
+        "prompt_eval_count": 5473.0,
+        "prompt_eval_s": 0.022515,
+        "eval_count": 16.0,
+        "eval_s": 0.253876,
+        "tokens_per_s": 63.022893065906196
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"stripe\", \"args\": {\"action\": \"overview\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-039",
+      "category": "direto",
+      "prompt": "lista as faturas do Stripe",
+      "expected_tool": "stripe",
+      "predicted": "stripe",
+      "args": {
+        "action": "invoices",
+        "days": "30",
+        "limit": "10",
+        "status": "paid"
+      },
+      "error": null,
+      "latency_s": 0.7463014999999587,
+      "timings": {
+        "total_s": 0.6821678,
+        "load_s": 0.0238839,
+        "prompt_eval_count": 5470.0,
+        "prompt_eval_s": 0.023634,
+        "eval_count": 34.0,
+        "eval_s": 0.571242,
+        "tokens_per_s": 59.51943309490549
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"stripe\", \"args\": {\"action\": \"invoices\", \"days\": \"30\", \"limit\": \"10\", \"status\": \"paid\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-040",
+      "category": "direto",
+      "prompt": "pesquisa na internet as notícias de hoje sobre inteligência artificial",
+      "expected_tool": "web_search",
+      "predicted": "web_search",
+      "args": {
+        "query": "notícias de hoje sobre inteligência artificial",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 0.7832462000000078,
+      "timings": {
+        "total_s": 0.7184974,
+        "load_s": 0.0236746,
+        "prompt_eval_count": 5478.0,
+        "prompt_eval_s": 0.02481,
+        "eval_count": 38.0,
+        "eval_s": 0.623284,
+        "tokens_per_s": 60.96739207167199
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"web_search\", \"args\": {\"query\": \"not\\u00edcias de hoje sobre intelig\\u00eancia artificial\", \"max_results\": \"5\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-041",
+      "category": "direto",
+      "prompt": "qual a cotação do dólar agora?",
+      "expected_tool": "web_search",
+      "predicted": "web_fetch",
+      "args": {},
+      "error": null,
+      "latency_s": 0.7250784999999951,
+      "timings": {
+        "total_s": 0.669258,
+        "load_s": 0.0390943,
+        "prompt_eval_count": 5474.0,
+        "prompt_eval_s": 0.023632,
+        "eval_count": 33.0,
+        "eval_s": 0.534097999,
+        "tokens_per_s": 61.78641384499926
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"web_fetch\", \"url\": \"https://current.com/dolar/real-time-exchange-rate\", \"max_chars\": 8000}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-042",
+      "category": "direto",
+      "prompt": "procura na web a documentação do FastAPI sobre injeção de dependências",
+      "expected_tool": "web_search",
+      "predicted": "web_search",
+      "args": {},
+      "error": null,
+      "latency_s": 0.5382436999999527,
+      "timings": {
+        "total_s": 0.5077551,
+        "load_s": 0.0236525,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.023349,
+        "eval_count": 25.0,
+        "eval_s": 0.411822,
+        "tokens_per_s": 60.70583893041168
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"web_search\", \"query\": \"FastAPI dependency injection documentation\", \"max_results\": 5}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "query"
+      ]
+    },
+    {
+      "id": "ts-043",
+      "category": "direto",
+      "prompt": "lê o conteúdo da página https://docs.python.org/3/whatsnew/3.13.html",
+      "expected_tool": "web_fetch",
+      "predicted": "web_fetch",
+      "args": {
+        "url": "https://docs.python.org/3/whatsnew/3.13.html",
+        "max_chars": "8000"
+      },
+      "error": null,
+      "latency_s": 0.8161890000000085,
+      "timings": {
+        "total_s": 0.7690715,
+        "load_s": 0.0256442,
+        "prompt_eval_count": 5487.0,
+        "prompt_eval_s": 0.02618,
+        "eval_count": 40.0,
+        "eval_s": 0.660954,
+        "tokens_per_s": 60.51858374410322
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"web_fetch\", \"args\": {\"url\": \"https://docs.python.org/3/whatsnew/3.13.html\", \"max_chars\": \"8000\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-044",
+      "category": "direto",
+      "prompt": "resume esse artigo pra mim: https://exemplo.com.br/blog/produtividade",
+      "expected_tool": "web_fetch",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.6948558999999932,
+      "timings": {
+        "total_s": 0.6710337,
+        "load_s": 0.0176978,
+        "prompt_eval_count": 5483.0,
+        "prompt_eval_s": 0.023854,
+        "eval_count": 34.0,
+        "eval_s": 0.597346,
+        "tokens_per_s": 56.918435881381974
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "Não posso acessar links externos. Você gostaria de que eu busque por um resumo do artigo \"Produtividade\" no Google?",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-045",
+      "category": "direto",
+      "prompt": "me manda aqui no Telegram o arquivo relatorio_mensal.pdf",
+      "expected_tool": "send_file",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.999914600000011,
+      "timings": {
+        "total_s": 0.9579653,
+        "load_s": 0.0140983,
+        "prompt_eval_count": 5478.0,
+        "prompt_eval_s": 0.023453,
+        "eval_count": 53.0,
+        "eval_s": 0.878752,
+        "tokens_per_s": 60.31280725392375
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\relatorio_mensal.pdf\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-046",
+      "category": "direto",
+      "prompt": "envia pra mim o backup.zip que está na pasta backups",
+      "expected_tool": "send_file",
+      "predicted": "send_file",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\backup.zip"
+      },
+      "error": null,
+      "latency_s": 0.8649392999999463,
+      "timings": {
+        "total_s": 0.8213522,
+        "load_s": 0.0301569,
+        "prompt_eval_count": 5476.0,
+        "prompt_eval_s": 0.024536,
+        "eval_count": 43.0,
+        "eval_s": 0.714325,
+        "tokens_per_s": 60.196689182094985
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"send_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\backup.zip\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-047",
+      "category": "direto",
+      "prompt": "lê o PDF contrato_aluguel.pdf e me diz o valor do aluguel",
+      "expected_tool": "read_pdf",
+      "predicted": "read_pdf",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\contrato_aluguel.pdf",
+        "max_pages": "1",
+        "ocr": "false"
+      },
+      "error": null,
+      "latency_s": 1.2784656999999697,
+      "timings": {
+        "total_s": 1.2500899,
+        "load_s": 0.0303957,
+        "prompt_eval_count": 5482.0,
+        "prompt_eval_s": 0.023916,
+        "eval_count": 68.0,
+        "eval_s": 1.129281,
+        "tokens_per_s": 60.21530513663119
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\contrato_aluguel.pdf\", \"max_pages\": \"1\", \"ocr\": \"false\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-048",
+      "category": "direto",
+      "prompt": "extrai o texto da apostila_calculo.pdf",
+      "expected_tool": "read_pdf",
+      "predicted": "read_pdf",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Apostila de Cálculo.pdf",
+        "max_pages": "50",
+        "ocr": "false"
+      },
+      "error": null,
+      "latency_s": 1.2063664000000927,
+      "timings": {
+        "total_s": 1.1477194,
+        "load_s": 0.0355201,
+        "prompt_eval_count": 5474.0,
+        "prompt_eval_s": 0.02746,
+        "eval_count": 61.0,
+        "eval_s": 1.008177,
+        "tokens_per_s": 60.50524858234218
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_pdf\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Documents\\\\Apostila de C\\u00e1lculo.pdf\", \"max_pages\": \"50\", \"ocr\": \"false\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-049",
+      "category": "direto",
+      "prompt": "abre o documento Word proposta_comercial.docx",
+      "expected_tool": "read_docx",
+      "predicted": "read_docx",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrão\\Proposta Comercial.docx"
+      },
+      "error": null,
+      "latency_s": 0.7803546000000097,
+      "timings": {
+        "total_s": 0.7456241,
+        "load_s": 0.0251072,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.02435,
+        "eval_count": 40.0,
+        "eval_s": 0.648754,
+        "tokens_per_s": 61.65665259867376
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_docx\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\Proposta Comercial.docx\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-050",
+      "category": "direto",
+      "prompt": "o que está escrito no arquivo ata_reuniao.docx?",
+      "expected_tool": "read_docx",
+      "predicted": "read_docx",
+      "args": {},
+      "error": null,
+      "latency_s": 0.9555315999999721,
+      "timings": {
+        "total_s": 0.9351977,
+        "load_s": 0.0148449,
+        "prompt_eval_count": 5478.0,
+        "prompt_eval_s": 0.023443,
+        "eval_count": 52.0,
+        "eval_s": 0.8477,
+        "tokens_per_s": 61.34245605756753
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_docx\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmp7t3wjvj\\\\ata_reuniao.docx\"}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": false,
+      "args_failed": [
+        "path"
+      ]
+    },
+    {
+      "id": "ts-051",
+      "category": "direto",
+      "prompt": "faz OCR do print comprovante.png",
+      "expected_tool": "read_image",
+      "predicted": "read_image",
+      "args": {
+        "path": "comprovante.png"
+      },
+      "error": null,
+      "latency_s": 0.4512119999999413,
+      "timings": {
+        "total_s": 0.4198745,
+        "load_s": 0.028799,
+        "prompt_eval_count": 5473.0,
+        "prompt_eval_s": 0.02187,
+        "eval_count": 20.0,
+        "eval_s": 0.317794,
+        "tokens_per_s": 62.93385023002322
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_image\", \"args\": {\"path\": \"comprovante.png\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-052",
+      "category": "direto",
+      "prompt": "lê o texto dessa foto do quadro: uploads/quadro_aula.jpg",
+      "expected_tool": "read_image",
+      "predicted": "read_image",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\uploads\\quadro_aula.jpg"
+      },
+      "error": null,
+      "latency_s": 1.055204099999969,
+      "timings": {
+        "total_s": 1.0145177,
+        "load_s": 0.0400526,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.023025,
+        "eval_count": 56.0,
+        "eval_s": 0.911775,
+        "tokens_per_s": 61.41866140220998
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_image\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\uploads\\\\quadro_aula.jpg\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-053",
+      "category": "direto",
+      "prompt": "me manda em áudio: bom dia, a reunião foi adiada",
+      "expected_tool": "speak",
+      "predicted": "speak",
+      "args": {
+        "text": "Bom dia, a reunião foi adiada",
+        "caption": "Reunião adiada"
+      },
+      "error": null,
+      "latency_s": 0.8904232999999522,
+      "timings": {
+        "total_s": 0.8630857,
+        "load_s": 0.0223884,
+        "prompt_eval_count": 5482.0,
+        "prompt_eval_s": 0.023177,
+        "eval_count": 47.0,
+        "eval_s": 0.780403,
+        "tokens_per_s": 60.22529385458539
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"speak\", \"args\": {\"text\": \"Bom dia, a reuni\\u00e3o foi adiada\", \"caption\": \"Reuni\\u00e3o adiada\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-054",
+      "category": "direto",
+      "prompt": "fala em voz alta a frase 'beba água'",
+      "expected_tool": "speak",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5628780000000688,
+      "timings": {
+        "total_s": 0.5204938,
+        "load_s": 0.0423102,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.037824,
+        "eval_count": 22.0,
+        "eval_s": 0.353786,
+        "tokens_per_s": 62.184484405827256
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "SPEAK {\"text\": \"beba \\u00e1gua\", \"caption\": \"\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-055",
+      "category": "direto",
+      "prompt": "nos meus documentos indexados, qual é a multa por atraso do aluguel?",
+      "expected_tool": "knowledge_search",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.9523410000000467,
+      "timings": {
+        "total_s": 0.9289097,
+        "load_s": 0.0144937,
+        "prompt_eval_count": 5485.0,
+        "prompt_eval_s": 0.025816,
+        "eval_count": 50.0,
+        "eval_s": 0.84014,
+        "tokens_per_s": 59.513890542052515
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"error\": \"Knowledge search not found\", \"message\": \"Nenhuma nota ou documento encontrado com o termo 'multa por atraso do aluguel'.\"} \n\nQual é o documento que você está procurando?",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-056",
+      "category": "direto",
+      "prompt": "procura na minha memória local o que foi decidido sobre o orçamento do condomínio",
+      "expected_tool": "knowledge_search",
+      "predicted": "knowledge_index",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Condomínio\\Orçamento",
+        "force": "false",
+        "max_files": "400"
+      },
+      "error": null,
+      "latency_s": 1.1764647999999625,
+      "timings": {
+        "total_s": 1.126896,
+        "load_s": 0.0389509,
+        "prompt_eval_count": 5485.0,
+        "prompt_eval_s": 0.024781,
+        "eval_count": 62.0,
+        "eval_s": 1.01878,
+        "tokens_per_s": 60.85710359449538
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\Documents\\\\Condom\\u00ednio\\\\Or\\u00e7amento\", \"force\": \"false\", \"max_files\": \"400\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-057",
+      "category": "direto",
+      "prompt": "indexa a pasta Documentos/faculdade para a busca semântica",
+      "expected_tool": "knowledge_index",
+      "predicted": "knowledge_index",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrão\\AppData\\Local\\Temp\\tmpr7t3wjvj\\Documentos\\faculdade"
+      },
+      "error": null,
+      "latency_s": 1.021005700000046,
+      "timings": {
+        "total_s": 0.991638,
+        "load_s": 0.027556,
+        "prompt_eval_count": 5481.0,
+        "prompt_eval_s": 0.02537,
+        "eval_count": 54.0,
+        "eval_s": 0.891326,
+        "tokens_per_s": 60.583894108328494
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3o\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\Documentos\\\\faculdade\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": true,
+      "args_failed": []
+    },
+    {
+      "id": "ts-058",
+      "category": "direto",
+      "prompt": "reindexa minha memória local",
+      "expected_tool": "knowledge_index",
+      "predicted": "knowledge_index",
+      "args": {
+        "force": "true"
+      },
+      "error": null,
+      "latency_s": 0.4817964999999731,
+      "timings": {
+        "total_s": 0.435579,
+        "load_s": 0.0487808,
+        "prompt_eval_count": 5471.0,
+        "prompt_eval_s": 0.024084,
+        "eval_count": 17.0,
+        "eval_s": 0.281258,
+        "tokens_per_s": 60.44272518470586
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"knowledge_index\", \"args\": {\"force\": \"true\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-059",
+      "category": "direto",
+      "prompt": "me lembra de tomar remédio daqui a 10 minutos",
+      "expected_tool": "reminder",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.7093359000000419,
+      "timings": {
+        "total_s": 0.6601051,
+        "load_s": 0.0369775,
+        "prompt_eval_count": 5479.0,
+        "prompt_eval_s": 0.033405,
+        "eval_count": 30.0,
+        "eval_s": 0.482618,
+        "tokens_per_s": 62.16096374358188
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"add\", \"text\": \"Lembrei de tomar rem\\u00e7io\", \"when\": \"10m\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-060",
+      "category": "direto",
+      "prompt": "amanhã às 9h me lembra da consulta no dentista",
+      "expected_tool": "reminder",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.8180707999999868,
+      "timings": {
+        "total_s": 0.774219,
+        "load_s": 0.0312249,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 0.023501,
+        "eval_count": 41.0,
+        "eval_s": 0.671884,
+        "tokens_per_s": 61.02243839710426
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "Lembrei! Aqui vai o lembrete:\n\n\"Amãhã às 9h: consulta no dentista\"\n\nVocê quer adicionar mais alguma coisa ao lembrete?",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-061",
+      "category": "direto",
+      "prompt": "quais lembretes eu tenho pendentes?",
+      "expected_tool": "reminder",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.40371680000009746,
+      "timings": {
+        "total_s": 0.3196793,
+        "load_s": 0.0497213,
+        "prompt_eval_count": 5476.0,
+        "prompt_eval_s": 0.025466,
+        "eval_count": 12.0,
+        "eval_s": 0.183898,
+        "tokens_per_s": 65.2535644759595
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"list\", \"id\": null}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-062",
+      "category": "direto",
+      "prompt": "cancela o lembrete número 3",
+      "expected_tool": "reminder",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.3688690000000179,
+      "timings": {
+        "total_s": 0.342754,
+        "load_s": 0.0457659,
+        "prompt_eval_count": 5473.0,
+        "prompt_eval_s": 0.025406,
+        "eval_count": 13.0,
+        "eval_s": 0.207236,
+        "tokens_per_s": 62.730413634696674
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"delete\", \"id\": 3}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": false,
+      "args_failed": [
+        "<ferramenta errada>"
+      ]
+    },
+    {
+      "id": "ts-063",
+      "category": "sem_ferramenta",
+      "prompt": "oi, tudo bem?",
+      "expected_tool": null,
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.539151400000037,
+      "timings": {
+        "total_s": 0.5008366,
+        "load_s": 0.0196796,
+        "prompt_eval_count": 5469.0,
+        "prompt_eval_s": 0.026908,
+        "eval_count": 23.0,
+        "eval_s": 0.382489,
+        "tokens_per_s": 60.13244825341382
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "Tudo bem, obrigado! Estou aqui para ajudar. Como posso te ajudar hoje?",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-064",
+      "category": "sem_ferramenta",
+      "prompt": "obrigada, Jarvis!",
+      "expected_tool": null,
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.39952070000003914,
+      "timings": {
+        "total_s": 0.3629568,
+        "load_s": 0.030099,
+        "prompt_eval_count": 5470.0,
+        "prompt_eval_s": 0.034388,
+        "eval_count": 14.0,
+        "eval_s": 0.23113,
+        "tokens_per_s": 60.571972483018214
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "Você está bem, Julia. Como posso ajudar hoje?",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-065",
+      "category": "sem_ferramenta",
+      "prompt": "quanto é 15% de 240?",
+      "expected_tool": null,
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.3039929999999913,
+      "timings": {
+        "total_s": 0.2391232,
+        "load_s": 0.0292266,
+        "prompt_eval_count": 5474.0,
+        "prompt_eval_s": 0.02181,
+        "eval_count": 9.0,
+        "eval_s": 0.133094,
+        "tokens_per_s": 67.62138037777812
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"result\": 36.0}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-066",
+      "category": "sem_ferramenta",
+      "prompt": "me explica em duas frases o que é uma API REST",
+      "expected_tool": null,
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.846080499999971,
+      "timings": {
+        "total_s": 1.8089653,
+        "load_s": 0.0313119,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.025037,
+        "eval_count": 102.0,
+        "eval_s": 1.694724,
+        "tokens_per_s": 60.18679147755033
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "Uma API REST (Representational State of Resource) é uma abordagem de programação que permite acessar e manipular recursos de forma descentralizada e padrãoizada, utilizando métodos HTTP (GET, POST, PUT, DELETE, etc.) para realizar operações. Em outras palavras, é uma forma de interagir com um sistema de forma programática, utilizando uma linguagem de programação, para realizar operações como criar, ler, atualizar e excluir recursos.",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-067",
+      "category": "sem_ferramenta",
+      "prompt": "traduz para o inglês: 'onde fica a estação de trem?'",
+      "expected_tool": null,
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 2.8314274000000523,
+      "timings": {
+        "total_s": 2.7769737,
+        "load_s": 0.0569686,
+        "prompt_eval_count": 5480.0,
+        "prompt_eval_s": 1.660728,
+        "eval_count": 35.0,
+        "eval_s": 0.633868,
+        "tokens_per_s": 55.216543507481056
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"google\", \"args\": [\"search\", \"train station\", \"JuliaCristinaSerrãoM\", \"Sao_Paulo\"]}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-068",
+      "category": "sem_ferramenta",
+      "prompt": "me dá três ideias de nome para um gato",
+      "expected_tool": null,
+      "predicted": "google",
+      "args": {
+        "query": "nome gato",
+        "limit": 3
+      },
+      "error": null,
+      "latency_s": 0.5296471999999994,
+      "timings": {
+        "total_s": 0.4976355,
+        "load_s": 0.0297418,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.024381,
+        "eval_count": 24.0,
+        "eval_s": 0.383657,
+        "tokens_per_s": 62.555876733644894
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"google\", \"args\": {\"query\": \"nome gato\", \"limit\": 3}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-069",
+      "category": "sem_ferramenta",
+      "prompt": "escreve um haicai sobre café",
+      "expected_tool": null,
+      "predicted": "obsidian",
+      "args": {},
+      "error": null,
+      "latency_s": 1.8052983999999697,
+      "timings": {
+        "total_s": 1.7744716,
+        "load_s": 0.0190526,
+        "prompt_eval_count": 5473.0,
+        "prompt_eval_s": 0.024389,
+        "eval_count": 100.0,
+        "eval_s": 1.675216,
+        "tokens_per_s": 59.693794710652234
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"obsidian\", \"action\": \"write\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\haicai.txt\", \"content\": \"Caf\\u00e9 quente, \\u00e1gua \\u00e9tica, \\u00e1s dias \\u00e9 mais \\u00e1gvel.\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-070",
+      "category": "sem_ferramenta",
+      "prompt": "qual a diferença entre lista e tupla em Python?",
+      "expected_tool": null,
+      "predicted": "python",
+      "args": {
+        "name": "print",
+        "text": "Em Python, lista e tupla sao tipos de sequencia. A principal diferenca entre elas e que uma lista pode ser alterada, enquanto uma tupla nao pode ser alterada."
+      },
+      "error": null,
+      "latency_s": 1.1460904999999002,
+      "timings": {
+        "total_s": 1.1126996,
+        "load_s": 0.0168859,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.026942,
+        "eval_count": 61.0,
+        "eval_s": 1.006203,
+        "tokens_per_s": 60.62394964038072
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": true,
+      "content": "{\"tool\": \"python\", \"args\": {\"name\": \"print\", \"text\": \"Em Python, lista e tupla sao tipos de sequencia. A principal diferenca entre elas e que uma lista pode ser alterada, enquanto uma tupla nao pode ser alterada.\"}}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-071",
+      "category": "ambiguo",
+      "prompt": "o que eu anotei sobre o projeto Falcon?",
+      "expected_tool": "knowledge_search",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5133884999999054,
+      "timings": {
+        "total_s": 0.4720668,
+        "load_s": 0.0357564,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.024496,
+        "eval_count": 22.0,
+        "eval_s": 0.355439,
+        "tokens_per_s": 61.895290049769436
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"action\": \"knowledge_search\", \"query\": \"Falcon projeto\", \"k\": \"5\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-072",
+      "category": "ambiguo",
+      "prompt": "o que tenho marcado pra amanhã?",
+      "expected_tool": "google",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 0.5381857999999511,
+      "timings": {
+        "total_s": 0.5064874,
+        "load_s": 0.049207,
+        "prompt_eval_count": 5475.0,
+        "prompt_eval_s": 0.022973,
+        "eval_count": 22.0,
+        "eval_s": 0.361854,
+        "tokens_per_s": 60.79800140388112
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{ \"action\": \"list\", \"caption\": \"Lembretes para amanhã\" }",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-073",
+      "category": "ambiguo",
+      "prompt": "procura minhas anotações sobre o curso de inglês",
+      "expected_tool": "knowledge_search",
+      "predicted": "knowledge_search",
+      "args": {
+        "query": "minhas anotações sobre o curso de inglçãs",
+        "k": "5"
+      },
+      "error": null,
+      "latency_s": 0.9607611000000134,
+      "timings": {
+        "total_s": 0.923732,
+        "load_s": 0.0383189,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.023585,
+        "eval_count": 49.0,
+        "eval_s": 0.814866,
+        "tokens_per_s": 60.132586216629484
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"knowledge_search\", \"args\": {\"query\": \"minhas anota\\u00e7\\u00f5es sobre o curso de ingl\\u00e7\\u00e3s\", \"k\": \"5\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-074",
+      "category": "ambiguo",
+      "prompt": "tem algum PDF sobre imposto de renda nos meus arquivos?",
+      "expected_tool": "find_files",
+      "predicted": "find_files",
+      "args": {
+        "name": "*.pdf",
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\Documents\\Trabalho\\Imposto de Renda",
+        "max_results": "10"
+      },
+      "error": null,
+      "latency_s": 1.041551400000003,
+      "timings": {
+        "total_s": 1.0001078,
+        "load_s": 0.0248804,
+        "prompt_eval_count": 5479.0,
+        "prompt_eval_s": 0.025738,
+        "eval_count": 54.0,
+        "eval_s": 0.890249,
+        "tokens_per_s": 60.65718692186119
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"find_files\", \"args\": {\"name\": \"*.pdf\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\Documents\\\\Trabalho\\\\Imposto de Renda\", \"max_results\": \"10\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-075",
+      "category": "ambiguo",
+      "prompt": "abre o arquivo dados.csv",
+      "expected_tool": "spreadsheet",
+      "predicted": "read_file",
+      "args": {
+        "path": "C:\\Users\\JuliaCristinaSerrãoM\\AppData\\Local\\Temp\\tmpr7t3wjvj\\dados.csv",
+        "start_line": "1",
+        "end_line": "10000"
+      },
+      "error": null,
+      "latency_s": 1.2497767000000977,
+      "timings": {
+        "total_s": 1.2077421,
+        "load_s": 0.0332583,
+        "prompt_eval_count": 5470.0,
+        "prompt_eval_s": 0.023459,
+        "eval_count": 66.0,
+        "eval_s": 1.09117,
+        "tokens_per_s": 60.48553387648121
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_file\", \"args\": {\"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\u00e3oM\\\\AppData\\\\Local\\\\Temp\\\\tmpr7t3wjvj\\\\dados.csv\", \"start_line\": \"1\", \"end_line\": \"10000\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-076",
+      "category": "ambiguo",
+      "prompt": "quem ganhou a Copa do Mundo de 2022?",
+      "expected_tool": null,
+      "predicted": "web_search",
+      "args": {
+        "query": "Copa do Mundo 2022 vencedor",
+        "max_results": "5"
+      },
+      "error": null,
+      "latency_s": 0.6940685999999232,
+      "timings": {
+        "total_s": 0.6513473,
+        "load_s": 0.0289455,
+        "prompt_eval_count": 5477.0,
+        "prompt_eval_s": 0.025201,
+        "eval_count": 33.0,
+        "eval_s": 0.543934,
+        "tokens_per_s": 60.66912529828986
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"web_search\", \"args\": {\"query\": \"Copa do Mundo 2022 vencedor\", \"max_results\": \"5\"}}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-077",
+      "category": "ambiguo",
+      "prompt": "vê se chegou algum e-mail do banco",
+      "expected_tool": "google",
+      "predicted": null,
+      "args": {},
+      "error": null,
+      "latency_s": 1.0962190999999848,
+      "timings": {
+        "total_s": 1.0287929,
+        "load_s": 0.0377869,
+        "prompt_eval_count": 5474.0,
+        "prompt_eval_s": 0.022092,
+        "eval_count": 56.0,
+        "eval_s": 0.919972,
+        "tokens_per_s": 60.87141782575991
+      },
+      "invalid_json": true,
+      "leaked": false,
+      "n_calls": 0,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"gmail\", \"args\": [\"search\", \"is:unread\", \"from:bank\"], \"cwd\": \"C:\\\\Users\\\\JuliaCristinaSerrãoM\\\\AppData\\\\Local\\\\Temp\\\\tmppr7t3wjvj\"}",
+      "mode": "json",
+      "tool_ok": false,
+      "args_ok": null,
+      "args_failed": []
+    },
+    {
+      "id": "ts-078",
+      "category": "ambiguo",
+      "prompt": "qual é o README desse projeto?",
+      "expected_tool": "read_file",
+      "predicted": "read_file",
+      "args": {},
+      "error": null,
+      "latency_s": 0.8535448999999744,
+      "timings": {
+        "total_s": 0.8195131,
+        "load_s": 0.032034,
+        "prompt_eval_count": 5472.0,
+        "prompt_eval_s": 0.023681,
+        "eval_count": 43.0,
+        "eval_s": 0.701809,
+        "tokens_per_s": 61.270231644222285
+      },
+      "invalid_json": false,
+      "leaked": false,
+      "n_calls": 1,
+      "unknown_tool": false,
+      "content": "{\"tool\": \"read_file\", \"path\": \"C:\\\\Users\\\\JuliaCristinaSerr\\\\ao\\\\README.md\", \"start_line\": \"1\", \"end_line\": \"0\"}",
+      "mode": "json",
+      "tool_ok": true,
+      "args_ok": null,
+      "args_failed": []
+    }
+  ]
+}
