@@ -17,6 +17,7 @@ import argparse
 import asyncio
 import contextlib
 import itertools
+import json
 import sys
 import traceback
 from pathlib import Path
@@ -43,6 +44,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--repeats", type=int, default=1,
                         help="rodadas idênticas por modelo; com N > 1 reporta média, desvio, "
                              "IC 95%% e McNemar entre os modelos")
+    parser.add_argument("--from-json", nargs="+", default=None, metavar="ARQUIVO",
+                        help="com --repeats: refaz a tabela e o McNemar a partir de JSON "
+                             "*_xN.json já gravados, sem chamar o Ollama")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
 
@@ -55,6 +59,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     cases = common.load_jsonl(eval_tools.DATA_PATH)
     if args.limit:
         cases = cases[: args.limit]
+    if args.from_json and args.repeats == 1:
+        parser.error("--from-json pede --repeats N (o N das rodadas gravadas)")
     if args.repeats > 1:
         return run_repeats(args, modes, cases)
 
@@ -193,7 +199,18 @@ def run_repeats(args: argparse.Namespace, modes: List[str], cases: List[Dict[str
     )
     with run_ctx as parent:
         nested = parent is not None
-        for model in args.models:
+        for path_str in args.from_json or []:
+            # Rodadas já gravadas (e já registradas no MLflow quando rodaram): só a tabela.
+            with open(path_str, encoding="utf-8") as handle:
+                repeated = json.load(handle)
+            if repeated.get("kind") != "tool_selection_repeated":
+                raise SystemExit("{} não é um resultado com repetições".format(path_str))
+            if repeated["repeats"] != args.repeats:
+                raise SystemExit("{} tem {} rodadas, não {}".format(
+                    path_str, repeated["repeats"], args.repeats))
+            repeated_results.append(repeated)
+            files.append(Path(path_str).name)
+        for model in [] if args.from_json else args.models:
             if not common.model_available(args.ollama_url, model):
                 failures.append({"target": model, "error": "modelo não encontrado no Ollama"})
                 print("!! {}: modelo não encontrado no Ollama".format(model))
@@ -224,6 +241,7 @@ def run_repeats(args: argparse.Namespace, modes: List[str], cases: List[Dict[str
             "modes": modes,
             "repeats": args.repeats,
             "limit": args.limit,
+            "from_json": bool(args.from_json),
             "repeated_results": repeated_results,
             "comparisons": comparisons,
             "failures": failures,

@@ -170,6 +170,32 @@ métricas são calculadas antes de gravar. Para conferir ou limpar arquivos já 
 .venv/Scripts/python.exe evals/sanitize.py evals/results           # regrava limpo
 ```
 
+### Repetições e intervalo de confiança (`--repeats N`)
+
+Uma rodada só não basta: com o mesmo código, o mesmo seed (42) e temperatura 0,2, o
+`qwen2.5:3b` nativo deu 66/78 numa rodada e 64/78 na seguinte (a GPU não é determinística).
+`eval_tools.py --repeats N` e `compare_models.py --repeats N` (padrão 1) fazem N rodadas
+idênticas e gravam um JSON por (modelo, modo) com todas as rodadas
+(`<data>_tools_<modelo>_<modo>_xN.json`), além de `<data>_compare_xN.json` e da tabela em
+`--markdown` (a rodada de 08/11 está em [`results/REPEATS.md`](results/REPEATS.md)).
+Estatística em [`stats.py`](stats.py), só stdlib:
+
+- **Média e desvio-padrão amostral entre as rodadas** — mede o não determinismo.
+- **IC 95% principal: bootstrap percentil sobre os casos** (10.000 reamostragens, seed fixa).
+  Cada caso entra com a fração de rodadas em que acertou; reamostrar casos (e não as 3×78
+  respostas) mantém juntas as rodadas do mesmo caso e cobre a incerteza maior, que é a da
+  amostra de 78 pedidos.
+- **IC de Wilson** sobre a média de acertos com n = 78: fórmula fechada, boa perto de 0/1;
+  ignora a variação entre rodadas e serve de conferência.
+- **Comparação pareada (`compare_models`): McNemar exato** bilateral sobre os casos
+  discordantes, com o acerto de cada caso por maioria das rodadas (N ímpar); também rodada a
+  rodada, como sensibilidade, e o IC bootstrap pareado da diferença. Com várias comparações, a
+  tabela usa o limiar de Bonferroni (0,05 / nº de comparações).
+
+```bash
+.venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b qwen2.5:3b llama3.2:3b     --modes native,json --repeats 3 --skip-rag --markdown evals/results/REPEATS.md
+```
+
 ## 4. MLflow
 
 Cada execução de `eval_tools.py`, `eval_rag.py` e `compare_models.py` vira um **run** no
@@ -224,7 +250,10 @@ O banco e os artefatos do MLflow ficam fora do git (são locais e pesados); os J
 evals/
   common.py          settings fictícias, matchers de args, hashes, metadados
   eval_tools.py      seleção de ferramentas
-  eval_rag.py        recuperação (modos vector/bm25/hybrid, --grid -> results/RAG.md)
+  eval_rag.py        recuperação (modos vector/bm25/hybrid, --grid -> results/RAG.md;
+                     --dataset paraphrase -> results/RAG_PARAPHRASE.md)
+  lexical_overlap.py sobreposição de palavras entre pergunta e trecho certo
+  stats.py           média, desvio, IC bootstrap/Wilson, McNemar exato (stdlib)
   bench_vector_backend.py  microbenchmark sqlite-vec x NumPy
   compare_models.py  comparação + RESULTS.md
   sanitize.py        tira home/usuário da máquina dos JSON antes de gravar

@@ -213,6 +213,12 @@ def render_repeats_markdown(summary: Dict[str, Any]) -> str:
         ),
         "",
     ]
+    if summary.get("from_json"):
+        parts += [
+            "Tabela refeita com `--from-json` a partir dos JSON gravados (sem chamar o Ollama); "
+            "commit e data de cada rodada estão no `meta` de cada arquivo.",
+            "",
+        ]
     if not reps:
         parts.append("Nenhum resultado.")
         return "\n".join(parts) + "\n"

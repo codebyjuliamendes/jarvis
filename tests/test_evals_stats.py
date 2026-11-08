@@ -153,3 +153,35 @@ def test_agrega_recusa_configuracoes_diferentes():
         eval_tools.aggregate_repeats([_fake_result("a", "1"), _fake_result("b", "1")])
     with pytest.raises(ValueError):
         eval_tools.aggregate_repeats([])
+
+
+def test_compare_from_json_refaz_a_tabela_sem_ollama(tmp_path, monkeypatch):
+    import json
+
+    from evals import common
+
+    reps = []
+    runs = {"qwen2.5:3b": ("1110", "1111", "1110"), "llama3.2:3b": ("1000", "1100", "1000")}
+    for model, patterns in runs.items():
+        rep = eval_tools.aggregate_repeats([_fake_result(model, p, "11-0") for p in patterns])
+        path = tmp_path / eval_tools.repeated_filename(rep).replace("040000", model[:4])
+        path.write_text(json.dumps(rep), encoding="utf-8")
+        reps.append(str(path))
+    saved = []
+
+    def fake_save(payload, name, out_dir=None):
+        saved.append(name)
+        return common.RESULTS_DIR / name  # não grava nada em results/
+
+    monkeypatch.setattr(common, "save_json", fake_save)
+    meta = json.loads(open(reps[0], encoding="utf-8").read())["meta"]
+    monkeypatch.setattr(common, "run_metadata", lambda url: meta)
+    md = tmp_path / "rep.md"
+    base_args = ["x", "--no-mlflow", "--markdown", str(md)]
+    code = compare_models.main(base_args + ["--repeats", "3", "--from-json"] + reps)
+    assert code == 0
+    text = md.read_text(encoding="utf-8")
+    assert "refeita com `--from-json`" in text and "`qwen2.5:3b` × `llama3.2:3b`" in text
+    assert saved and saved[0].endswith("_compare_x3.json")
+    with pytest.raises(SystemExit):
+        compare_models.main(base_args + ["--repeats", "5", "--from-json"] + reps)
