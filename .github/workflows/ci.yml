@@ -51,3 +51,26 @@ jobs:
       # determinísticos) e no Linux executa o run_shell de verdade com /bin/bash.
       - name: smoke test
         run: python scripts/smoke_test.py
+
+  mcp:
+    # O SDK oficial do MCP exige Python >= 3.10: este job instala requirements-mcp.txt e
+    # roda os testes do servidor (no job "test" eles são pulados com importorskip).
+    name: servidor MCP (Python 3.12)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-mcp.txt
+      - name: Dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-mcp.txt pytest
+      - name: pytest (MCP)
+        run: python -m pytest -q tests/test_mcp_server.py tests/test_mcp_policy.py
+      - name: allowlist padrão
+        run: python -m jarvis.mcp_server --check
