@@ -311,12 +311,14 @@ A especificação está em `docs/superpowers/specs/2026-11-08-acabamento-design.
    parse; `ruff check .` limpo; `pytest` (373) e smoke test passam no `.venv` (3.8) e num venv
    limpo com Python 3.12.13 **no Windows**, sem MLflow. O smoke test no Linux executa a
    checagem "run_shell executa" (pulada no Windows), que não rodei aqui. Não usei `act`.
-4. **[PENDENTE] A imagem Docker nunca foi construída.** `docker compose config` valida os dois
-   arquivos (com e sem GPU) e as tags `python:3.11-slim-bookworm` e `ollama/ollama:0.40.14`
-   existem no Docker Hub (conferido pela API), mas nada foi baixado nem executado nesta
-   máquina. Pontos a conferir no primeiro `docker compose up`: permissão de `./data` e
-   `./workspace` (uid 1000) em Linux; o `healthcheck` com `ollama list`; o tamanho da imagem
-   (tesseract + PyMuPDF). Voz (faster-whisper) não está na imagem.
+4. **[RESOLVIDO em 08/11] Imagem Docker construída e testada localmente** (Docker 29.6.1):
+   `docker compose build jarvis` em ~1 min, imagem de 739 MB; `docker run --rm jarvis:local
+   python scripts/smoke_test.py` passa 63 de 63 (o `run_shell` roda no Linux do contêiner);
+   o processo é `uid=1000(jarvis)`; sem `.env`, `python -m jarvis` sai com "TELEGRAM_BOT_TOKEN
+   não configurado". **Ainda não feito:** o `docker compose up` completo (serviço `ollama`,
+   healthcheck com `ollama list`, GPU) e a permissão de `./data` em host Linux. O
+   `docker compose config` exige um `.env` (o compose usa `env_file`), como o README já manda
+   criar. Voz (faster-whisper) não está na imagem.
 5. **numpy diferente por versão do Python.** `numpy==1.24.4` (Python < 3.12, a do `.venv` e da
    imagem) e `numpy==1.26.4` (3.12+, porque a 1.24.4 não tem wheel). O código só usa a API
    básica e os testes passam nas duas, mas são duas versões em produção possíveis.

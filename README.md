@@ -676,8 +676,11 @@ docker compose logs -f jarvis
 - O terminal do agente (`run_shell`) roda dentro do contêiner, como usuário sem privilégios:
   uma camada a mais além do filtro de comandos. Voz (faster-whisper) não está na imagem.
 
-> O `Dockerfile` e o compose foram validados com `docker compose config`; a imagem não foi
-> construída nesta máquina (ver [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md)).
+> Conferido em 08/11/2026 (Docker 29.6.1): `docker compose build jarvis` constrói a imagem
+> (739 MB, ~1 min), o smoke test **dentro do contêiner** passa inteiro (63 de 63, inclusive o
+> `run_shell`, que no Windows é pulado), o processo roda como `uid=1000(jarvis)` e, sem
+> `.env`, o bot sai com a mensagem de configuração. O serviço `ollama` (imagem oficial) e o
+> `docker compose up` completo com o Telegram não foram executados aqui.
 
 ---
 
