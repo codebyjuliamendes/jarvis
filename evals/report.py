@@ -43,10 +43,18 @@ def category_row(result: Dict[str, Any]) -> List[str]:
     ]
 
 
+def _rag_config_suffix(result: Dict[str, Any]) -> str:
+    if not result.get("config"):
+        return ""
+    from evals.eval_rag import config_label
+
+    return " · " + config_label(result)
+
+
 def rag_row(result: Dict[str, Any]) -> List[str]:
     m = result["metrics"]
     return [
-        "`{}`".format(result["embed_model"]),
+        "`{}`{}".format(result["embed_model"], _rag_config_suffix(result)),
         "{} docs / {} trechos".format(result["corpus"]["documents"], result["corpus"]["chunks"]),
         common.fmt_pct(m["recall_at_1"], m["hits_at_1"], m["n"]),
         common.fmt_pct(m["recall_at_5"], m["hits_at_5"], m["n"]),

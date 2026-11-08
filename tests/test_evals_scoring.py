@@ -176,3 +176,30 @@ def test_dataset_de_rag_aponta_para_trechos_existentes():
     for question in questions:
         snippet = common.normalize(question["expected_snippet"])
         assert any(snippet in chunk for chunk in chunks[question["expected_doc"]]), question["id"]
+
+
+def test_rag_divisao_dev_teste_fixa():
+    assert eval_rag.split_of("rag-001") == "dev"
+    assert eval_rag.split_of("rag-036") == "test"
+    questions = common.load_jsonl(eval_rag.DATA_PATH)
+    splits = [eval_rag.split_of(q["id"]) for q in questions]
+    assert splits.count("dev") == 18 and splits.count("test") == 18
+    records = [
+        {"id": "rag-001", "rank": 1, "top_docs": ["a.md"], "expected_doc": "a.md", "latency_s": 0.1},
+        {"id": "rag-002", "rank": None, "top_docs": [], "expected_doc": "a.md", "latency_s": 0.1},
+    ]
+    by_split = eval_rag.compute_split_metrics(records)
+    assert by_split["dev"]["mrr"] == 1.0 and by_split["test"]["mrr"] == 0.0
+
+
+def test_rag_rotulo_e_nome_do_arquivo_por_configuracao():
+    base = {"embed_model": "nomic-embed-text", "meta": {"timestamp": "2026-11-08T02:00:00-03:00"}}
+    hybrid = dict(base, config={"mode": "hybrid", "prefixes": True, "rrf_k": 60, "vector_backend": "sqlite-vec"})
+    vector = dict(base, config={"mode": "vector", "prefixes": False, "rrf_k": 60, "vector_backend": "numpy"})
+    bm25 = dict(base, config={"mode": "bm25", "prefixes": True, "rrf_k": 60, "vector_backend": "sqlite-vec"})
+    assert eval_rag.config_label(hybrid) == "hybrid + prefixos (RRF k=60)"
+    assert eval_rag.config_label(vector) == "vector numpy sem prefixos"
+    assert eval_rag.config_label(bm25) == "bm25"
+    assert eval_rag.result_filename(hybrid) == "20261108T020000_rag_nomic-embed-text_hybrid-prefixos-k60.json"
+    assert eval_rag.result_filename(vector) == "20261108T020000_rag_nomic-embed-text_vector-numpy.json"
+    assert eval_rag.result_filename(base) == "20261108T020000_rag_nomic-embed-text.json"  # formato antigo

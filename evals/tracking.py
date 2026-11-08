@@ -148,9 +148,15 @@ def tool_metrics(result: Dict[str, Any]) -> Dict[str, float]:
 
 def rag_params(result: Dict[str, Any]) -> Dict[str, Any]:
     meta = result["meta"]
+    # Resultados anteriores ao subprojeto 4 não têm "config": eram vector/NumPy sem prefixo.
+    config = result.get("config") or {}
     return {
         "eval": "rag_retrieval",
         "embed_model": result["embed_model"],
+        "rag_mode": config.get("mode", "vector"),
+        "prefixes": config.get("prefixes", False),
+        "rrf_k": config.get("rrf_k"),
+        "vector_backend": config.get("vector_backend", "numpy"),
         "k": result["k"],
         "n_examples": result["metrics"]["n"],
         "dataset": result["dataset"],
@@ -166,12 +172,19 @@ def rag_params(result: Dict[str, Any]) -> Dict[str, Any]:
 
 def rag_metrics(result: Dict[str, Any]) -> Dict[str, float]:
     m = result["metrics"]
+    splits = {}
+    for name, info in (result.get("metrics_by_split") or {}).items():
+        splits["mrr_" + name] = info["mrr"]
+        splits["recall_at_1_" + name] = info["recall_at_1"]
+        splits["recall_at_5_" + name] = info["recall_at_5"]
     return _clean_metrics(
         {
+            **splits,
             "recall_at_1": m["recall_at_1"],
             "recall_at_5": m["recall_at_5"],
             "mrr": m["mrr"],
             "doc_recall_at_1": m["doc_recall_at_1"],
+            "search_latency_mean_s": m["search_latency_s"].get("mean"),
             "search_latency_p50_s": m["search_latency_s"]["p50"],
             "search_latency_p95_s": m["search_latency_s"]["p95"],
             "index_s": result["corpus"]["index_s"],

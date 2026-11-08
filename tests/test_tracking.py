@@ -46,6 +46,16 @@ def test_rag_params_e_metricas():
     assert tracking.rag_params(result)["n_chunks"] == 25
     metrics = tracking.rag_metrics(result)
     assert metrics["recall_at_5"] == 0.7 and metrics["mrr"] == 0.5
+    assert tracking.rag_params(result)["rag_mode"] == "vector"  # resultado antigo, sem config
+    result["config"] = {"mode": "hybrid", "prefixes": True, "rrf_k": 60, "vector_backend": "sqlite-vec"}
+    result["metrics_by_split"] = {
+        "dev": {"mrr": 0.6, "recall_at_1": 0.5, "recall_at_5": 0.8},
+        "test": {"mrr": 0.4, "recall_at_1": 0.3, "recall_at_5": 0.6},
+    }
+    params = tracking.rag_params(result)
+    assert params["rag_mode"] == "hybrid" and params["prefixes"] is True and params["rrf_k"] == 60
+    metrics = tracking.rag_metrics(result)
+    assert metrics["mrr_dev"] == 0.6 and metrics["recall_at_1_test"] == 0.3
 
 
 def test_sem_mlflow_instalado_so_avisa(monkeypatch, capsys):
