@@ -1,14 +1,16 @@
 # Modelfile do modelo treinado LOCALMENTE (finetune/train_local.py + merge_adapter.py).
 #
 #   .venv-train/Scripts/python.exe finetune/merge_adapter.py
-#   ollama create jarvis-qwen-lora -f finetune/Modelfile.local --quantize q4_K_M
+#   .venv-train/Scripts/python.exe finetune/to_gguf.py --base-gguf <blob do qwen2.5:3b>
+#   ollama create jarvis-qwen-lora -f finetune/Modelfile.local
 #
-# FROM aponta para os safetensors juntados (finetune/out/ está no .gitignore).
+# FROM aponta para o GGUF Q8_0 gerado pelo to_gguf.py (finetune/out/ está no .gitignore).
+# O Ollama 0.40.14 não importa Qwen2 em safetensors (só MLX) nem quantiza GGUF na importação.
 # TEMPLATE, SYSTEM e PARAMETER: idênticos a finetune/Modelfile (template oficial do
 # qwen2.5 no Ollama, o mesmo que finetune/chat_format.py reproduz no treino).
 # Licença do Qwen2.5-3B-Instruct: Qwen Research (uso não comercial). "Built with Qwen".
 
-FROM ./out/merged
+FROM ./out/jarvis-qwen-lora-q8_0.gguf
 
 TEMPLATE """{{- if .Messages }}
 {{- if or .System .Tools }}<|im_start|>system
