@@ -68,12 +68,10 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
   Uma execução por configuração, sem intervalo de confiança. Agora há 3 rodadas por modelo no
   nativo (e no JSON dos dois qwen), IC por bootstrap sobre os casos e Wilson, e McNemar exato
   pareado. O que continua valendo: com 78 casos o IC tem ~15 pontos de largura, e
-  `qwen2.5:3b` × `llama3.2:3b` dá p = 0,049, que não passa na correção para 4 comparações.
+  `qwen2.5:3b` × `llama3.2:3b` dá p = 0,049, que não passa na correção de Bonferroni (4 ou 6 comparações).
   Para separar modelos tão próximos, o caminho é mais casos, não mais rodadas.
-- **[PENDENTE] `llama3.2:3b` no modo JSON com 3 rodadas.** A rodada foi interrompida pelo
-  Claude Code por falta de memória livre e não foi relançada. Comando:
-  `compare_models.py llama3.2:3b --modes json --repeats 3 --skip-rag --markdown <tmp>`, depois
-  `--from-json` com os 6 arquivos para refazer o `REPEATS.md`.
+- **[RESOLVIDO em 08/11] `llama3.2:3b` no modo JSON com 3 rodadas:** 44 / 43 / 45 (56,4%),
+  empata com os dois qwen no JSON (p = 1,0). `REPEATS.md` refeito com as 6 baterias.
 - **Timeouts do `qwen2.5:1.5b`.** Sem limite de `num_predict` (nem no agente nem no eval), o
   1,5B às vezes não para de gerar e estoura os 300 s do cliente: 2–4 casos por rodada nativa nos
   extras (1 na rodada anterior). Conta como erro. Um `num_predict` no agente (ex.: 512) cortaria
@@ -227,20 +225,17 @@ A especificação está em `docs/superpowers/specs/2026-11-08-finetune-design.md
 passo, em `finetune/README.md`. **O que foi preparado está testado; o treino e a medição do
 antes/depois NÃO foram feitos.**
 
-1. **[PENDENTE] Treinar no Colab.** Por pedido explícito, nada foi treinado nesta máquina
-   (nem pesos baixados do Hugging Face, nem torch/transformers/unsloth instalados). O
-   `finetune/train_lora.ipynb` foi validado só como arquivo (`json.load`, `nbformat` 5.10.4,
-   código compilado com `ast`), **nunca executado**: a instalação do Unsloth no Colab, os
-   nomes de parâmetro do `TrainingArguments` (`eval_strategy`) e o nome do arquivo que o
-   `save_pretrained_gguf` gera mudam entre versões e podem pedir ajuste na primeira rodada.
-   O tempo de treino na T4 não foi medido (~13 milhões de tokens em 2 épocas).
-2. **[PENDENTE] Medir o antes/depois** com
-   `evals/compare_models.py qwen2.5:1.5b jarvis-qwen-lora --skip-rag --markdown evals/results/FINETUNE.md`
-   e só então preencher a linha do modelo ajustado no README. A linha de base do 1,5B foi
-   refeita com o prompt atual no subprojeto 5b (56,4% / 44,3%; antes 56,4% / 42,6%), mas
-   rodadas iguais variam 1–2 casos, então a base ainda deve ser medida na mesma execução que
-   o modelo ajustado.
-3. **Os modelos de frase foram escritos por quem tinha lido o eval.** Os filtros de vazamento
+1. **[RESOLVIDO em 08/11] Treinado localmente**, não no Colab (o login do Colab falhou):
+   `finetune/train_local.py`, QLoRA do Qwen2.5-3B-Instruct numa RTX 4050 Laptop de 6 GB, 101
+   de 106 passos (parou no limite de tempo), 219,6 min, perda no val 0,917 -> 0,099. Desvios
+   do plano: 3B em vez de 1,5B; gradiente truncado (prompt sem gradiente) para caber em 6 GB;
+   GGUF Q8_0 em vez de q4_K_M (o Ollama 0.40.14 não quantiza GGUF nem importa Qwen2 em
+   safetensors). O notebook do Colab continua sem execução.
+2. **[RESOLVIDO em 08/11] Antes/depois medido** (3 rodadas, mesmo eval): base Q8_0 83,3% ->
+   ajustado 100% (78/78 nas 3), args 81,4% -> 96,7%, McNemar p < 0,001
+   (`evals/results/FINETUNE.md`). A base Q8_0 empata com o `qwen2.5:3b` oficial (p = 1,0).
+   **Mas veja o item 3: o 100% não prova generalização.**
+3. **[PENDENTE, agora o mais importante] Os modelos de frase foram escritos por quem tinha lido o eval.** Os filtros de vazamento
    pegam cópia (exata), paráfrase próxima (Jaccard de 4-gramas ≥ 0,35; 60 removidos) e
    entidades do eval (0), mas não "ensinar para a prova" no nível da política — ex.:
    "anotações -> `knowledge_search`", "agenda do Google -> `google`", que coincidem com
@@ -306,17 +301,19 @@ A especificação está em `docs/superpowers/specs/2026-11-08-acabamento-design.
    sobrenome) passaria. Os dados do fine-tuning (`finetune/data/`) usam homes fictícias
    (`/home/julia` e o equivalente no Windows) e não passam pelo sanitizador, de propósito:
    são texto de treino, e o teste do system prompt depende deles.
-3. **[PENDENTE] O CI nunca rodou no GitHub.** Nada foi empurrado (pedido explícito), então o
-   badge do README mostra "sem status" até o primeiro push. Validado localmente: o YAML faz
+3. **[RESOLVIDO em 08/11] O CI rodou no GitHub e passou** (4 jobs: ruff, pytest + smoke em
+   3.8 e 3.12, servidor MCP), no push da branch e de novo na `main` depois do merge. Validado localmente: o YAML faz
    parse; `ruff check .` limpo; `pytest` (373) e smoke test passam no `.venv` (3.8) e num venv
    limpo com Python 3.12.13 **no Windows**, sem MLflow. O smoke test no Linux executa a
    checagem "run_shell executa" (pulada no Windows), que não rodei aqui. Não usei `act`.
-4. **[PENDENTE] A imagem Docker nunca foi construída.** `docker compose config` valida os dois
-   arquivos (com e sem GPU) e as tags `python:3.11-slim-bookworm` e `ollama/ollama:0.40.14`
-   existem no Docker Hub (conferido pela API), mas nada foi baixado nem executado nesta
-   máquina. Pontos a conferir no primeiro `docker compose up`: permissão de `./data` e
-   `./workspace` (uid 1000) em Linux; o `healthcheck` com `ollama list`; o tamanho da imagem
-   (tesseract + PyMuPDF). Voz (faster-whisper) não está na imagem.
+4. **[RESOLVIDO em 08/11] Imagem Docker construída e testada localmente** (Docker 29.6.1):
+   `docker compose build jarvis` em ~1 min, imagem de 739 MB; `docker run --rm jarvis:local
+   python scripts/smoke_test.py` passa 63 de 63 (o `run_shell` roda no Linux do contêiner);
+   o processo é `uid=1000(jarvis)`; sem `.env`, `python -m jarvis` sai com "TELEGRAM_BOT_TOKEN
+   não configurado". **Ainda não feito:** o `docker compose up` completo (serviço `ollama`,
+   healthcheck com `ollama list`, GPU) e a permissão de `./data` em host Linux. O
+   `docker compose config` exige um `.env` (o compose usa `env_file`), como o README já manda
+   criar. Voz (faster-whisper) não está na imagem.
 5. **numpy diferente por versão do Python.** `numpy==1.24.4` (Python < 3.12, a do `.venv` e da
    imagem) e `numpy==1.26.4` (3.12+, porque a 1.24.4 não tem wheel). O código só usa a API
    básica e os testes passam nas duas, mas são duas versões em produção possíveis.
