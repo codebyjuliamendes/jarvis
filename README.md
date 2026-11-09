@@ -159,7 +159,7 @@ rodada anterior](evals/results/RESULTS.md); os JSON com cada caso estão em
   `qwen2.5:3b` × `llama3.2:3b`, pareado por caso: 13 casos só o qwen acerta, 4 só o llama;
   McNemar exato p = 0,049 e diferença de +12,0 pontos (IC 95% [+2,1; +22,2]). É evidência
   moderada a favor do qwen, **não** conclusiva: rodada a rodada o p vai de 0,019 a 0,096 e não
-  passa na correção de Bonferroni para as 4 comparações (0,0125). O `qwen2.5:1.5b` perde dos
+  passa na correção de Bonferroni (0,0125 para 4 comparações; 0,0083 para as 6 do `REPEATS.md`). O `qwen2.5:1.5b` perde dos
   dois com folga (p < 0,001 e 0,008). Detalhes, modo JSON e ressalvas em
   [`RESULTS.md`](evals/results/RESULTS.md#três-rodadas-por-modelo-variância-ic-95-e-teste-pareado-extras)
   e [`REPEATS.md`](evals/results/REPEATS.md). As latências valem para esta máquina.

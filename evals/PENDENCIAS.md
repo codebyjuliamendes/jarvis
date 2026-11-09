@@ -68,12 +68,10 @@ avaliação não mede. Nada aqui foi escondido da tabela de resultados.
   Uma execução por configuração, sem intervalo de confiança. Agora há 3 rodadas por modelo no
   nativo (e no JSON dos dois qwen), IC por bootstrap sobre os casos e Wilson, e McNemar exato
   pareado. O que continua valendo: com 78 casos o IC tem ~15 pontos de largura, e
-  `qwen2.5:3b` × `llama3.2:3b` dá p = 0,049, que não passa na correção para 4 comparações.
+  `qwen2.5:3b` × `llama3.2:3b` dá p = 0,049, que não passa na correção de Bonferroni (4 ou 6 comparações).
   Para separar modelos tão próximos, o caminho é mais casos, não mais rodadas.
-- **[PENDENTE] `llama3.2:3b` no modo JSON com 3 rodadas.** A rodada foi interrompida pelo
-  Claude Code por falta de memória livre e não foi relançada. Comando:
-  `compare_models.py llama3.2:3b --modes json --repeats 3 --skip-rag --markdown <tmp>`, depois
-  `--from-json` com os 6 arquivos para refazer o `REPEATS.md`.
+- **[RESOLVIDO em 08/11] `llama3.2:3b` no modo JSON com 3 rodadas:** 44 / 43 / 45 (56,4%),
+  empata com os dois qwen no JSON (p = 1,0). `REPEATS.md` refeito com as 6 baterias.
 - **Timeouts do `qwen2.5:1.5b`.** Sem limite de `num_predict` (nem no agente nem no eval), o
   1,5B às vezes não para de gerar e estoura os 300 s do cliente: 2–4 casos por rodada nativa nos
   extras (1 na rodada anterior). Conta como erro. Um `num_predict` no agente (ex.: 512) cortaria

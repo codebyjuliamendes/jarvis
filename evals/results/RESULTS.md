@@ -93,11 +93,11 @@ rodada e cada caso nos `*_x3.json`; os runs no MLflow (`tools <modelo> <modo> x3
 | `llama3.2:3b` | native | 56 / 58 / 58 | 73,5% | 1,5 p.p. | [63,7; 82,5%] | [62,8; 82,0%] |
 | `qwen2.5:1.5b` | json | 45 / 38 / 41 | 53,0% | 4,5 p.p. | [42,3; 63,2%] | [42,0; 63,7%] |
 | `qwen2.5:3b` | json | 42 / 37 / 41 | 51,3% | 3,4 p.p. | [40,6; 61,5%] | [40,4; 62,1%] |
-| `llama3.2:3b` | json | não terminou (ver abaixo) | | | | |
+| `llama3.2:3b` | json | 44 / 43 / 45 | 56,4% | 1,3 p.p. | [46,2; 67,1%] | [45,4; 66,9%] |
 
 Comparação pareada no modo nativo (McNemar exato bilateral sobre os casos discordantes, com o
-acerto de cada caso pela maioria das 3 rodadas; 4 comparações → limiar de Bonferroni
-p < 0,0125):
+acerto de cada caso pela maioria das 3 rodadas; 6 comparações no `REPEATS.md` → limiar de
+Bonferroni p < 0,0083; eram 4 → 0,0125 antes da bateria do `llama3.2:3b` JSON):
 
 | Comparação | Só A acerta / só B acerta | p (maioria) | p por rodada | Diferença A − B (IC 95% bootstrap pareado) |
 |---|---|---|---|---|
@@ -114,14 +114,15 @@ Como ler:
   determinismo da GPU. No modo JSON a variação entre rodadas é maior (3,4–4,5 pontos).
 - **`qwen2.5:3b` > `llama3.2:3b`: evidência moderada, não conclusiva.** A diferença de 12
   pontos tem IC bootstrap que não cruza o zero e McNemar p = 0,049 na maioria das rodadas, mas
-  rodada a rodada o p vai de 0,019 a 0,096, e com a correção para 4 comparações (0,0125) não é
+  rodada a rodada o p vai de 0,019 a 0,096, e com a correção de Bonferroni (0,0125 para 4 comparações, 0,0083 para 6) não é
   significativa. A escolha do `qwen2.5:3b` continua defensável (melhor nas 3 rodadas, em
   argumentos e em latência), mas "melhor com significância estatística" não é o que os dados
   dizem.
 - **O `qwen2.5:1.5b` perde dos dois 3B com folga** (p < 0,001 e p = 0,008, ambos abaixo do
   limiar corrigido).
-- **No modo JSON o tamanho do modelo não importa** (15 × 15 casos discordantes): o gargalo é
-  o formato, não o modelo.
+- **No modo JSON o tamanho do modelo não importa** (15 × 15 casos discordantes entre os qwen;
+  16 × 17 entre `qwen2.5:3b` e `llama3.2:3b`, p = 1,0): o gargalo é o formato, não o modelo.
+  Os três ficam entre 51% e 57% de média.
 - **A média do `qwen2.5:3b` nativo subiu de 82,1% (64/78) para 85,5%** sem mudança no código
   da avaliação: as rodadas desta noite deram 67, 67 e 66; as anteriores, 66 e 64. Com as 5
   rodadas juntas, 66,0 ± 1,2 casos (84,6%). É a mesma variância medida acima, e é por isso que
@@ -129,10 +130,9 @@ Como ler:
 
 Ressalvas desta rodada:
 
-- **O `llama3.2:3b` no modo JSON não terminou.** O processo foi interrompido pelo Claude Code
-  por pouca memória livre na máquina, na 1ª das 3 rodadas, e não foi relançado (pedido explícito
-  do ambiente). As outras 15 rodadas já estavam gravadas; a tabela e o McNemar foram refeitos com
-  `compare_models.py --repeats 3 --from-json ...`.
+- **O `llama3.2:3b` no modo JSON foi refeito em 08/11 à noite** (a 1ª tentativa foi
+  interrompida por falta de memória): 44 / 43 / 45, 56,4%. O `REPEATS.md` foi refeito com
+  `compare_models.py --repeats 3 --from-json` com as 6 baterias.
 - **Timeouts do `qwen2.5:1.5b`.** Em 2, 3 e 4 casos das rodadas nativas (e 0, 2 e 1 no JSON) o
   modelo não parou de gerar em 300 s (o eval não limita `num_predict`, como o agente). Contam
   como erro de ferramenta. Na rodada anterior tinha sido 1 caso. Não muda nenhuma conclusão
