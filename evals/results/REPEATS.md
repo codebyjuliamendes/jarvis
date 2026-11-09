@@ -1,6 +1,6 @@
 # Seleção de ferramentas com repetições
 
-Gerado por `evals/compare_models.py --repeats 3` em 2026-11-08T05:07:46-03:00 (commit `faf0410-dirty`, Ollama 0.40.14).
+Gerado por `evals/compare_models.py --repeats 3` em 2026-11-08T21:57:16-03:00 (commit `ee7842f`, Ollama 0.40.14).
 Máquina: Windows-10-10.0.26100-SP0 · GPU: NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB. Um modelo por vez, seed 42 igual em todas as rodadas (o que varia é o não determinismo da GPU), temperatura 0,2, `num_ctx` 8192.
 
 Tabela refeita com `--from-json` a partir dos JSON gravados (sem chamar o Ollama); commit e data de cada rodada estão no `meta` de cada arquivo.
@@ -16,16 +16,19 @@ IC 95% principal: bootstrap percentil sobre os casos (10000 reamostragens, seed 
 | `qwen2.5:3b` | native | 67 / 67 / 66 (de 78) | 85,5% | 0,7 p.p. | [77,8; 92,3%] | [76,0; 91,6%] | 5 | 84,7% ± 0,9 p.p. |
 | `qwen2.5:3b` | json | 42 / 37 / 41 (de 78) | 51,3% | 3,4 p.p. | [40,6; 61,5%] | [40,4; 62,1%] | 10 | 45,9% ± 4,3 p.p. |
 | `llama3.2:3b` | native | 56 / 58 / 58 (de 78) | 73,5% | 1,5 p.p. | [63,7; 82,5%] | [62,8; 82,0%] | 6 | 62,8% ± 0,9 p.p. |
+| `llama3.2:3b` | json | 44 / 43 / 45 (de 78) | 56,4% | 1,3 p.p. | [46,2; 67,1%] | [45,4; 66,9%] | 9 | 31,7% ± 0,9 p.p. |
 
 ## Comparações pareadas (mesmos casos)
 
-McNemar exato bilateral sobre o acerto por maioria das rodadas; "só A / só B" são os casos discordantes. Também rodada a rodada (rodada i × rodada i), como sensibilidade. Diferença = média por caso da fração de acertos de A menos a de B, com IC bootstrap pareado. Com 4 comparações, o limiar corrigido por Bonferroni é p < 0,0125.
+McNemar exato bilateral sobre o acerto por maioria das rodadas; "só A / só B" são os casos discordantes. Também rodada a rodada (rodada i × rodada i), como sensibilidade. Diferença = média por caso da fração de acertos de A menos a de B, com IC bootstrap pareado. Com 6 comparações, o limiar corrigido por Bonferroni é p < 0,0083.
 
 | Comparação | Modo | Só A / só B | p (maioria) | p por rodada | Diferença A − B | IC 95% da diferença | Significativa? |
 |---|---|---|---|---|---|---|---|
 | `qwen2.5:1.5b` × `qwen2.5:3b` | json | 15 / 15 | 1,000 | 0,711, 1,000, 1,000 | +1,7 p.p. | [-11,1; +14,1] p.p. | não |
+| `qwen2.5:1.5b` × `llama3.2:3b` | json | 17 / 18 | 1,000 | 1,000, 0,500, 0,597 | -3,4 p.p. | [-17,1; +10,3] p.p. | não |
+| `qwen2.5:3b` × `llama3.2:3b` | json | 16 / 17 | 1,000 | 0,864, 0,362, 0,597 | -5,1 p.p. | [-18,4; +8,1] p.p. | não |
 | `qwen2.5:1.5b` × `qwen2.5:3b` | native | 4 / 30 | < 0,001 | < 0,001, < 0,001, < 0,001 | -31,2 p.p. | [-43,2; -18,8] p.p. | sim |
 | `qwen2.5:1.5b` × `llama3.2:3b` | native | 10 / 27 | 0,008 | 0,041, 0,011, 0,011 | -19,2 p.p. | [-32,9; -6,0] p.p. | sim |
 | `qwen2.5:3b` × `llama3.2:3b` | native | 13 / 4 | 0,049 | 0,019, 0,064, 0,096 | +12,0 p.p. | [+2,1; +22,2] p.p. | não |
 
-Arquivos brutos (cada rodada, cada caso): `20261108T035921_tools_qwen2.5-1.5b_native_x3.json`, `20261108T043725_tools_qwen2.5-1.5b_json_x3.json`, `20261108T045503_tools_qwen2.5-3b_native_x3.json`, `20261108T045827_tools_qwen2.5-3b_json_x3.json`, `20261108T050159_tools_llama3.2-3b_native_x3.json`
+Arquivos brutos (cada rodada, cada caso): `20261108T035921_tools_qwen2.5-1.5b_native_x3.json`, `20261108T043725_tools_qwen2.5-1.5b_json_x3.json`, `20261108T045503_tools_qwen2.5-3b_native_x3.json`, `20261108T045827_tools_qwen2.5-3b_json_x3.json`, `20261108T050159_tools_llama3.2-3b_native_x3.json`, `20261108T215419_tools_llama3.2-3b_json_x3.json`
