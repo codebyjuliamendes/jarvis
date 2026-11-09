@@ -16,9 +16,9 @@ ressalva de vazamento de política), **servidor MCP** que
 leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **441 testes** sem
 Ollama, CI e Docker.
 
-![Demonstração: servidor MCP só leitura, avaliação com IC 95% e McNemar, testes](docs/demo.gif)
+![Demonstração: servidor MCP só leitura, avaliação com IC 95% e McNemar, LoRA antes/depois, testes](docs/demo.gif)
 
-<sub>Gravado a partir da saída real dos comandos (o `--check` do MCP, a tabela gravada em `evals/results/REPEATS.md` e o pytest).</sub>
+<sub>Quadros montados a partir da saída real dos comandos (o `--check` do MCP, as tabelas gravadas em `evals/results/REPEATS.md` e `FINETUNE.md` e o pytest).</sub>
 
 | Seção | Destaque |
 |---|---|
