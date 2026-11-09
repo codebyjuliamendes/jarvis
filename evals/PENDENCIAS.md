@@ -227,20 +227,17 @@ A especificação está em `docs/superpowers/specs/2026-11-08-finetune-design.md
 passo, em `finetune/README.md`. **O que foi preparado está testado; o treino e a medição do
 antes/depois NÃO foram feitos.**
 
-1. **[PENDENTE] Treinar no Colab.** Por pedido explícito, nada foi treinado nesta máquina
-   (nem pesos baixados do Hugging Face, nem torch/transformers/unsloth instalados). O
-   `finetune/train_lora.ipynb` foi validado só como arquivo (`json.load`, `nbformat` 5.10.4,
-   código compilado com `ast`), **nunca executado**: a instalação do Unsloth no Colab, os
-   nomes de parâmetro do `TrainingArguments` (`eval_strategy`) e o nome do arquivo que o
-   `save_pretrained_gguf` gera mudam entre versões e podem pedir ajuste na primeira rodada.
-   O tempo de treino na T4 não foi medido (~13 milhões de tokens em 2 épocas).
-2. **[PENDENTE] Medir o antes/depois** com
-   `evals/compare_models.py qwen2.5:1.5b jarvis-qwen-lora --skip-rag --markdown evals/results/FINETUNE.md`
-   e só então preencher a linha do modelo ajustado no README. A linha de base do 1,5B foi
-   refeita com o prompt atual no subprojeto 5b (56,4% / 44,3%; antes 56,4% / 42,6%), mas
-   rodadas iguais variam 1–2 casos, então a base ainda deve ser medida na mesma execução que
-   o modelo ajustado.
-3. **Os modelos de frase foram escritos por quem tinha lido o eval.** Os filtros de vazamento
+1. **[RESOLVIDO em 08/11] Treinado localmente**, não no Colab (o login do Colab falhou):
+   `finetune/train_local.py`, QLoRA do Qwen2.5-3B-Instruct numa RTX 4050 Laptop de 6 GB, 101
+   de 106 passos (parou no limite de tempo), 219,6 min, perda no val 0,917 -> 0,099. Desvios
+   do plano: 3B em vez de 1,5B; gradiente truncado (prompt sem gradiente) para caber em 6 GB;
+   GGUF Q8_0 em vez de q4_K_M (o Ollama 0.40.14 não quantiza GGUF nem importa Qwen2 em
+   safetensors). O notebook do Colab continua sem execução.
+2. **[RESOLVIDO em 08/11] Antes/depois medido** (3 rodadas, mesmo eval): base Q8_0 83,3% ->
+   ajustado 100% (78/78 nas 3), args 81,4% -> 96,7%, McNemar p < 0,001
+   (`evals/results/FINETUNE.md`). A base Q8_0 empata com o `qwen2.5:3b` oficial (p = 1,0).
+   **Mas veja o item 3: o 100% não prova generalização.**
+3. **[PENDENTE, agora o mais importante] Os modelos de frase foram escritos por quem tinha lido o eval.** Os filtros de vazamento
    pegam cópia (exata), paráfrase próxima (Jaccard de 4-gramas ≥ 0,35; 60 removidos) e
    entidades do eval (0), mas não "ensinar para a prova" no nível da política — ex.:
    "anotações -> `knowledge_search`", "agenda do Google -> `google`", que coincidem com

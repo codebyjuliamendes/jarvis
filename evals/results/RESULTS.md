@@ -140,3 +140,12 @@ Ressalvas desta rodada:
 - O metadado `git_commit` dos `*_x3.json` diz `faf0410-dirty`: a árvore tinha mudanças em
   arquivos de documentação e do RAG enquanto rodava; `evals/eval_tools.py` e `jarvis/` estavam
   iguais ao commit `7efaa66`.
+
+## Fine-tuning (08/11/2026)
+
+O `jarvis-qwen-lora` (Qwen2.5-3B + LoRA treinado localmente, GGUF Q8_0) fez 78/78 nas 3
+rodadas (100%; Wilson [95,3; 100]) contra 65/65/65 (83,3%) da mesma base convertida do mesmo
+jeito; McNemar 0 / 12, p < 0,001. Os modelos de frase do treino foram escritos por quem tinha
+lido este eval, então o número mede o eval, não generalização. Tabela, método e ressalvas em
+[`FINETUNE.md`](FINETUNE.md).
+

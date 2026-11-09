@@ -11,7 +11,8 @@ suas notas. Medido, não suposto: o `qwen2.5:3b` escolhe a ferramenta certa em *
 pedidos em pt-BR (85,5% na média de 3 rodadas, IC 95% de 77,8% a 92,3%; 0,58 s por
 decisão numa GPU de notebook), e trocar a busca vetorial pela
 busca por palavras (BM25) levou o recall@1 do RAG de **44,4% para 83,3%**. Observabilidade
-por requisição (`/metrics`), LoRA preparado com checagem de vazamento, **servidor MCP** que
+por requisição (`/metrics`), **LoRA treinado localmente numa GPU de 6 GB** (78/78 no eval, com
+ressalva de vazamento de política), **servidor MCP** que
 leva as mesmas ferramentas (e as mesmas travas) ao Claude Desktop/Code, **441 testes** sem
 Ollama, CI e Docker.
 
@@ -22,7 +23,7 @@ Ollama, CI e Docker.
 | Seção | Destaque |
 |---|---|
 | [Avaliação](#avaliação) | 78 casos de seleção de ferramentas (3 rodadas, IC 95%, McNemar) e 36+36 de RAG (original e paráfrases), MLflow, JSON de cada caso versionado |
-| [Fine-tuning](#fine-tuning) | dataset sintético de 2.134 conversas, template idêntico ao do Ollama; treino no Colab **pendente** |
+| [Fine-tuning](#fine-tuning) | QLoRA do Qwen2.5-3B em 3,7 h numa RTX 4050 de 6 GB; 83,3% -> 100% no eval (McNemar p < 0,001), ressalvas de vazamento |
 | [RAG](#rag) | BM25 (FTS5), vetorial (sqlite-vec) e híbrido (RRF), com citação de fonte |
 | [Observabilidade](#observabilidade) | latência, tokens e ferramentas por requisição; logs JSON com `request_id` |
 | [Servidor MCP](#servidor-mcp) | ferramentas do Jarvis no Claude Desktop/Code por stdio; só leitura por padrão, mesmas checagens do `security.py` |
@@ -177,10 +178,28 @@ uv pip install --python .venv/Scripts/python.exe -r requirements-evals.txt   # M
 
 ## Fine-tuning
 
-Preparação de um **LoRA** para o `qwen2.5` acertar mais a escolha de ferramenta — inclusive
-quando o certo é não chamar nenhuma. Tudo em [`finetune/`](finetune/README.md). **O treino
-ainda não foi feito**: ele roda no Google Colab gratuito (T4), não nesta máquina, e o modelo
-ajustado só ganha número depois de medido pelo mesmo eval da seção anterior.
+**LoRA** no `Qwen2.5-3B-Instruct` para acertar a escolha de ferramenta — inclusive quando o
+certo é não chamar nenhuma. Tudo em [`finetune/`](finetune/README.md). **Treinado localmente**
+em 08/11/2026 numa RTX 4050 Laptop de 6 GB (QLoRA 4 bits, 101 passos, 3,7 h, pico de 5,08 GB)
+e medido pelo mesmo eval da seção anterior:
+
+| Modelo (modo nativo, 78 casos, 3 rodadas) | Ferramenta (média) | IC 95% | Args | Sem ferramenta | p50 |
+|---|---|---|---|---|---|
+| `qwen2.5:3b` oficial (q4_K_M) | 85,5% (67/67/66) | [77,8; 92,3] | 84,7% | — | 0,58 s |
+| `qwen2.5-3b-base-q8` (base, mesmo caminho do ajustado) | 83,3% (65/65/65) | [75,2; 91,0] | 81,4% | 50,0% (4/8) | 0,82 s |
+| **`jarvis-qwen-lora`** (base + LoRA, Q8_0) | **100,0%** (78/78/78) | [100; 100] (Wilson [95,3; 100]) | **96,7%** | **100,0%** (8/8) | 0,70 s |
+
+McNemar base × ajustado: 0 casos só a base acerta, 12 só o ajustado, p < 0,001; diferença de
++16,7 p.p. (IC [+9,0; +24,8]). A base Q8_0 empata com o `qwen2.5:3b` oficial (p = 1,0), o que
+confere a conversão. Na demonstração do RAG (`scripts/demo_rag.py`, 3 perguntas), o ajustado
+buscou nos documentos nas 3 e citou a fonte em 2; o `qwen2.5:3b` buscou em 1.
+
+> **Ressalva que pesa:** os modelos de frase do treino foram escritos por quem tinha lido o
+> eval. Os filtros tiram cópia e paráfrase, não a política (ex.: "anotações ->
+> `knowledge_search`"), então 100% aqui **não prova generalização**. Falta um conjunto novo,
+> escrito por outra pessoa ou tirado do uso real. A perda no val (modelos de frase que o treino
+> não viu) caiu de 0,917 para 0,099. Detalhes em
+> [`evals/results/FINETUNE.md`](evals/results/FINETUNE.md).
 
 O que está pronto e testado:
 
@@ -197,21 +216,20 @@ O que está pronto e testado:
   treinado num formato que o modelo nunca vê. `finetune/chat_format.py` reproduz o template
   do Ollama e `finetune/check_template.py` prova: mesmos tokens de prompt e mesma saída em 6
   conversas.
-- **Notebook do Colab** (Unsloth, LoRA r=16/alpha=32, perda só na resposta, avaliação no
-  val, exportação GGUF q4_K_M) e **Modelfile** com o template oficial — validado num modelo
-  temporário sobre o `qwen2.5:1.5b`.
+- **Notebook do Colab** (Unsloth, LoRA r=16/alpha=32, perda só na resposta, exportação GGUF
+  q4_K_M), alternativa ao treino local; **não executado**.
 
-| Modelo (modo nativo, 78 casos) | Acurácia ferramenta | Acurácia args | Sem ferramenta |
-|---|---|---|---|
-| `qwen2.5:1.5b` (linha de base, medida) | 56,4% (44/78) | 44,3% (27/61) | 100,0% (8/8) |
-| `qwen2.5:3b` (linha de base, medida) | 82,1% (64/78) | 80,3% (49/61) | 62,5% (5/8) |
-| `jarvis-qwen-lora` (1,5B + LoRA) | pendente (treino no Colab) | pendente | pendente |
+Os modelos base erram em sentidos opostos: o 1,5B quase não chama ferramenta (31 dos 34
+erros), o 3B chama demais em conversa simples. O dataset ataca os dois lados. Lista completa
+de ressalvas em [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#fine-tuning-subprojeto-2).
 
-Os dois modelos erram em sentidos opostos: o 1,5B quase não chama ferramenta (31 dos 34
-erros), o 3B chama demais em conversa simples. O dataset ataca os dois lados. Ressalvas que
-valem para quando houver número: os modelos de frase foram escritos por quem tinha lido o
-eval (os filtros pegam cópia e paráfrase, não a política), e 1 caso = 1,3 ponto. Lista
-completa em [`evals/PENDENCIAS.md`](evals/PENDENCIAS.md#fine-tuning-subprojeto-2).
+**Como coube em 6 GB** ([`finetune/train_local.py`](finetune/train_local.py)): cada exemplo tem
+~3.900 tokens de prompt (system + 25 ferramentas) e ~30 de resposta. O backward completo
+passava de 7 GB e levava 82 s por exemplo; o script passa o prompt **sem gradiente** (vira
+cache de chaves/valores) e só a resposta com gradiente: ~5 GB e 5–7 s por exemplo. É um
+gradiente truncado (o forward e a perda medida são exatos). O Ollama 0.40.14 não importa Qwen2
+em safetensors, então [`finetune/to_gguf.py`](finetune/to_gguf.py) gera um GGUF Q8_0
+reaproveitando o tokenizador do GGUF oficial.
 
 **Experimento sem treino (resultado nulo).** O Ollama 0.40.14 mostra as ferramentas ao
 `qwen2.5` como struct do Go, não JSON. Um Modelfile com `{{ json .Function }}` (conferido: o
@@ -224,9 +242,12 @@ Para reproduzir:
 ```bash
 .venv/Scripts/python.exe finetune/generate_dataset.py          # dados + relatório de vazamento
 .venv/Scripts/python.exe finetune/check_template.py            # renderizador = template do Ollama
-# treino: finetune/train_lora.ipynb no Colab (T4) -> jarvis-qwen-lora.Q4_K_M.gguf
-ollama create jarvis-qwen-lora -f finetune/Modelfile
-.venv/Scripts/python.exe evals/compare_models.py qwen2.5:1.5b jarvis-qwen-lora --skip-rag --markdown evals/results/FINETUNE.md
+# treino local (venv separado com torch CUDA; ver finetune/README.md)
+.venv-train/Scripts/python.exe finetune/train_local.py --epochs 1 --grad-accum 16 --val-sample 40
+.venv-train/Scripts/python.exe finetune/merge_adapter.py
+.venv-train/Scripts/python.exe finetune/to_gguf.py --base-gguf <blob do qwen2.5:3b>
+ollama create jarvis-qwen-lora -f finetune/Modelfile.local
+.venv/Scripts/python.exe evals/eval_tools.py --model jarvis-qwen-lora --repeats 3
 ```
 
 ---
@@ -1163,7 +1184,8 @@ jarvis/
 
 - **WhatsApp**: API oficial (Meta Cloud API) ou bridge QR; exige decisão/conta.
 - **Google Drive** e outras integrações (Trello, Linear, Slack, Mercado Pago).
-- **Rodar o treino do LoRA no Colab** e medir o antes/depois (ver [Fine-tuning](#fine-tuning)).
+- **Conjunto de teste novo para o LoRA**, escrito por outra pessoa ou tirado do uso real, para
+  medir generalização (ver [Fine-tuning](#fine-tuning)).
 - **Migrar para VPS** para ficar 24h no ar (basta copiar `.env`, `data/` e instalar Ollama
   ou trocar o cliente por uma API).
 

@@ -3,11 +3,13 @@
 Preparação completa e reprodutível para ajustar um Qwen 2.5 pequeno com LoRA na tarefa que
 o subprojeto 1 mede: **escolher a ferramenta certa (ou nenhuma) e preencher os argumentos**.
 
-> **Estado: o treino ainda não foi feito.** Tudo abaixo foi preparado e testado nesta
-> máquina sem treinar nada (pedido explícito: não sobrecarregar o notebook, não baixar pesos
-> do Hugging Face, não instalar torch/transformers/unsloth). O treino roda no Google Colab
-> gratuito (T4). Não há número do modelo ajustado em lugar nenhum do repositório até ele ser
-> medido com `evals/compare_models.py`.
+> **Estado (08/11/2026): treinado localmente e medido.** QLoRA do Qwen2.5-3B-Instruct numa
+> RTX 4050 Laptop de 6 GB com [`train_local.py`](train_local.py) (101 passos, 219,6 min, pico
+> de 5,08 GB; perda no val 0,917 -> 0,099). No eval de 78 casos, 3 rodadas: base Q8_0 83,3%
+> (65/65/65) -> ajustado **100%** (78/78/78), args 81,4% -> 96,7%, McNemar p < 0,001. **Isso
+> não prova generalização**: os modelos de frase foram escritos por quem tinha lido o eval
+> (ver [`evals/results/FINETUNE.md`](../evals/results/FINETUNE.md)). Os pesos não estão no
+> repositório (`finetune/out/` no `.gitignore`); o passo a passo abaixo reproduz.
 
 Especificação: [`docs/superpowers/specs/2026-11-08-finetune-design.md`](../docs/superpowers/specs/2026-11-08-finetune-design.md).
 Pendências: seção "Fine-tuning" de [`evals/PENDENCIAS.md`](../evals/PENDENCIAS.md).
@@ -21,7 +23,11 @@ Pendências: seção "Fine-tuning" de [`evals/PENDENCIAS.md`](../evals/PENDENCIA
 | [`leakage.py`](leakage.py) | checagem de vazamento contra `evals/data/tool_selection.jsonl` |
 | [`chat_format.py`](chat_format.py) | renderiza a conversa no texto exato que o Ollama monta para o `qwen2.5` |
 | [`check_template.py`](check_template.py) | prova a equivalência acima contra o Ollama local |
-| [`train_lora.ipynb`](train_lora.ipynb) | notebook do Colab (Unsloth, LoRA, GGUF q4_K_M) — **não executado** |
+| [`train_local.py`](train_local.py) | **treino QLoRA local** (6 GB): prompt sem gradiente, perda só na resposta, MLflow |
+| [`merge_adapter.py`](merge_adapter.py) | junta o adaptador ao modelo base (CPU, bf16) |
+| [`to_gguf.py`](to_gguf.py) | GGUF Q8_0 com o tokenizador do GGUF oficial do `qwen2.5` |
+| [`Modelfile.local`](Modelfile.local) | importa o GGUF local no Ollama, template oficial |
+| [`train_lora.ipynb`](train_lora.ipynb) | alternativa no Colab (Unsloth, LoRA, GGUF q4_K_M) — **não executado** |
 | [`Modelfile`](Modelfile) | importa o GGUF no Ollama com o template oficial do `qwen2.5` |
 | `data/train.jsonl`, `data/val.jsonl` | dataset versionado (seed 42) |
 | `data/tools.json` | os 25 schemas reais (iguais em todo exemplo; guardados uma vez) |
@@ -279,3 +285,43 @@ determinismo, divisão por modelo de frase, `tools.json` = registro, system prom
 `Agent` atual, tamanho) e
 `tests/test_finetune_notebook.py` (notebook é JSON válido, sem saídas). Nenhum fala com o
 Ollama; `check_template.py` é a conferência que fala.
+
+## Treino local (o que foi feito em 08/11/2026)
+
+Venv separado (Python 3.12; o bot continua no 3.8), fora do git:
+
+```bash
+uv venv .venv-train --python 3.12
+uv pip install --python .venv-train/Scripts/python.exe torch --index-url https://download.pytorch.org/whl/cu128
+uv pip install --python .venv-train/Scripts/python.exe transformers peft bitsandbytes accelerate safetensors gguf "mlflow==2.17.2" "sqlalchemy==2.0.57" "alembic==1.14.1"
+```
+
+Versões usadas: torch 2.11.0+cu128, transformers 5.22.2, peft 0.21.2, bitsandbytes 0.50.2,
+gguf 0.19.0. O SQLAlchemy fica na 2.0.x porque o MLflow 2.17.2 quebra com a 2.1.
+
+```bash
+# descarregue os modelos do Ollama antes (ollama ps / ollama stop): o treino usa ~5 GB de VRAM
+.venv-train/Scripts/python.exe finetune/train_local.py --epochs 1 --grad-accum 16 --val-sample 40 --eval-every 25 --max-minutes 210
+.venv-train/Scripts/python.exe finetune/merge_adapter.py
+.venv-train/Scripts/python.exe finetune/to_gguf.py --base-gguf <FROM de: ollama show qwen2.5:3b --modelfile>
+ollama create jarvis-qwen-lora -f finetune/Modelfile.local
+# base pelo mesmo caminho, para comparar sem diferença de quantização:
+.venv-train/Scripts/python.exe finetune/to_gguf.py --base-gguf <...> --merged <snapshot do Qwen2.5-3B-Instruct no cache do HF> --out finetune/out/qwen2.5-3b-base-q8_0.gguf
+.venv/Scripts/python.exe evals/eval_tools.py --model jarvis-qwen-lora --repeats 3
+```
+
+Decisões e por quê:
+
+- **Prompt sem gradiente.** O backward completo sobre ~3.900 tokens passou de 7 GB (a GPU tem
+  6) e levou 82 s por exemplo, transbordando para a RAM. Com o prompt virando cache de
+  chaves/valores sem gradiente, ficou em ~5 GB e 5–7 s. O forward e a perda medida são
+  exatos; o gradiente não volta pelas representações do prompt.
+- **Sem `prepare_model_for_kbit_training`**: ele converte o embedding (152 mil × 2048) para
+  fp32, +1,2 GB.
+- **1 época, parada por tempo** em 101 de 106 passos (o lr já estava perto de zero no fim do
+  agendamento linear).
+- **Q8_0 em vez de q4_K_M**: o Ollama 0.40.14 só quantiza na importação de safetensors (MLX,
+  que não aceita Qwen2) e o `gguf` do PyPI não implementa q4_K_M. A base foi convertida igual
+  e empata com o `qwen2.5:3b` oficial (p = 1,0), o que confere a conversão.
+- O adaptador foi treinado sobre a base em nf4 e juntado à base em bf16 (prática comum do
+  QLoRA; a pequena diferença de quantização não foi medida à parte).
