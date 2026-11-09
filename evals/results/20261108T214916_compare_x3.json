@@ -1,0 +1,411 @@
+{
+  "kind": "comparison_repeated",
+  "meta": {
+    "timestamp": "2026-11-08T21:49:16-03:00",
+    "git_commit": "441c949",
+    "python": "3.8.20",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+    "ollama": {
+      "url": "http://127.0.0.1:11434",
+      "version": "0.40.14"
+    }
+  },
+  "models": [
+    "x"
+  ],
+  "modes": [
+    "native"
+  ],
+  "repeats": 3,
+  "limit": 0,
+  "from_json": true,
+  "repeated_results": [
+    {
+      "kind": "tool_selection_repeated",
+      "model": "qwen2.5-3b-base-q8",
+      "mode": "native",
+      "effective_mode": "native",
+      "repeats": 3,
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "meta": {
+        "timestamp": "2026-11-08T21:42:45-03:00",
+        "git_commit": "441c949",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26100-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "stats": {
+        "tool": {
+          "repeats": 3,
+          "n_cases": 78,
+          "hits_per_run": [
+            65,
+            65,
+            65
+          ],
+          "accuracy_per_run": [
+            0.8333333333333334,
+            0.8333333333333334,
+            0.8333333333333334
+          ],
+          "mean": 0.8333333333333334,
+          "stdev": 0.0,
+          "mean_hits": 65.0,
+          "ci95_bootstrap": [
+            0.752136752136752,
+            0.9102564102564102
+          ],
+          "ci95_wilson": [
+            0.7354442476924203,
+            0.8999305458327835
+          ],
+          "unstable_cases": 5,
+          "majority_hits": 66,
+          "bootstrap": {
+            "resamples": 10000,
+            "seed": 20261108,
+            "method": "percentil"
+          }
+        },
+        "args": {
+          "repeats": 3,
+          "n_cases": 61,
+          "hits_per_run": [
+            50,
+            50,
+            49
+          ],
+          "accuracy_per_run": [
+            0.819672131147541,
+            0.819672131147541,
+            0.8032786885245902
+          ],
+          "mean": 0.814207650273224,
+          "stdev": 0.00946475851130535,
+          "mean_hits": 49.666666666666664,
+          "ci95_bootstrap": [
+            0.7158469945355193,
+            0.901639344262295
+          ],
+          "ci95_wilson": [
+            0.6991119777860626,
+            0.8920735697096589
+          ],
+          "unstable_cases": 4,
+          "majority_hits": 51,
+          "bootstrap": {
+            "resamples": 10000,
+            "seed": 20261108,
+            "method": "percentil"
+          }
+        },
+        "invalid_json_per_run": [
+          0,
+          0,
+          0
+        ],
+        "latency_p50_per_run": [
+          0.8228940499999986,
+          0.8587488499999978,
+          0.8166979500000053
+        ],
+        "tokens_per_s_per_run": [
+          47.63024608740771,
+          45.82517212025198,
+          47.18892579628757
+        ]
+      }
+    },
+    {
+      "kind": "tool_selection_repeated",
+      "model": "jarvis-qwen-lora",
+      "mode": "native",
+      "effective_mode": "native",
+      "repeats": 3,
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "meta": {
+        "timestamp": "2026-11-08T21:46:47-03:00",
+        "git_commit": "441c949",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26100-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "stats": {
+        "tool": {
+          "repeats": 3,
+          "n_cases": 78,
+          "hits_per_run": [
+            78,
+            78,
+            78
+          ],
+          "accuracy_per_run": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "mean": 1.0,
+          "stdev": 0.0,
+          "mean_hits": 78.0,
+          "ci95_bootstrap": [
+            1.0,
+            1.0
+          ],
+          "ci95_wilson": [
+            0.9530621902878059,
+            1.0
+          ],
+          "unstable_cases": 0,
+          "majority_hits": 78,
+          "bootstrap": {
+            "resamples": 10000,
+            "seed": 20261108,
+            "method": "percentil"
+          }
+        },
+        "args": {
+          "repeats": 3,
+          "n_cases": 61,
+          "hits_per_run": [
+            59,
+            59,
+            59
+          ],
+          "accuracy_per_run": [
+            0.9672131147540983,
+            0.9672131147540983,
+            0.9672131147540983
+          ],
+          "mean": 0.9672131147540983,
+          "stdev": 0.0,
+          "mean_hits": 59.0,
+          "ci95_bootstrap": [
+            0.9180327868852459,
+            1.0
+          ],
+          "ci95_wilson": [
+            0.8881050958050438,
+            0.9909621096016377
+          ],
+          "unstable_cases": 0,
+          "majority_hits": 59,
+          "bootstrap": {
+            "resamples": 10000,
+            "seed": 20261108,
+            "method": "percentil"
+          }
+        },
+        "invalid_json_per_run": [
+          0,
+          0,
+          0
+        ],
+        "latency_p50_per_run": [
+          0.7070193499999995,
+          0.7102821000000077,
+          0.6937907500000051
+        ],
+        "tokens_per_s_per_run": [
+          47.980997175722784,
+          47.9843149012621,
+          47.976648909399714
+        ]
+      }
+    },
+    {
+      "kind": "tool_selection_repeated",
+      "model": "qwen2.5:3b",
+      "mode": "native",
+      "effective_mode": "native",
+      "repeats": 3,
+      "dataset": "evals/data/tool_selection.jsonl",
+      "dataset_sha256": "a0afd6d2936e",
+      "n_tools": 25,
+      "seed": 42,
+      "num_ctx": 8192,
+      "meta": {
+        "timestamp": "2026-11-08T04:55:03-03:00",
+        "git_commit": "faf0410-dirty",
+        "python": "3.8.20",
+        "platform": "Windows-10-10.0.26100-SP0",
+        "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB",
+        "ollama": {
+          "url": "http://127.0.0.1:11434",
+          "version": "0.40.14"
+        }
+      },
+      "stats": {
+        "tool": {
+          "repeats": 3,
+          "n_cases": 78,
+          "hits_per_run": [
+            67,
+            67,
+            66
+          ],
+          "accuracy_per_run": [
+            0.8589743589743589,
+            0.8589743589743589,
+            0.8461538461538461
+          ],
+          "mean": 0.8547008547008547,
+          "stdev": 0.007401926528072099,
+          "mean_hits": 66.66666666666667,
+          "ci95_bootstrap": [
+            0.7777777777777778,
+            0.9230769230769231
+          ],
+          "ci95_wilson": [
+            0.7599093777027954,
+            0.9161945692535114
+          ],
+          "unstable_cases": 5,
+          "majority_hits": 67,
+          "bootstrap": {
+            "resamples": 10000,
+            "seed": 20261108,
+            "method": "percentil"
+          }
+        },
+        "args": {
+          "repeats": 3,
+          "n_cases": 61,
+          "hits_per_run": [
+            51,
+            52,
+            52
+          ],
+          "accuracy_per_run": [
+            0.8360655737704918,
+            0.8524590163934426,
+            0.8524590163934426
+          ],
+          "mean": 0.8469945355191256,
+          "stdev": 0.009464758511305287,
+          "mean_hits": 51.666666666666664,
+          "ci95_bootstrap": [
+            0.7595628415300546,
+            0.923497267759563
+          ],
+          "ci95_wilson": [
+            0.7364355744721485,
+            0.9164388997187787
+          ],
+          "unstable_cases": 5,
+          "majority_hits": 52,
+          "bootstrap": {
+            "resamples": 10000,
+            "seed": 20261108,
+            "method": "percentil"
+          }
+        },
+        "invalid_json_per_run": [
+          0,
+          0,
+          0
+        ],
+        "latency_p50_per_run": [
+          0.5885461999998824,
+          0.6134032499999194,
+          0.604320300000154
+        ],
+        "tokens_per_s_per_run": [
+          69.30366581580279,
+          69.68968689151065,
+          69.4624339564989
+        ]
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "n_cases": 78,
+      "only_a": 0,
+      "only_b": 12,
+      "both": 66,
+      "neither": 0,
+      "mcnemar_p": 0.00048828125,
+      "mcnemar_p_per_run": [
+        0.000244140625,
+        0.000244140625,
+        0.000244140625
+      ],
+      "diff_mean": -0.16666666666666666,
+      "diff_ci95_bootstrap": [
+        -0.24786324786324793,
+        -0.08974358974358976
+      ],
+      "model_a": "qwen2.5-3b-base-q8",
+      "model_b": "jarvis-qwen-lora",
+      "mode": "native",
+      "alpha_bonferroni": 0.016666666666666666
+    },
+    {
+      "n_cases": 78,
+      "only_a": 5,
+      "only_b": 6,
+      "both": 61,
+      "neither": 6,
+      "mcnemar_p": 1.0,
+      "mcnemar_p_per_run": [
+        0.7744140625,
+        0.7744140625,
+        1.0
+      ],
+      "diff_mean": -0.021367521367521364,
+      "diff_ci95_bootstrap": [
+        -0.09829059829059827,
+        0.05128205128205128
+      ],
+      "model_a": "qwen2.5-3b-base-q8",
+      "model_b": "qwen2.5:3b",
+      "mode": "native",
+      "alpha_bonferroni": 0.016666666666666666
+    },
+    {
+      "n_cases": 78,
+      "only_a": 11,
+      "only_b": 0,
+      "both": 67,
+      "neither": 0,
+      "mcnemar_p": 0.0009765625,
+      "mcnemar_p_per_run": [
+        0.0009765625,
+        0.0009765625,
+        0.00048828125
+      ],
+      "diff_mean": 0.1452991452991453,
+      "diff_ci95_bootstrap": [
+        0.07692307692307693,
+        0.22222222222222227
+      ],
+      "model_a": "jarvis-qwen-lora",
+      "model_b": "qwen2.5:3b",
+      "mode": "native",
+      "alpha_bonferroni": 0.016666666666666666
+    }
+  ],
+  "failures": [],
+  "files": [
+    "20261108T214245_tools_qwen2.5-3b-base-q8_native_x3.json",
+    "20261108T214647_tools_jarvis-qwen-lora_native_x3.json",
+    "20261108T045503_tools_qwen2.5-3b_native_x3.json"
+  ]
+}
